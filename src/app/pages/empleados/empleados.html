@@ -1,0 +1,80 @@
+<div class="empleados-header">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" [(ngModel)]="textoBusqueda" (input)="filtrarEmpleados()" placeholder="Buscar empleado por nombre o especialidad...">
+    </div>
+    <button (click)="abrirModal()" class="btn-primary">
+        <i class="fas fa-user-plus"></i> Registrar Empleado
+    </button>
+</div>
+
+<div class="recent-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Especialidad</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="cargando">
+                <td colspan="6" style="text-align: center;">Cargando planilla de especialistas...</td>
+            </tr>
+            <tr *ngIf="!cargando && empleadosFiltrados.length === 0">
+                <td colspan="6" style="text-align: center;">No se encontraron colaboradores coincidentes.</td>
+            </tr>
+
+            @for (empleado of empleadosFiltrados; track empleado.id_especialista) {
+                <tr>
+                    <td>{{ empleado.id_especialista }}</td>
+                    <td>{{ empleado.nombre }}</td>
+                    <td><span class="badge-specialty">{{ empleado.especialidad }}</span></td>
+                    <td>{{ empleado.telefono }}</td>
+                    <td>
+                        <span class="status" [ngClass]="{'confirmed': empleado.estado === 'ACTIVO', 'pending': empleado.estado !== 'ACTIVO'}">
+                            {{ empleado.estado }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn edit" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button (click)="eliminarEmpleado(empleado.id_especialista, empleado.nombre)" class="action-btn delete" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Registrar Nuevo Empleado</h3>
+            <span class="close-modal" (click)="cerrarModal()">&times;</span>
+        </div>
+        <form (submit)="guardarEmpleado($event)">
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" [(ngModel)]="nuevoEmpleado.nombre" name="nombre" required placeholder="Ej: Juan David Sánchez">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Especialidad Principal</label>
+                    <select [(ngModel)]="nuevoEmpleado.especialidad" name="especialidad" required>
+                        <option value="Cabello & Tintes">Cabello & Tintes</option>
+                        <option value="Manicura & Uñas">Manicura & Uñas</option>
+                        <option value="Mirada & Cejas">Mirada & Cejas</option>
+                        <option value="Estética General">Estética General</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Guardar Colaborador</button>
+        </form>
+    </div>
+</div>

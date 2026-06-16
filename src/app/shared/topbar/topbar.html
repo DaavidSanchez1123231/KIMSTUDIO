@@ -1,0 +1,13 @@
+<div class="topbar">
+    <div class="topbar-title">Módulo Administrativo - {{ rolUsuario | uppercase }}</div>
+    
+    <div class="admin-profile">
+        <span class="admin-name">
+            <i class="fas fa-user-circle"></i> {{ nombreUsuario }}
+        </span>
+        
+        <button (click)="cerrarSesion()" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
+    </div>
+</div>

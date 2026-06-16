@@ -1,0 +1,87 @@
+<div class="citas-header">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" [(ngModel)]="textoBusqueda" (input)="filtrarCitas()" placeholder="Buscar cliente o servicio...">
+    </div>
+    <button (click)="abrirModal()" class="btn-primary">
+        <i class="fas fa-plus"></i> Nueva Cita
+    </button>
+</div>
+
+<div class="recent-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="cargando">
+                <td colspan="6" style="text-align: center;">Cargando calendario de citas...</td>
+            </tr>
+            <tr *ngIf="!cargando && citasFiltradas.length === 0">
+                <td colspan="6" style="text-align: center;">No hay citas programadas con esos parámetros.</td>
+            </tr>
+
+            @for (cita of citasFiltradas; track cita.id_cita) {
+                <tr>
+                    <td>{{ cita.fecha | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ cita.hora }}</td>
+                    <td>{{ cita.cliente?.nombre || cita.nombre_cliente }}</td>
+                    <td>{{ cita.servicio?.nombre || 'General' }}</td>
+                    <td>
+                        <span class="status" [ngClass]="{'confirmed': cita.estado === 'Confirmada', 'pending': cita.estado === 'Pendiente'}">
+                            {{ cita.estado || 'Pendiente' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn edit" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button (click)="eliminarCita(cita.id_cita, cita.cliente?.nombre || cita.nombre_cliente)" class="action-btn delete" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Agendar Nueva Cita</h3>
+            <span class="close-modal" (click)="cerrarModal()">&times;</span>
+        </div>
+        <form (submit)="guardarCita($event)">
+            <div class="form-group">
+                <label>Nombre del Cliente</label>
+                <input type="text" [(ngModel)]="nuevaCita.nombre_cliente" name="nombre_cliente" required placeholder="Ej: Ana Pérez">
+            </div>
+            <div class="form-group">
+                <label>Servicio</label>
+                <select [(ngModel)]="nuevaCita.id_servicio" name="id_servicio" required>
+                    <option value="" disabled>Seleccione un servicio...</option>
+                    @for (servicio of listaServicios; track servicio.id_servicio) {
+                        <option [value]="servicio.id_servicio">{{ servicio.nombre }}</option>
+                    }
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" [(ngModel)]="nuevaCita.fecha" name="fecha" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora</label>
+                    <input type="time" [(ngModel)]="nuevaCita.hora" name="hora" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Guardar Cita</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="forgot-wrapper">
+    <div id="particles-js"></div>
+
+    <div class="forgot-card">
+        
+        <h2>Recuperar contraseña</h2>
+        
+        <p class="subtitle">
+            Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña
+        </p>
+
+        <form (submit)="enviarEnlace($event)">
+            
+            <div class="input-group">
+                <input type="email" name="email" [(ngModel)]="email" placeholder="Correo electrónico" required>
+            </div>
+
+            <p id="msg" *ngIf="mensaje" [ngStyle]="{'color': mensajeColor}">{{ mensaje }}</p>
+
+            <button type="submit" class="btn-send" [disabled]="cargando">
+                {{ cargando ? 'Procesando...' : 'Enviar enlace' }}
+            </button>
+
+            <div class="extra-links">
+                <a routerLink="/login">← Volver al login</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>

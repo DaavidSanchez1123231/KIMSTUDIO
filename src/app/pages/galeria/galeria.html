@@ -1,0 +1,88 @@
+<div class="galeria-header">
+    <div class="filter-box">
+        <select [(ngModel)]="filtroActual" class="form-select-custom">
+            <option value="todos">Todos los trabajos</option>
+            <option value="cabello">Cabello & Tintes</option>
+            <option value="uñas">Manicura & Uñas</option>
+            <option value="cejas">Mirada & Cejas</option>
+        </select>
+    </div>
+    <button (click)="abrirModal()" class="btn-primary">
+        <i class="fas fa-upload"></i> Subir Trabajo
+    </button>
+</div>
+
+<div class="galeria-grid">
+    <div *ngIf="cargando" style="grid-column: 1 / -1; text-align: center;">
+        <p>Cargando imágenes del servidor...</p>
+    </div>
+    <div *ngIf="!cargando && galeriaFiltrada.length === 0" style="grid-column: 1 / -1; text-align: center;">
+        <p>No hay trabajos publicados en esta categoría.</p>
+    </div>
+
+    @for (trabajo of galeriaFiltrada; track trabajo.id_trabajo) {
+        <div class="galeria-card">
+            <div class="comparison-box">
+                <div class="img-side">
+                    <img [src]="trabajo.imgAntes" alt="Antes">
+                    <span class="badge-side">Antes</span>
+                </div>
+                <div class="img-side border-left-cian">
+                    <img [src]="trabajo.imgDespues" alt="Después">
+                    <span class="badge-side cian">Después</span>
+                </div>
+            </div>
+            
+            <div class="galeria-info">
+                <h4>{{ trabajo.titulo }}</h4>
+                <p>{{ trabajo.desc }}</p>
+                <div class="galeria-footer">
+                    <span class="tag">{{ trabajo.categoriaTexto }}</span>
+                    <button (click)="eliminarTrabajo(trabajo.id_trabajo, trabajo.titulo)" class="action-btn delete">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Publicar Nuevo Trabajo en Portafolio</h3>
+            <span class="close-modal" (click)="cerrarModal()">&times;</span>
+        </div>
+        <form (submit)="guardarTrabajo($event)">
+            <div class="form-group">
+                <label>Título del Trabajo</label>
+                <input type="text" [(ngModel)]="nuevoTrabajo.titulo" name="titulo" required placeholder="Ej: Balayage Rubio Platinado">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select [(ngModel)]="nuevoTrabajo.categoriaId" name="categoriaId" required>
+                        <option value="cabello">Cabello & Tintes</option>
+                        <option value="uñas">Manicura & Uñas</option>
+                        <option value="cejas">Mirada & Cejas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Descripción corta</label>
+                    <input type="text" [(ngModel)]="nuevoTrabajo.desc" name="desc" required placeholder="Ej: Cambio radical de tono">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Foto del "Antes" (URL de imagen)</label>
+                    <input type="text" [(ngModel)]="nuevoTrabajo.imgAntes" name="imgAntes" required placeholder="assets/img/antes1.jpg">
+                </div>
+                <div class="form-group">
+                    <label>Foto del "Después" (URL de imagen)</label>
+                    <input type="text" [(ngModel)]="nuevoTrabajo.imgDespues" name="imgDespues" required placeholder="assets/img/despues1.jpg">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Publicar en Web Principal</button>
+        </form>
+    </div>
+</div>

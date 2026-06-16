@@ -1,0 +1,76 @@
+<div class="clientes-header">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" [(ngModel)]="textoBusqueda" (input)="filtrarClientes()" placeholder="Buscar por nombre, correo o teléfono...">
+    </div>
+    <button (click)="abrirModal()" class="btn-primary">
+        <i class="fas fa-user-plus"></i> Registrar Cliente
+    </button>
+</div>
+
+<div class="recent-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Correo Electrónico</th>
+                <th>Teléfono / Celular</th>
+                <th>Citas Totales</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="cargando">
+                <td colspan="6" style="text-align: center;">Cargando registros desde SQL Server...</td>
+            </tr>
+            <tr *ngIf="!cargando && clientesFiltrados.length === 0">
+                <td colspan="6" style="text-align: center;">No se encontraron clientes coincidentes.</td>
+            </tr>
+
+            @for (cliente of clientesFiltrados; track cliente.id_usuario) {
+                <tr>
+                    <td>{{ cliente.id_usuario }}</td>
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.correo }}</td>
+                    <td>{{ cliente.telefono }}</td>
+                    <td><span class="badge-citas">{{ cliente.citasTotales || '0 Citas' }}</span></td>
+                    <td>
+                        <button class="action-btn edit" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button (click)="eliminarCliente(cliente.id_usuario, cliente.nombre)" class="action-btn delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Registrar Nuevo Cliente</h3>
+            <span class="close-modal" (click)="cerrarModal()">&times;</span>
+        </div>
+        <form (submit)="guardarCliente($event)">
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" [(ngModel)]="nuevoCliente.nombre" name="nombre" required placeholder="Ej: Juan David Sánchez">
+            </div>
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" [(ngModel)]="nuevoCliente.correo" name="correo" required placeholder="Ej: nombre@correo.com">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" [(ngModel)]="nuevoCliente.telefono" name="telefono" required placeholder="Ej: 999888777">
+                </div>
+                <div class="form-group">
+                    <label>Notas Especiales (Opcional)</label>
+                    <input type="text" [(ngModel)]="nuevoCliente.notas" name="notas" placeholder="Ej: Alérgica a ciertos tintes">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Guardar Cliente</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+<div class="config-container">
+            
+    <div class="config-card">
+        <h3><i class="fas fa-store icon-cyan"></i> Información de KIM STUDIO</h3>
+        <p class="subtitle-card">Configura los datos que se muestran públicamente en la landing page principal.</p>
+        
+        <form (submit)="guardarDatosEmpresa($event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombre del Salón</label>
+                    <input type="text" [(ngModel)]="empresa.nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono de Contacto WhatsApp</label>
+                    <input type="tel" [(ngModel)]="empresa.telefono" name="telefono" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Dirección del Local</label>
+                <input type="text" [(ngModel)]="empresa.direccion" name="direccion" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Enlace de Instagram (URL)</label>
+                    <input type="text" [(ngModel)]="empresa.instagram" name="instagram">
+                </div>
+                <div class="form-group">
+                    <label>Enlace de Facebook (URL)</label>
+                    <input type="text" [(ngModel)]="empresa.facebook" name="facebook">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary-sm">Actualizar Datos Informativos</button>
+        </form>
+    </div>
+
+    <div class="config-card border-top-red">
+        <h3><i class="fas fa-shield-alt icon-red"></i> Seguridad de la Cuenta</h3>
+        <p class="subtitle-card">Modifica las credenciales de acceso para la cuenta del Administrador.</p>
+        
+        <form (submit)="cambiarContrasena($event)">
+            <div class="form-group">
+                <label>Nombre de Usuario Actual</label>
+                <input type="text" [value]="usuario" readonly class="input-readonly">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nueva Contraseña</label>
+                    <input type="password" [(ngModel)]="nuevaClave" name="nuevaClave" placeholder="Escribe la nueva contraseña" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Nueva Contraseña</label>
+                    <input type="password" [(ngModel)]="confirmarClave" name="confirmarClave" placeholder="Repite la nueva contraseña" required>
+                </div>
+            </div>
+            <<p *ngIf="mostrarError" class="error-text" style="display: block;">Las contraseñas no coinciden.</p>
+            <p *ngIf="mostrarError" class="error-text" style="display: block;">{{ mensajeServidor }}</p>
+            <button type="submit" class="btn-primary-sm btn-danger">Actualizar Contraseña de Acceso</button>
+        </form>
+    </div>
+
+</div>

@@ -1,0 +1,50 @@
+<div class="dashboard-cards">
+    <div class="card" *ngIf="cargandoMetricas" style="justify-content: center;">
+        <p>Calculando métricas del servidor...</p>
+    </div>
+
+    @for (metrica of metricas; track metrica.etiqueta) {
+        <div class="card">
+            <div class="card-info">
+                <h3>{{ metrica.valor }}</h3>
+                <p>{{ metrica.etiqueta }}</p>
+            </div>
+            <i class="{{ metrica.icono }} card-icon"></i>
+        </div>
+    }
+</div>
+
+<div class="recent-table-container">
+    <h3>Citas Recientes</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Fecha y Hora</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="cargandoCitas">
+                <td colspan="4" style="text-align: center;">Cargando flujo de citas...</td>
+            </tr>
+            <tr *ngIf="!cargandoCitas && citas.length === 0">
+                <td colspan="4" style="text-align: center;">No hay citas agendadas recientemente.</td>
+            </tr>
+
+            @for (cita of citas; track cita.id_cita) {
+                <tr>
+                    <td>{{ cita.cliente?.nombre || cita.nombre_cliente }}</td>
+                    <td>{{ cita.servicio?.nombre || 'General' }}</td>
+                    <td>{{ cita.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>
+                        <span class="status" [ngClass]="{'confirmed': cita.estado === 'Confirmada', 'pending': cita.estado === 'Pendiente'}">
+                            {{ cita.estado || 'Pendiente' }}
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

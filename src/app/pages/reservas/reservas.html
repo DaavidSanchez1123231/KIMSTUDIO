@@ -1,0 +1,72 @@
+<div id="particles-js"></div>
+
+<nav>
+    <a routerLink="/" class="logo">KIM STUDIO</a>
+    
+    <div class="nav-links">
+        <a routerLink="/">Inicio</a>
+        <a routerLink="/nuestros-servicios">Servicios</a>
+        <a routerLink="/reservas">Reservar</a>
+        <a routerLink="/promociones-publico">Promociones</a>
+        <a routerLink="/nosotros">Nosotros</a>
+        <a routerLink="/contacto">Contacto</a> 
+        <a *ngIf="!usuarioLogeado" routerLink="/login" class="cta-solid">RESERVAR CITAS</a>
+    </div>
+
+    <div class="user-panel" *ngIf="usuarioLogeado">
+        <span id="usuario-logeado">👤 {{ usuarioLogeado }} ({{ rolLogeado }})</span>
+        <button id="logout-btn" (click)="cerrarSesion()">Salir</button>
+    </div>
+</nav>
+
+<section class="reserva-section">
+    <div class="reserva-card glow-effect">
+        <h1>Reserva tu cita</h1>
+        <p class="subtitle">Agenda tu experiencia premium en KIM STUDIO</p>
+
+        <form (submit)="procesarReserva($event)">
+            
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" placeholder="Nombre completo" required />
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input type="tel" placeholder="Teléfono" required />
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" placeholder="Correo electrónico" required />
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-spa"></i>
+                <select required>
+                    <option value="">Selecciona un servicio</option>
+                    <option>Cabello & Tintes</option>
+                    <option>Manicura & Uñas</option>
+                    <option>Mirada & Cejas</option>
+                    <option>Tratamiento Facial</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-calendar"></i>
+                <input type="date" required />
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-clock"></i>
+                <input type="time" required />
+            </div>
+
+            <div class="input-group">
+                <textarea rows="5" placeholder="Detalles adicionales..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-reserva">RESERVAR CITA</button>
+        </form>
+    </div>
+</section>

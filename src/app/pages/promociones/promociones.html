@@ -1,0 +1,77 @@
+<div class="promos-header">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" [(ngModel)]="textoBusqueda" (input)="filtrarPromos()" placeholder="Buscar promoción activa...">
+    </div>
+    <button (click)="abrirModal()" class="btn-primary">
+        <i class="fas fa-plus"></i> Crear Promoción
+    </button>
+</div>
+
+<div class="promos-grid">
+    <div *ngIf="cargando" style="grid-column: 1 / -1; text-align: center; color: white;">
+        <p>Cargando campañas promocionales...</p>
+    </div>
+    <div *ngIf="!cargando && promosFiltradas.length === 0" style="grid-column: 1 / -1; text-align: center; color: white;">
+        <p>No se encontraron promociones registradas.</p>
+    </div>
+
+    @for (promo of promosFiltradas; track promo.id_promocion) {
+        <div class="promo-card" [class.expired]="promo.expirada">
+            <div class="promo-badge-pct" [class.gray]="promo.expirada">{{ promo.descuentoTexto }}</div>
+            <div class="promo-content">
+                <span class="status-tag {{ promo.claseEstado }}">{{ promo.estado }}</span>
+                <h4>{{ promo.titulo }}</h4>
+                <p class="desc">{{ promo.descripcion }}</p>
+                <div class="promo-date">
+                    <i class="fas fa-calendar-alt"></i> {{ promo.fechaFormateada }}
+                </div>
+                <div class="promo-footer">
+                    <span class="code-tag">CÓDIGO: {{ promo.codigo }}</span>
+                    <div class="actions">
+                        <button class="action-btn edit" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button (click)="eliminarPromo(promo.id_promocion, promo.titulo)" class="action-btn delete" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Nueva Campaña Promocional</h3>
+            <span class="close-modal" (click)="cerrarModal()">&times;</span>
+        </div>
+        <form (submit)="guardarPromo($event)">
+            <div class="form-group">
+                <label>Nombre de la Promoción</label>
+                <input type="text" [(ngModel)]="nuevaPromo.titulo" name="titulo" required placeholder="Ej: Reducción de Invierno">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Descuento (%)</label>
+                    <input type="number" [(ngModel)]="nuevaPromo.descuento" name="descuento" min="1" max="100" required placeholder="Ej: 20">
+                </div>
+                <div class="form-group">
+                    <label>Código de Cupón</label>
+                    <input type="text" [(ngModel)]="nuevaPromo.codigo" (input)="nuevaPromo.codigo = nuevaPromo.codigo.toUpperCase()" name="codigo" required placeholder="Ej: WINTERKIM">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha de Expiración</label>
+                    <input type="date" [(ngModel)]="nuevaPromo.fecha_expiracion" name="fecha_expiracion" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción u Oferta</label>
+                    <input type="text" [(ngModel)]="nuevaPromo.descripcion" name="descripcion" required placeholder="Ej: Válido en manicura los jueves">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Lanzar Promoción</button>
+        </form>
+    </div>
+</div>
