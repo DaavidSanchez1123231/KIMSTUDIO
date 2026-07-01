@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- Necesario para [(ngModel)]
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -35,7 +35,7 @@ export class VentasComponent implements OnInit {
     total: null
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.cargarMetricasHoy();
@@ -54,7 +54,10 @@ export class VentasComponent implements OnInit {
     // Endpoint que hace los SUM y GROUP BY de la fecha actual en SQL Server
     this.http.get<any>(`${environment.apiUrl}/ventas/metricas-hoy`, { headers: this.getHeaders() }).subscribe({
       next: (data) => this.metricas = data,
-      error: (err) => console.error('Error al cargar las métricas del día:', err)
+      error: (err) => {
+        console.error('Error al cargar las métricas del día:', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -65,16 +68,18 @@ export class VentasComponent implements OnInit {
         this.ventas = data;
         this.ventasFiltradas = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar historial de caja:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   filtrarVentas(): void {
-    const busqueda = this.textoBusqueda.toLowerCase().trim();
+    const busqueda = this.textoBusqueda.toLowerCase().trim();     
     if (!busqueda) {
       this.ventasFiltradas = this.ventas;
       return;
@@ -93,6 +98,7 @@ export class VentasComponent implements OnInit {
 
   cerrarModal(): void {
     this.isModalOpen = false;
+    this.cdr.detectChanges();
   }
 
   registrarVenta(event: Event): void {
@@ -107,6 +113,7 @@ export class VentasComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al registrar venta:', err);
+        this.cdr.detectChanges();
         alert('Ocurrió un error al guardar la venta en el sistema.');
       }
     });
@@ -128,7 +135,10 @@ export class VentasComponent implements OnInit {
             this.obtenerVentas();
             this.cargarMetricasHoy();
           },
-          error: (err) => console.error('Error al anular venta:', err)
+          error: (err) => {
+            console.error('Error al anular venta:', err);
+            this.cdr.detectChanges();
+          }
         });
 
       } else if (motivo !== null) {

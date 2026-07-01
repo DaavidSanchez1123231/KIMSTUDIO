@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- Importar para vincular el formulario
 import { RouterLink, Router } from '@angular/router';
@@ -38,7 +38,7 @@ export class ContactoComponent implements OnInit, AfterViewInit {
     whatsapp: '#'
   };
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef ) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -87,6 +87,7 @@ export class ContactoComponent implements OnInit, AfterViewInit {
         this.enviandoMensaje = false;
         // Reseteamos el formulario
         this.mensajeContacto = { nombre: '', correo: '', telefono: '', mensaje: '' };
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error enviando mensaje:', err);

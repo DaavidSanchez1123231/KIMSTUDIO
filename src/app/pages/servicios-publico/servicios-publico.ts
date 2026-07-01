@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -21,7 +21,7 @@ export class ServiciosPublicoComponent implements OnInit, AfterViewInit {
   // Lista dinámica vinculada a Spring Boot
   listaServicios: any[] = [];
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -49,6 +49,7 @@ export class ServiciosPublicoComponent implements OnInit, AfterViewInit {
                 };
             });
             this.cargando = false;
+            this.cdr.detectChanges();
         },
         error: () => { this.cargando = false; }
     });

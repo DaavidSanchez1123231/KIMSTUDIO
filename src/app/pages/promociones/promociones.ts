@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -22,14 +22,14 @@ export class PromocionesComponent implements OnInit {
 
   // Modelo reactivo para el modal
   nuevaPromo = {
-    titulo: '',
+    nombre: '',
     descuento: null,
     codigo: '',
     fecha_expiracion: '',
     descripcion: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.obtenerPromociones();
@@ -71,10 +71,12 @@ export class PromocionesComponent implements OnInit {
 
         this.promosFiltradas = this.promociones;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar promociones:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -102,7 +104,7 @@ export class PromocionesComponent implements OnInit {
 
   abrirModal(): void {
     this.isModalOpen = true;
-    this.nuevaPromo = { titulo: '', descuento: null, codigo: '', fecha_expiracion: '', descripcion: '' };
+    this.nuevaPromo = { nombre: '', descuento: null, codigo: '', fecha_expiracion: '', descripcion: '' };
   }
 
   cerrarModal(): void {

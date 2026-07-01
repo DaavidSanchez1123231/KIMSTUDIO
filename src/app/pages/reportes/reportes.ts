@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- Necesario para los filtros de fecha
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -28,7 +28,7 @@ export class ReportesComponent implements OnInit {
     utilidadNeta: 0
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.inicializarFechas();
@@ -65,11 +65,13 @@ export class ReportesComponent implements OnInit {
         this.balance = data.balance || this.balance;
         
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al generar el reporte:', err);
         alert('Ocurrió un error al calcular las métricas.');
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -93,7 +95,10 @@ export class ReportesComponent implements OnInit {
         a.click();
         window.URL.revokeObjectURL(url);
       },
-      error: (err) => console.error('Error al exportar el documento:', err)
+      error: (err) => {
+        console.error('Error al exportar el documento:', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- Necesario para el [(ngModel)]
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -31,7 +31,7 @@ export class CitasComponent implements OnInit {
     hora: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.obtenerCitas();
@@ -53,10 +53,12 @@ export class CitasComponent implements OnInit {
         this.citas = data;
         this.citasFiltradas = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al obtener citas:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Necesario para enlazar el formulario
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -29,7 +29,7 @@ export class ProductosComponent implements OnInit {
     desc: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.obtenerProductos();
@@ -54,10 +54,12 @@ export class ProductosComponent implements OnInit {
         }));
         this.productosFiltrados = this.productos;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar inventario:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -29,7 +29,7 @@ export class ConfiguracionComponent implements OnInit {
   mostrarError: boolean = false;
   mensajeServidor: string = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     // Recuperamos el nombre de usuario de la sesión actual
@@ -63,6 +63,7 @@ export class ConfiguracionComponent implements OnInit {
     this.http.put(`${environment.apiUrl}/configuracion/empresa`, this.empresa, { headers: this.getHeaders() }).subscribe({
       next: () => {
         alert("¡Los datos informativos de KIM STUDIO se han actualizado correctamente!");
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);

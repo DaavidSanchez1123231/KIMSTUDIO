@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-servicios',
@@ -28,7 +29,7 @@ export class ServiciosComponent implements OnInit {
     imagen_url: '' // Campo para la URL de la imagen
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {} 
 
   ngOnInit(): void {
     this.obtenerServicios();
@@ -50,10 +51,12 @@ export class ServiciosComponent implements OnInit {
       next: (data) => {
         this.servicios = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar catálogo de servicios:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }

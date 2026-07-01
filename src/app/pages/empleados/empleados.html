@@ -22,10 +22,10 @@
         </thead>
         <tbody>
             <tr *ngIf="cargando">
-                <td colspan="6" style="text-align: center;">Cargando planilla de especialistas...</td>
+                <td colspan="6" style="text-align: center;">Cargando planilla...</td>
             </tr>
             <tr *ngIf="!cargando && empleadosFiltrados.length === 0">
-                <td colspan="6" style="text-align: center;">No se encontraron colaboradores coincidentes.</td>
+                <td colspan="6" style="text-align: center;">No se encontraron colaboradores.</td>
             </tr>
 
             @for (empleado of empleadosFiltrados; track empleado.id_especialista) {
@@ -33,15 +33,16 @@
                     <td>{{ empleado.id_especialista }}</td>
                     <td>{{ empleado.nombre }}</td>
                     <td><span class="badge-specialty">{{ empleado.especialidad }}</span></td>
-                    <td>{{ empleado.telefono }}</td>
+                    <td>{{ empleado.telefono || 'No registrado' }}</td>
                     <td>
-                        <span class="status" [ngClass]="{'confirmed': empleado.estado === 'ACTIVO', 'pending': empleado.estado !== 'ACTIVO'}">
-                            {{ empleado.estado }}
-                        </span>
+                        <span class="status confirmed" *ngIf="empleado.estado == 1 || empleado.estado == 'ACTIVO'">ACTIVO</span>
+                        <span class="status pending" *ngIf="empleado.estado == 0 || empleado.estado == 'INACTIVO'">INACTIVO</span>
                     </td>
-                    <td>
-                        <button class="action-btn edit" title="Editar"><i class="fas fa-edit"></i></button>
-                        <button (click)="eliminarEmpleado(empleado.id_especialista, empleado.nombre)" class="action-btn delete" title="Eliminar">
+                    <td style="display: flex; gap: 10px;">
+                        <button class="action-btn edit" title="Gestionar Horarios" (click)="abrirModalHorarios(empleado)">
+                            <i class="fas fa-calendar-alt"></i>
+                        </button>
+                        <button class="action-btn delete" title="Eliminar" (click)="eliminarEmpleado(empleado.id_especialista, empleado.nombre)">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -51,6 +52,7 @@
     </table>
 </div>
 
+<!-- Modal para Crear Empleado -->
 <div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
@@ -66,15 +68,66 @@
                 <div class="form-group">
                     <label>Especialidad Principal</label>
                     <select [(ngModel)]="nuevoEmpleado.especialidad" name="especialidad" required>
-                        <option value="Cabello & Tintes">Cabello & Tintes</option>
-                        <option value="Manicura & Uñas">Manicura & Uñas</option>
-                        <option value="Mirada & Cejas">Mirada & Cejas</option>
-                        <option value="Estética General">Estética General</option>
+                        <option value="Cabello">Cabello & Tintes</option>
+                        <option value="Manicura">Manicura & Uñas</option>
+                        <option value="Cejas">Mirada & Cejas</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Teléfono / Móvil</label>
+                    <input type="text" [(ngModel)]="nuevoEmpleado.telefono" name="telefono" required placeholder="Ej: 999888777">
+                </div>
             </div>
-            
             <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Guardar Colaborador</button>
         </form>
+    </div>
+</div>
+
+<!-- Modal para Gestionar Horarios (Agenda) -->
+<div class="modal-overlay" *ngIf="isModalHorariosOpen" (click)="cerrarModalHorarios()">
+    <div class="modal-content" style="max-width: 600px;" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Agenda de {{ especialistaSeleccionado?.nombre }}</h3>
+            <span class="close-modal" (click)="cerrarModalHorarios()">&times;</span>
+        </div>
+        
+        <form (submit)="guardarHorario($event)" style="background: rgba(104, 178, 168, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <div class="form-row" style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1.5;">
+                    <label>Fecha</label>
+                    <input type="date" [(ngModel)]="nuevoHorario.fecha" name="fecha" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Inicio</label>
+                    <input type="time" [(ngModel)]="nuevoHorario.hora_inicio" name="hora_inicio" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Fin</label>
+                    <input type="time" [(ngModel)]="nuevoHorario.hora_fin" name="hora_fin" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">
+                <i class="fas fa-plus"></i> Añadir Turno Libre
+            </button>
+        </form>
+
+        <div style="max-height: 250px; overflow-y: auto;">
+            <p *ngIf="horariosActuales.length === 0" style="text-align: center; color: #aaa;">No hay turnos asignados aún.</p>
+            
+            <div *ngFor="let turno of horariosActuales" style="display: flex; justify-content: space-between; align-items: center; background: #222; padding: 10px 15px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #68b2a8;">
+                <div>
+                    <strong style="color: #fff; display: block;"><i class="far fa-calendar-check"></i> {{ turno.fecha | date:'dd/MM/yyyy' }}</strong>
+                    <span style="color: #aaa; font-size: 0.9rem;">{{ turno.hora_inicio }} - {{ turno.hora_fin }}</span>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <span [ngStyle]="{'color': turno.estado === 'disponible' ? '#68b2a8' : '#ffc107'}" style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
+                        {{ turno.estado }}
+                    </span>
+                    <button class="action-btn delete" (click)="eliminarHorario(turno.id_horario)" title="Eliminar Turno">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

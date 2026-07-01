@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   metricas: any[] = [];
   citas: any[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.cargarMetricas();
@@ -44,6 +44,7 @@ export class DashboardComponent implements OnInit {
           { valor: data.solicitudesPendientes || '0', etiqueta: 'Solicitudes Pendientes', icono: 'fas fa-bell' }
         ];
         this.cargandoMetricas = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar métricas:', err);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { Router, RouterLink } from '@angular/router';
@@ -26,7 +26,7 @@ export class RegistroComponent implements OnInit {
   mensajeError: string = ''; // Mensaje dinámico para mostrar fallos del servidor
   cargando: boolean = false;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (typeof particlesJS !== 'undefined') {

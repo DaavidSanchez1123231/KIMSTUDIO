@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -28,7 +28,7 @@ export class GaleriaComponent implements OnInit {
     imgDespues: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef ) {}
 
   ngOnInit(): void {
     this.obtenerTrabajos();
@@ -48,6 +48,7 @@ export class GaleriaComponent implements OnInit {
       next: (data) => {
         this.trabajos = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar la galería:', err);
@@ -87,6 +88,7 @@ export class GaleriaComponent implements OnInit {
             alert("¡Trabajo subido correctamente al portafolio!");
             this.cerrarModal();
             this.obtenerTrabajos();
+            this.cdr.detectChanges();
         },
         error: (err) => {
             console.error('Error al publicar trabajo:', err);
@@ -101,6 +103,7 @@ export class GaleriaComponent implements OnInit {
       this.http.delete(`${environment.apiUrl}/galeria/${id}`, { headers: this.getHeaders() }).subscribe({
         next: () => {
           alert("Trabajo eliminado del portafolio.");
+          this.cdr.detectChanges();
           this.trabajos = this.trabajos.filter(t => t.id_trabajo !== id);
         },
         error: (err) => console.error('Error al eliminar trabajo:', err)

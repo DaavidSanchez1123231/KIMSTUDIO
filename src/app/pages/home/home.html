@@ -37,11 +37,23 @@
     </section>
 
     <section class="video-section" data-aos="fade-up">
-        <h2 class="section-title">Nuestra Transformación</h2>
-        <div class="video-box glow-effect">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/sGWBu_pWPXA?si=56Gjmwav-LIwOvGB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-    </section>
+    <h2 class="section-title">Nuestra Transformación</h2>
+    <div class="video-box glow-effect">
+        @if (!videoActivado) {
+            <div class="video-thumbnail" (click)="videoActivado = true">
+                <img src="https://img.youtube.com/vi/sGWBu_pWPXA/hqdefault.jpg" alt="Ver video">
+                <i class="fas fa-play-circle"></i>
+            </div>
+        } @else {
+            <iframe width="560" height="315" 
+                src="https://www.youtube.com/embed/sGWBu_pWPXA?autoplay=1" 
+                title="YouTube video player" frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+        }
+    </div>
+</section>
 
     <section id="servicios" class="gallery-category">
         <h2 data-aos="fade-right">Cabello & Tintes</h2>

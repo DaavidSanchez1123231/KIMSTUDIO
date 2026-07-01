@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- Necesario para capturar los datos
 import { RouterLink, Router } from '@angular/router';
@@ -32,7 +32,7 @@ export class ReservasComponent implements OnInit, AfterViewInit {
     detalles: '' // Notas adicionales
   };
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -64,7 +64,10 @@ export class ReservasComponent implements OnInit, AfterViewInit {
     // Usamos el mismo endpoint que configuramos para el panel administrativo
     this.http.get<any[]>(`${environment.apiUrl}/servicios`, { headers: this.getHeaders() }).subscribe({
       next: (data) => this.listaServicios = data,
-      error: (err) => console.error('Error al cargar catálogo de servicios:', err)
+      error: (err) => {
+        console.error('Error al cargar catálogo de servicios:', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -102,7 +105,8 @@ export class ReservasComponent implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Error al reservar:', err);
         this.cargando = false;
-        
+        this.cdr.detectChanges();
+
         // Manejo de conflictos de horario (HTTP 409 Conflict)
         if (err.status === 409) {
           alert("El horario seleccionado ya está ocupado. Por favor elige otra hora o fecha.");

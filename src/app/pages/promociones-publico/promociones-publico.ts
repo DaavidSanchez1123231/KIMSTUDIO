@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -19,7 +19,7 @@ export class PromocionesPublicoComponent implements OnInit, AfterViewInit {
   cargando: boolean = true;
   usuarioLogeado: string | null = null;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -65,10 +65,12 @@ export class PromocionesPublicoComponent implements OnInit, AfterViewInit {
           .filter(promo => promo.valida); // Descartamos las caducadas para la vista pública
 
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar las promociones públicas:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http'; // <-- Importación agregada
@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   isMenuOpen: boolean = false;
   isModalOpen: boolean = false;
   modalImageSrc: string = '';
+  videoActivado: boolean = false;
 
   usuarioLogeado: string | null = null;
   rolLogeado: string | null = null;
@@ -28,7 +29,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   trabajosUnas: any[] = [];
   cargandoGaleria: boolean = true;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -66,6 +67,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.trabajosUnas    = data.filter(t => t.categoria === 'uñas');
             this.trabajosCejas   = data.filter(t => t.categoria === 'cejas');
             this.cargandoGaleria = false;
+            this.cdr.detectChanges();
         },
         error: () => {
             this.cargandoGaleria = false;

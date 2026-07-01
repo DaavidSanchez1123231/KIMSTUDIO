@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 
@@ -15,7 +15,7 @@ export class NosotrosComponent implements OnInit, AfterViewInit {
   usuarioLogeado: string | null = null;
   rolLogeado: string | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -39,6 +39,7 @@ export class NosotrosComponent implements OnInit, AfterViewInit {
 
   cerrarSesion(): void {
     localStorage.clear();
+    this.cdr.detectChanges();
     this.usuarioLogeado = null;
     this.rolLogeado = null;
     this.router.navigate(['/login']);

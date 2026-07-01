@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -27,7 +27,7 @@ export class ClientesComponent implements OnInit {
     notas: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.obtenerClientes();
@@ -49,10 +49,12 @@ export class ClientesComponent implements OnInit {
         this.clientes = data;
         this.clientesFiltrados = data; 
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al obtener clientes:', err);
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }
