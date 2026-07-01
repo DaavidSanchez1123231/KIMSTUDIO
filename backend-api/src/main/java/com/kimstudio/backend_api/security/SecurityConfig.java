@@ -43,9 +43,16 @@ public class SecurityConfig {
                     .requestMatchers("/api/empleados", "/api/empleados/**").hasAuthority("admin")
                     .requestMatchers("/api/galeria/**").hasAnyAuthority("admin", "recepcion")
                     .requestMatchers("/api/configuracion/**").hasAuthority("admin")
-                    .requestMatchers(HttpMethod.POST, "/api/servicios/**", "/api/productos/**", "/api/promociones/**").hasAnyAuthority("admin", "recepcion")
-                    .requestMatchers(HttpMethod.PUT, "/api/servicios/**", "/api/productos/**", "/api/promociones/**").hasAnyAuthority("admin", "recepcion")
-                    .requestMatchers(HttpMethod.DELETE, "/api/servicios/**", "/api/productos/**", "/api/promociones/**").hasAuthority("admin")
+                    .requestMatchers(HttpMethod.POST, "/api/servicios", "/api/servicios/**", 
+                                   "/api/productos", "/api/productos/**", 
+                                   "/api/promociones", "/api/promociones/**").hasAnyAuthority("admin", "recepcion")
+                    .requestMatchers(HttpMethod.PUT, "/api/servicios", "/api/servicios/**", 
+                                  "/api/productos", "/api/productos/**", 
+                                  "/api/promociones", "/api/promociones/**").hasAnyAuthority("admin", "recepcion")
+                    .requestMatchers(HttpMethod.DELETE, "/api/servicios", "/api/servicios/**", 
+                                     "/api/productos", "/api/productos/**", 
+                                     "/api/promociones", "/api/promociones/**").hasAuthority("admin")
+                    
                     .requestMatchers("/api/reservas/**").authenticated()
                     .requestMatchers("/api/citas/**").authenticated()
                     .anyRequest().authenticated()

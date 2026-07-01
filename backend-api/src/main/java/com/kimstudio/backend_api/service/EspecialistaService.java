@@ -15,15 +15,16 @@ public class EspecialistaService {
     private JdbcTemplate jdbcTemplate;
 
     public List<Map<String, Object>> obtenerEspecialistasActivos() {
-    String sql = "SELECT id_especialista, nombre, especialidad, estado " +
-                 "FROM Especialistas WHERE estado = 1"; 
-    return jdbcTemplate.queryForList(sql);
-}
+        // Agregamos el campo 'telefono' a la consulta
+        String sql = "SELECT id_especialista, nombre, especialidad, telefono, estado " +
+                     "FROM Especialistas WHERE estado = 1"; 
+        return jdbcTemplate.queryForList(sql);
+    }
 
-    // Crear un nuevo especialista
     public Map<String, Object> crearEspecialista(String nombre, String especialidad, String telefono) {
-        String sql = "INSERT INTO Especialistas (nombre, especialidad, estado) VALUES (?, ?, 1)";
-        jdbcTemplate.update(sql, nombre, especialidad);
+        // Guardamos el teléfono en la base de datos
+        String sql = "INSERT INTO Especialistas (nombre, especialidad, telefono, estado) VALUES (?, ?, ?, 1)";
+        jdbcTemplate.update(sql, nombre, especialidad, telefono);
         return Map.of("mensaje", "Colaborador registrado exitosamente");
     }
 

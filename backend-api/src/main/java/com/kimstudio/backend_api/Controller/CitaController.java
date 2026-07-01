@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import com.kimstudio.backend_api.model.CitaRequest;
+
 import java.util.List;
 import java.util.Map;
 
@@ -30,14 +32,14 @@ public class CitaController {
         return ResponseEntity.ok(citas);
     }
 
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> crearCita(@RequestBody Map<String, Object> body) {
+        @PostMapping
+        public ResponseEntity<?> crearCita(@RequestBody CitaRequest body) {
         try {
             // 1. Buscar o crear el horario disponible
-            String fecha = (String) body.get("fecha");
-            String hora = (String) body.get("hora");
-            Integer idServicio = (Integer) body.get("id_servicio");
-            String nombreCliente = (String) body.get("nombre_cliente");
+            String fecha = body.getFecha();
+            String hora = body.getHora();
+            Integer idServicio = body.getId_servicio();
+            String nombreCliente = body.getNombre_cliente();
 
             // 2. Buscar el id_usuario por nombre (búsqueda simple)
             String sqlUsuario = "SELECT TOP 1 id_usuario FROM Usuarios WHERE nombre LIKE ?";
@@ -76,7 +78,7 @@ public class CitaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> eliminarCita(@PathVariable int id) {
         try {
-            // 1. Obtener el id_horario antes de borrar para liberarlo
+            
             String sqlHorario = "SELECT id_horario FROM Citas WHERE id_cita = ?";
             List<Map<String, Object>> resultado = jdbcTemplate.queryForList(sqlHorario, id);
 

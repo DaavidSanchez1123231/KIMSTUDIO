@@ -93,4 +93,18 @@ public ResponseEntity<?> anularVenta(@PathVariable int id, @RequestBody Map<Stri
     String motivo = body.get("motivo") != null ? body.get("motivo").toString() : "Sin motivo";
     return ResponseEntity.ok(comercialService.anularVenta(id, motivo));
 }
+@DeleteMapping("/promociones/{id}")
+public ResponseEntity<?> eliminarPromocion(@PathVariable int id) {
+    try {
+        int filas = jdbcTemplate.update(
+            "UPDATE Promociones SET estado = 0 WHERE id_promocion = ?", id
+        );
+        if (filas == 0) {
+            return ResponseEntity.status(404).body(Map.of("mensaje", "Promoción no encontrada."));
+        }
+        return ResponseEntity.ok(Map.of("mensaje", "Promoción eliminada correctamente."));
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body(Map.of("mensaje", "Error: " + e.getMessage()));
+    }
+}
 }

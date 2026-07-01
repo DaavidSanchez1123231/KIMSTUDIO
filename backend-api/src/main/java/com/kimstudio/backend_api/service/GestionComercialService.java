@@ -53,12 +53,12 @@ public class GestionComercialService {
     // ==========================================
 
     public List<Map<String, Object>> obtenerProductos() {
-        String sql = "SELECT * FROM Productos WHERE estado = 'ACTIVO'";
+        String sql = "SELECT * FROM Productos WHERE estado = '1'";
         return jdbcTemplate.queryForList(sql);
     }
 
     public List<Map<String, Object>> obtenerPromociones() {
-        String sql = "SELECT * FROM Promociones WHERE estado = 'ACTIVO'";
+        String sql = "SELECT * FROM Promociones WHERE estado = '1'";
         return jdbcTemplate.queryForList(sql);
     }
 

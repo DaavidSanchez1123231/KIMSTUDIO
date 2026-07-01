@@ -1,6 +1,8 @@
 package com.kimstudio.backend_api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +16,15 @@ public class ServicioService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // 1. En obtenerServiciosActivos()
+    @Cacheable("serviciosCache")
     public List<Map<String, Object>> obtenerServiciosActivos() {
         // Añadimos 'categoria AS categoriaId' para que Angular lo reconozca automáticamente
         String sql = "SELECT id_servicio, nombre AS nombre, descripcion AS [desc], precio, duracion_minutos, imagen_url, categoria AS categoriaId " +
-                     "FROM Servicios WHERE estado = 'ACTIVO'";
+                     "FROM Servicios WHERE estado = '1'";
         return jdbcTemplate.queryForList(sql);
     }
 
-    // 2. En crearServicio() - Agregamos 'String categoria' como parámetro
+    @CacheEvict(value = "serviciosCache", allEntries = true)
     public Map<String, Object> crearServicio(String nombre, String descripcion, double precio, int duracionMinutos, String imagenUrl, String categoria) {
         
         // Agregamos 'categoria' a la consulta SQL
@@ -37,7 +39,7 @@ public class ServicioService {
         return respuesta;
     }
 
-    // "Eliminar" (Borrado lógico cambiando el estado)
+    @CacheEvict(value = "serviciosCache", allEntries = true)
     public Map<String, Object> eliminarServicio(int idServicio) {
         String sql = "UPDATE Servicios SET estado = 'INACTIVO' WHERE id_servicio = ?";
         jdbcTemplate.update(sql, idServicio);

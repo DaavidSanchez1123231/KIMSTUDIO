@@ -20,7 +20,7 @@ public class PublicoController {
     public ResponseEntity<List<Map<String, Object>>> obtenerGaleriaPublica() {
         // ← lee de la BD real, devuelve campo "categoria" que coincide con el frontend corregido
         String sql = "SELECT id_imagen, titulo, categoria, url_imagen " +
-                     "FROM Galeria WHERE estado = 'ACTIVO' " +
+                     "FROM Galeria WHERE estado = '1' " +
                      "ORDER BY fecha_subida DESC";
         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
     }
@@ -29,7 +29,7 @@ public class PublicoController {
     public ResponseEntity<List<Map<String, Object>>> obtenerServiciosPublicos() {
         String sql = "SELECT id_servicio, nombre, descripcion, precio, " +
                      "duracion_minutos, categoria, imagen_url " +
-                     "FROM Servicios WHERE estado = 'activo'";
+                     "FROM Servicios WHERE estado = '1'";
         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
     }
 
@@ -37,8 +37,22 @@ public class PublicoController {
     public ResponseEntity<List<Map<String, Object>>> obtenerPromocionesPublicas() {
         String sql = "SELECT id_promocion, nombre, descuento, codigo, " +
                      "fecha_expiracion, descripcion " +
-                     "FROM Promociones WHERE estado = 'ACTIVO' " +
+                     "FROM Promociones WHERE estado = '1' " +
                      "AND fecha_expiracion >= CAST(GETDATE() AS DATE)";
         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
+    }
+    @GetMapping("/configuracion")
+    public ResponseEntity<Map<String, Object>> obtenerConfiguracionPublica() {
+        try {
+            String sql = "SELECT TOP 1 nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
+                        "FROM Configuracion ORDER BY id_config DESC";
+            List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
+            if (result.isEmpty()) {
+                return ResponseEntity.status(404).body(Map.of("mensaje", "Sin configuración."));
+            }
+            return ResponseEntity.ok(result.get(0));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("mensaje", "Error: " + e.getMessage()));
+        }
     }
 }

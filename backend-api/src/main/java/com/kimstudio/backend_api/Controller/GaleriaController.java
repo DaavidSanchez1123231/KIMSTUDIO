@@ -19,7 +19,7 @@ public class GaleriaController {
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> listarImagenes() {
         String sql = "SELECT id_imagen, titulo, categoria, url_imagen, fecha_subida " +
-                     "FROM Galeria WHERE estado = 'ACTIVO' " +
+                     "FROM Galeria WHERE estado = '1' " +
                      "ORDER BY fecha_subida DESC";
         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
     }
@@ -32,7 +32,7 @@ public class GaleriaController {
             String urlImagen = body.get("url_imagen").toString();
 
             jdbcTemplate.update(
-                "INSERT INTO Galeria (titulo, categoria, url_imagen, estado) VALUES (?, ?, ?, 'ACTIVO')",
+                "INSERT INTO Galeria (titulo, categoria, url_imagen, estado) VALUES (?, ?, ?, '1')",
                 titulo, categoria, urlImagen
             );
             return ResponseEntity.ok(Map.of("mensaje", "Imagen agregada correctamente."));
@@ -45,7 +45,7 @@ public class GaleriaController {
     public ResponseEntity<Map<String, Object>> eliminarImagen(@PathVariable int id) {
         try {
             int filas = jdbcTemplate.update(
-                "UPDATE Galeria SET estado = 'INACTIVO' WHERE id_imagen = ?", id
+                "UPDATE Galeria SET estado = '0' WHERE id_imagen = ?", id
             );
             if (filas == 0) return ResponseEntity.status(404).body(Map.of("mensaje", "Imagen no encontrada."));
             return ResponseEntity.ok(Map.of("mensaje", "Imagen eliminada correctamente."));
