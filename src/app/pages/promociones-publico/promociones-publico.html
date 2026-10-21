@@ -1,0 +1,45 @@
+<div id="particles-js"></div>
+<nav>
+    <a routerLink="/" class="logo">NOVA Beauty Salon</a>
+    
+    <div class="nav-links">
+        <a routerLink="/">Inicio</a>
+        <a routerLink="/nuestros-servicios">Servicios</a>
+        <a routerLink="/reservas">Reservar</a>
+        <a routerLink="/promociones-publico">Promociones</a>
+        <a routerLink="/nosotros">Nosotros</a>
+        <a routerLink="/contacto">Contacto</a> 
+    </div>
+
+    <div class="user-panel" *ngIf="usuarioLogeado">
+        <span id="usuario-logeado">👤 {{ usuarioLogeado }}</span>
+        <button id="logout-btn" (click)="cerrarSesion()">Salir</button>
+    </div>
+</nav>
+
+<section class="promo-section">
+    <h1 class="section-title">Promociones Vigentes</h1>
+    <p class="section-description">¡Tu estilo, a un precio especial!</p>
+
+    <div class="promos-grid">
+        <div *ngIf="cargando" style="grid-column: 1 / -1; text-align: center; color: white;">
+            <p>Buscando las mejores ofertas para ti...</p>
+        </div>
+        <div *ngIf="!cargando && promociones.length === 0" style="grid-column: 1 / -1; text-align: center; color: white;">
+            <p>Por el momento no tenemos promociones activas. ¡Vuelve pronto!</p>
+        </div>
+
+        @for (promo of promociones; track promo.id_promocion) {
+            <div class="promo-card glow-effect">
+                <div class="discount-badge">{{ promo.descuentoTexto }}</div>
+                <h4>{{ promo.titulo }}</h4>
+                <p>{{ promo.descripcion }}</p>
+                <div class="promo-date">
+                    <i class="fas fa-calendar-alt"></i> {{ promo.fechaFormateada }}
+                </div>
+                <div class="code-tag">CÓDIGO: {{ promo.codigo }}</div>
+                <a routerLink="/reservas" class="btn-reserva">Reservar Ahora</a>
+            </div>
+        }
+    </div>
+</section>

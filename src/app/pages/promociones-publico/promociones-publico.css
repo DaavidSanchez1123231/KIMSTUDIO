@@ -1,0 +1,194 @@
+:root {
+  --brand-color: #38d1d1;
+  --black-pure: #000000;
+  --white: #ffffff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--black-pure);
+  color: var(--white);
+  font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* =========================
+   PARTÍCULAS
+========================= */
+#particles-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* Asegura que esté al fondo */
+  pointer-events: none;
+}
+
+/* =========================
+   NAVBAR (CENTRADO)
+========================= */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 25px 5%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 255, 221, 0.388);
+  z-index: 1000;
+  transition: 0.4s ease;
+}
+
+nav:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 221, 0.388);
+}
+
+.logo {
+  justify-self: start;
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  color: var(--brand-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav-links {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links a { 
+  color: white; text-decoration: none; transition: 0.3s; position: relative; padding: 8px 0; 
+}
+.nav-links a:hover { color: var(--brand-color); }
+
+.nav-links a::after {
+  content: "";
+  position: absolute; left: 0; bottom: -4px;
+  width: 0%; height: 2px;
+  background: var(--brand-color);
+  transition: 0.4s ease;
+}
+.nav-links a:hover::after { width: 100%; }
+
+/* Panel de Usuario */
+.user-panel { justify-self: end; display: flex; align-items: center; gap: 15px; color: white; }
+#logout-btn {
+  background: var(--brand-color); color: black; border: none; padding: 8px 15px;
+  border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;
+}
+#logout-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--brand-color); }
+
+/* =========================
+   SECCIÓN PROMOS
+========================= */
+.promo-section {
+  position: relative;
+  z-index: 2; /* Importante para que esté encima de las partículas */
+  padding: 160px 10% 100px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 3rem;
+  color: var(--brand-color);
+  margin-bottom: 15px;
+  font-family: 'Playfair Display', serif;
+}
+
+.section-description {
+  color: #aaa;
+  margin-bottom: 60px;
+  font-size: 1.1rem;
+}
+
+.promos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 35px;
+}
+
+/* TARJETAS GLASS EFFECT */
+.promo-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(104, 178, 168, 0.2);
+  border-radius: 25px;
+  backdrop-filter: blur(12px);
+  padding: 40px;
+  text-align: center;
+  transition: 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ANIMACIÓN GLOW */
+.glow-effect { position: relative; }
+.glow-effect::before {
+  content: "";
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(104, 178, 168, 0.18) 0%, transparent 70%);
+  transform: scale(0);
+  transition: 0.6s ease;
+  pointer-events: none;
+}
+.glow-effect:hover::before { transform: scale(1); }
+.glow-effect:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(104, 178, 168, 0.5), 0 0 60px rgba(104, 178, 168, 0.25);
+  border-color: var(--brand-color);
+}
+
+.discount-badge {
+  background: var(--brand-color);
+  color: black;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.promo-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--brand-color);
+  margin-bottom: 10px;
+}
+
+.promo-card p { color: #ccc; margin-bottom: 20px; }
+
+.code-tag {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 15px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  border: 1px dashed var(--brand-color);
+  color: white;
+}
+
+.btn-reserva {
+  padding: 12px 30px;
+  border-radius: 50px;
+  background: var(--brand-color);
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+.btn-reserva:hover { background: white; transform: scale(1.05); }
+
+@media (max-width: 768px) {
+  nav { grid-template-columns: 1fr; }
+}

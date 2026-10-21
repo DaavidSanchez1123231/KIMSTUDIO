@@ -1,0 +1,209 @@
+/* =========================================================
+   ESTILOS ESPECÍFICOS PARA GESTIÓN DE SERVICIOS
+   ========================================================= */
+
+.servicios-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.form-select-custom {
+    background: var(--bg-card);
+    color: white;
+    border: 1px solid rgba(104, 178, 168, 0.3);
+    padding: 12px 20px;
+    border-radius: 10px;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+}
+
+.form-select-custom option {
+    background: #000;
+    color: white;
+}
+
+/* Reutilización del Botón Principal */
+.btn-primary {
+    background: var(--brand-color);
+    color: black;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-primary:hover {
+    background: white;
+    box-shadow: 0 0 15px var(--brand-color);
+    transform: translateY(-2px);
+}
+
+/* CUADRÍCULA DE TARJETAS (Estructura Rectangular Completa) */
+.servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.servicio-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(104, 178, 168, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.servicio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(104, 178, 168, 0.4);
+    border-color: white;
+}
+
+/* Contenedor de la Imagen */
+.servicio-img-box {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.servicio-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.5s ease;
+}
+
+.servicio-card:hover .servicio-img-box img {
+    transform: scale(1.05);
+}
+
+.category-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.75);
+    color: var(--brand-color);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid rgba(104, 178, 168, 0.3);
+}
+
+/* Bloque de Información */
+.servicio-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.servicio-info h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.servicio-info .desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 15px;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--brand-color);
+}
+
+/* Botones de Acción */
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.action-btn.edit:hover { color: var(--brand-color); }
+.action-btn.delete:hover { color: #ff4d4d; }
+
+/* =========================================================
+   MODAL DE FORMULARIO
+   ========================================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: #111;
+    border: 1px solid rgba(104, 178, 168, 0.3);
+    padding: 30px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 15px;
+}
+
+.modal-header h3 { color: var(--brand-color); }
+.close-modal { color: white; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+.close-modal:hover { color: #ff4d4d; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(104, 178, 168, 0.2); border-radius: 8px; color: white; outline: none; font-family: 'Montserrat', sans-serif; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--brand-color); }
+
+.form-row { display: flex; gap: 15px; }
+.form-row .form-group { flex: 1; }

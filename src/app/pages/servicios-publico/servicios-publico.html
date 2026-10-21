@@ -1,0 +1,61 @@
+<div id="particles-js"></div>
+
+<nav>
+    <a routerLink="/" class="logo">NOVA Beauty Salon</a>
+    
+    <div class="nav-links">
+        <a routerLink="/">Inicio</a>
+        <a routerLink="/nuestros-servicios">Servicios</a>
+        <a routerLink="/reservas">Reservar</a>
+        <a routerLink="/promociones-publico">Promociones</a>
+        <a routerLink="/nosotros">Nosotros</a>
+        <a routerLink="/contacto">Contacto</a>
+        <a *ngIf="!usuarioLogeado" routerLink="/login" class="cta-solid">RESERVAR CITAS</a>
+    </div>
+
+    <div class="user-panel" *ngIf="usuarioLogeado">
+        <span id="usuario-logeado">👤 {{ usuarioLogeado }} ({{ rolLogeado }})</span>
+        <button id="logout-btn" (click)="cerrarSesion()">Salir</button>
+    </div>
+</nav>
+
+<section class="services-section">
+    <h1 class="section-title">Nuestros Servicios</h1>
+    <p class="section-subtitle">Belleza, estilo y elegancia premium para ti</p>
+
+    <div *ngIf="cargando" style="text-align: center; color: white; margin-top: 2rem;">
+        <p>Cargando catálogo de servicios...</p>
+    </div>
+    <div *ngIf="!cargando && listaServicios.length === 0" style="text-align: center; color: white; margin-top: 2rem;">
+        <p>Próximamente publicaremos nuestro catálogo de servicios.</p>
+    </div>
+
+    <<div class="services-grid">
+
+        @for (servicio of listaServicios; track servicio.id_servicio) {
+            <div class="service-card glow-effect" (click)="irAReservas()">
+                
+                <div class="service-image-box">
+                    <img [src]="servicio.imagen_url" [alt]="servicio.nombre">
+                    
+                    <div class="service-icon-badge">
+                        <i [class]="servicio.icono"></i>
+                    </div>
+                </div>
+
+                <div class="service-info">
+                    <h2>{{ servicio.nombre }}</h2>
+                    <p>{{ servicio.desc }}</p>
+                    <span class="price">Desde S/ {{ servicio.precio | number:'1.2-2' }}</span>
+                </div>
+
+            </div>
+        }
+
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 NOVA Beauty Salon · Todos los derechos reservados</p>
+<nav class="legal-links"><a href="/politica-privacidad">Privacidad</a><a href="/terminos-condiciones">Términos y condiciones</a><a href="/politica-cookies">Cookies</a><a href="/politica-reembolsos">Reembolsos</a></nav>
+    </footer>

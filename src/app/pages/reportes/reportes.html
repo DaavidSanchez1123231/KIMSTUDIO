@@ -1,0 +1,81 @@
+<div class="reportes-header">
+    <div class="date-filter-group">
+        <div class="date-input">
+            <label>Desde:</label>
+            <input type="date" [(ngModel)]="fechaDesde">
+        </div>
+        <div class="date-input">
+            <label>Hasta:</label>
+            <input type="date" [(ngModel)]="fechaHasta">
+        </div>
+        <button (click)="actualizarFiltro()" class="btn-primary-sm" [disabled]="cargando">
+            {{ cargando ? 'Calculando...' : 'Actualizar' }}
+        </button>
+    </div>
+    <button (click)="exportarReporte()" class="btn-primary" [disabled]="cargando">
+        <i class="fas fa-download"></i> Exportar PDF
+    </button>
+</div>
+
+<div class="reportes-grid">
+    <div class="reporte-card">
+        <h3><i class="fas fa-star" style="color: #10efff;"></i> Servicios Top del Período</h3>
+        <p class="subtitle-card">Por volumen de citas reservadas</p>
+        
+        <div *ngIf="serviciosTop.length === 0 && !cargando" style="text-align: center; color: white; margin-top: 20px;">
+            No hay citas registradas en este rango.
+        </div>
+
+        @for (servicio of serviciosTop; track servicio.nombre) {
+            <div class="chart-bar-group">
+                <div class="bar-info">
+                    <span>{{ servicio.nombre }}</span>
+                    <span class="pct-val">{{ servicio.porcentaje }}%</span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-fill" [style.width.%]="servicio.porcentaje"></div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="reporte-card">
+        <h3><i class="fas fa-medal" style="color: var(--brand-color);"></i> Productividad por Empleado</h3>
+        <p class="subtitle-card">Monto total facturado por atención</p>
+        
+        <div *ngIf="empleadosTop.length === 0 && !cargando" style="text-align: center; color: white; margin-top: 20px;">
+            No hay atenciones facturadas en este rango.
+        </div>
+
+        @for (empleado of empleadosTop; track empleado.nombre; let i = $index) {
+            <div class="employee-rank">
+                <div class="rank-info">
+                    <span class="number-rank">{{ i + 1 }}</span>
+                    <div>
+                        <h4>{{ empleado.nombre }}</h4>
+                        <p>{{ empleado.puesto }}</p>
+                    </div>
+                </div>
+                <span class="rank-amount">S/ {{ empleado.monto | number:'1.2-2' }}</span>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="balance-container">
+    <h3>Resumen Financiero del Período</h3>
+    <div class="balance-grid">
+        <div class="balance-item text-success">
+            <p>Ingresos Brutos</p>
+            <h2>S/ {{ balance.ingresosBrutos | number:'1.2-2' }}</h2>
+        </div>
+        <div class="balance-item text-danger">
+            <p>Insumos / Comisiones</p>
+            <h2>S/ {{ balance.insumosComisiones | number:'1.2-2' }}</h2>
+        </div>
+        <div class="balance-item text-cian">
+            <p>Utilidad Neta Total</p>
+            <h2>S/ {{ balance.utilidadNeta | number:'1.2-2' }}</h2>
+        </div>
+    </div>
+</div>

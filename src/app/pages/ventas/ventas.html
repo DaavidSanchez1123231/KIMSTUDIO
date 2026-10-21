@@ -1,0 +1,102 @@
+<div class="ventas-metricas">
+    <div class="metrica-box">
+        <p>Total Caja Hoy</p>
+        <h3>S/ {{ metricas.totalCaja | number:'1.2-2' }}</h3>
+    </div>
+    <div class="metrica-box cian-glow">
+        <p>Por Servicios</p>
+        <h3>S/ {{ metricas.porServicios | number:'1.2-2' }}</h3>
+    </div>
+    <div class="metrica-box">
+        <p>Por Productos</p>
+        <h3>S/ {{ metricas.porProductos | number:'1.2-2' }}</h3>
+    </div>
+</div>
+
+<div class="ventas-header">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" [(ngModel)]="textoBusqueda" (input)="filtrarVentas()" placeholder="Buscar por cliente, boleta o ítem...">
+    </div>
+    <button (click)="abrirModal()" class="btn-primary">
+        <i class="fas fa-shopping-cart"></i> Registrar Venta
+    </button>
+</div>
+
+<div class="recent-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>N° Boleta</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Concepto / Detalle</th>
+                <th>Método</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="cargando">
+                <td colspan="7" style="text-align: center;">Cargando registros de caja...</td>
+            </tr>
+            <tr *ngIf="!cargando && ventasFiltradas.length === 0">
+                <td colspan="7" style="text-align: center;">No se encontraron registros de ventas.</td>
+            </tr>
+
+            @for (venta of ventasFiltradas; track venta.id_venta) {
+                <tr>
+                    <td>{{ venta.boleta }}</td>
+                    <td>{{ venta.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ venta.cliente || 'Público General' }}</td>
+                    <td>{{ venta.detalle }}</td>
+                    <td><span class="pay-method {{ venta.metodo | lowercase }}">{{ venta.metodo | titlecase }}</span></td>
+                    <td class="total-amount">S/ {{ venta.total | number:'1.2-2' }}</td>
+                    <td>
+                        <button class="action-btn print" title="Reimprimir Comprobante"><i class="fas fa-print"></i></button>
+                        <button (click)="anularVenta(venta.id_venta, venta.boleta)" class="action-btn cancel" title="Anular Venta">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Registrar Operación de Venta</h3>
+            <span class="close-modal" (click)="cerrarModal()">&times;</span>
+        </div>
+        <form (submit)="registrarVenta($event)">
+            <div class="form-group">
+                <label>Cliente (Opcional)</label>
+                <input type="text" [(ngModel)]="nuevaVenta.cliente" name="cliente" placeholder="Ej: Carlos Mendoza">
+            </div>
+            <div class="form-group">
+                <label>Tipo de Venta / Concepto</label>
+                <select [(ngModel)]="nuevaVenta.tipo" name="tipo" required>
+                    <option value="servicio">Servicio Realizado</option>
+                    <option value="producto">Venta de Producto</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Método de Pago</label>
+                    <select [(ngModel)]="nuevaVenta.metodo" name="metodo" required>
+                        <option value="Yape">Yape / Plin</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Monto Total (S/)</label>
+                    <input type="number" [(ngModel)]="nuevaVenta.total" name="total" step="0.01" required placeholder="0.00">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Confirmar Caja e Imprimir</button>
+        </form>
+    </div>
+</div>

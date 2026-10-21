@@ -1,0 +1,53 @@
+<div class="sidebar">
+    <div class="sidebar-brand">NOVA Beauty Salon</div>
+    
+    <ul class="sidebar-menu">
+        <li routerLinkActive="active">
+            <a routerLink="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+        </li>
+
+        <li *ngIf="esRecepcion()" routerLinkActive="active">
+            <a routerLink="/citas"><i class="fas fa-calendar-alt"></i> Citas</a>
+        </li>
+        <li *ngIf="esRecepcion()" routerLinkActive="active">
+            <a routerLink="/clientes"><i class="fas fa-users"></i> Clientes</a>
+        </li>
+        <li *ngIf="esRecepcion()" routerLinkActive="active">
+            <a routerLink="/servicios"><i class="fas fa-cut"></i> Servicios</a>
+        </li>
+
+        <li *ngIf="esCaja()" routerLinkActive="active">
+            <a routerLink="/productos"><i class="fas fa-boxes"></i> Productos</a>
+        </li>
+        <li *ngIf="esCaja()" routerLinkActive="active">
+            <a routerLink="/ventas"><i class="fas fa-cash-register"></i> Ventas</a>
+        </li>
+
+        <li *ngIf="esAdmin()" routerLinkActive="active">
+            <a routerLink="/empleados"><i class="fas fa-user-tie"></i> Empleados</a>
+        </li>
+        <li *ngIf="esAdmin()" routerLinkActive="active">
+            <a routerLink="/promociones"><i class="fas fa-tags"></i> Promociones</a>
+        </li>
+        <li *ngIf="esAdmin()" routerLinkActive="active">
+            <a routerLink="/reportes"><i class="fas fa-file-invoice-dollar"></i> Reportes</a>
+        </li>
+        <li *ngIf="esAdmin()" routerLinkActive="active">
+            <a routerLink="/galeria"><i class="fas fa-images"></i> Galería</a>
+        </li>
+        <li *ngIf="esAdmin()" routerLinkActive="active">
+            <a routerLink="/configuracion"><i class="fas fa-cog"></i> Configuración</a>
+        </li>
+    </ul>
+
+    <div class="sidebar-footer" style="position: absolute; bottom: 20px; width: 100%; text-align: center;">
+        <div style="color: #68b2a8; margin-bottom: 10px; font-size: 0.9rem;">
+            <i class="fas fa-user-circle"></i> {{ nombreUsuario | uppercase }}
+            <br>
+            <small style="color: #aaa;">({{ rolUsuario }})</small>
+        </div>
+        <button (click)="cerrarSesion()" class="btn-primary-sm" style="background-color: #ff4d4d; border: none; padding: 5px 15px; border-radius: 5px; color: white; cursor: pointer;">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
+    </div>
+</div>

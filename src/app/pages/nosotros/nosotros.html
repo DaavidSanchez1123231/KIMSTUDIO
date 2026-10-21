@@ -1,0 +1,53 @@
+<div id="particles-js"></div>
+
+<nav>
+    <a routerLink="/" class="logo">NOVA Beauty Salon</a>
+
+    <div class="nav-links">
+        <a routerLink="/">Inicio</a>
+        <a routerLink="/nuestros-servicios">Servicios</a>
+        <a routerLink="/reservas">Reservar</a>
+        <a routerLink="/promociones-publico">Promociones</a>
+        <a routerLink="/nosotros">Nosotros</a>
+        <a routerLink="/contacto">Contacto</a>
+        
+        <a *ngIf="!usuarioLogeado" routerLink="/login" class="cta-solid">RESERVAR CITAS</a>
+    </div>
+
+    <div class="user-panel" *ngIf="usuarioLogeado">
+        <span id="usuario-logeado">👤 {{ usuarioLogeado }} ({{ rolLogeado }})</span>
+        <button id="logout-btn" (click)="cerrarSesion()">Salir</button>
+    </div>
+</nav>
+
+<section class="nosotros-hero">
+    <h1>Sobre Nosotros</h1>
+    <p>
+        En NOVA Beauty Salon transformamos tu imagen con estilo, elegancia y precisión profesional.
+    </p>
+</section>
+
+<section class="nosotros-section">
+    <div class="card glow">
+        <i class="fas fa-crown"></i>
+        <h2>Experiencia Premium</h2>
+        <p>Más de 10 años ofreciendo servicios de belleza de alto nivel.</p>
+    </div>
+
+    <div class="card glow">
+        <i class="fas fa-heart"></i>
+        <h2>Pasión por la Belleza</h2>
+        <p>Cada cliente es único, cada detalle es importante para nosotros.</p>
+    </div>
+
+    <div class="card glow">
+        <i class="fas fa-star"></i>
+        <h2>Resultados Garantizados</h2>
+        <p>Trabajamos con técnicas modernas y productos de calidad profesional.</p>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 NOVA Beauty Salon - Todos los derechos reservados</p>
+<nav class="legal-links"><a href="/politica-privacidad">Privacidad</a><a href="/terminos-condiciones">Términos y condiciones</a><a href="/politica-cookies">Cookies</a><a href="/politica-reembolsos">Reembolsos</a></nav>
+    </footer>

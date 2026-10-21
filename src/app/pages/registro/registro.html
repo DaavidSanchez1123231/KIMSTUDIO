@@ -1,0 +1,50 @@
+<div class="register-wrapper">
+    <div id="particles-js"></div>
+
+    <div class="register-card glow-effect">
+      <h2>Crear Cuenta</h2>
+      <p class="subtitle">Regístrate para reservar tus citas en NOVA Beauty Salon</p>
+
+      <form (submit)="registrar($event)">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" name="nombre" [(ngModel)]="nombre" placeholder="Nombre completo" required />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="correo" [(ngModel)]="correo" placeholder="Correo electrónico" required />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-phone"></i>
+          <input type="tel" name="telefono" [(ngModel)]="telefono" placeholder="Teléfono" />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" [(ngModel)]="password" placeholder="Contraseña" required />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirmar contraseña" required />
+        </div>
+
+        <div class="consent">
+          <label class="consent-item"><input type="checkbox" name="aceptaPrivacidad" [(ngModel)]="aceptaPrivacidad"> <span>He leído la <a href="/politica-privacidad" target="_blank" rel="noopener">Política de Privacidad</a> y autorizo el tratamiento de mis datos personales para gestionar mi cuenta y mis citas. *</span></label>
+          <label class="consent-item"><input type="checkbox" name="aceptaTerminos" [(ngModel)]="aceptaTerminos"> <span>Acepto los <a href="/terminos-condiciones" target="_blank" rel="noopener">Términos y Condiciones</a> y la <a href="/politica-reembolsos" target="_blank" rel="noopener">Política de Reembolsos y Cancelaciones</a>. *</span></label>
+          <label class="consent-item"><input type="checkbox" name="aceptaMarketing" [(ngModel)]="aceptaMarketing"> <span>Quiero recibir promociones y novedades por correo o WhatsApp (opcional).</span></label>
+        </div>
+
+        <div id="error-msg" *ngIf="mostrarError" style="color: red; text-align: center; margin-bottom: 10px;">
+          {{ mensajeError }}
+        </div>
+
+        <button type="submit" class="btn-register" [disabled]="cargando">
+          {{ cargando ? 'REGISTRANDO...' : 'REGISTRARSE' }}
+        </button>
+      </form>
+
+      <div class="extra-links">
+        <a routerLink="/login">¿Ya tienes cuenta?</a>
+        <a routerLink="/">Volver al inicio</a>
+      </div>
+    </div>
+</div>

@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap');
+
+:root {
+    --brand: #68b2a8; /* Tu verde agua original */
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* En lugar de body, usamos el contenedor */
+.register-wrapper {
+    background:black;
+    font-family:'Montserrat',sans-serif;
+    height:100vh;
+    width:100vw;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    position: relative;
+}
+
+/* PARTICLES */
+#particles-js{
+    position:absolute;
+    width:100%;
+    height:100%;
+    z-index:1;
+    pointer-events: none;
+}
+
+/* CARD */
+.register-card{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:450px;
+    background:rgba(20,20,20,0.85);
+    backdrop-filter:blur(15px);
+    padding:40px;
+    border-radius:25px;
+    border:1px solid rgba(104,178,168,0.2);
+    box-shadow: 0 0 30px rgba(104,178,168,0.2);
+    text-align:center;
+    transition:0.5s ease;
+    overflow:hidden;
+}
+
+/* EFECTO ILUMINADO */
+.glow-effect{
+    position:relative;
+}
+
+.glow-effect::before{
+    content:"";
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+    background: radial-gradient(circle, rgba(104,178,168,0.18) 0%, transparent 70%);
+    transform:scale(0);
+    transition:0.6s ease;
+    pointer-events:none;
+}
+
+.glow-effect:hover::before{
+    transform:scale(1);
+}
+
+.glow-effect:hover{
+    transform:translateY(-5px);
+    box-shadow: 0 0 25px rgba(104,178,168,0.5), 0 0 60px rgba(104,178,168,0.25);
+    border-color: #68b2a8;
+}
+
+/* CAPA DE CONTENIDO (Para que quede sobre la luz) */
+.register-card * {
+    position: relative;
+    z-index: 2;
+}
+
+/* TITULOS */
+.register-card h2{
+    color: #68b2a8;
+    font-size:2.5rem;
+    margin-bottom:10px;
+    font-family:'Playfair Display',serif;
+}
+
+.subtitle{
+    color:#bbb;
+    margin-bottom:30px;
+    font-size: 0.95rem;
+}
+
+/* INPUTS */
+.input-group{
+    position:relative;
+    margin-bottom:20px;
+}
+
+.input-group i{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color: #68b2a8;
+}
+
+.input-group input{
+    width:100%;
+    padding:15px 15px 15px 45px;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,0.05);
+    color:white;
+    outline:none;
+    transition:0.4s;
+    font-family:'Montserrat',sans-serif;
+}
+
+.input-group input:focus{
+    border:1px solid #68b2a8;
+    box-shadow: 0 0 15px rgba(104,178,168,0.4);
+}
+
+/* BOTON */
+.btn-register{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background: #68b2a8;
+    color:white; /* Lo mantuve en blanco como en tu CSS original */
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.4s;
+    margin-top:10px;
+    font-family:'Montserrat',sans-serif;
+}
+
+.btn-register:hover{
+    transform:scale(1.03);
+    box-shadow: 0 0 20px #68b2a8;
+}
+
+/* ERROR */
+#error-msg{
+    color:#ff4d4d;
+    margin-bottom:15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* LINKS */
+.extra-links{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.extra-links a{
+    color:#aaa;
+    text-decoration:none;
+    font-size:0.9rem;
+    transition:0.3s;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+.extra-links a:hover{
+    color: #68b2a8;
+}
+
+/* RESPONSIVE */
+@media(max-width:500px){
+    .register-card{
+        width:90%;
+        padding:30px;
+    }
+    .register-card h2{
+        font-size:2rem;
+    }
+    .extra-links{
+        flex-direction:column;
+        gap:15px;
+    }
+}

@@ -1,0 +1,190 @@
+/* =========================
+   BASE Y CONTENEDOR (Simula el body)
+========================= */
+.login-wrapper {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: black;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* =========================
+   TARJETA DE LOGIN
+========================= */
+.login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(15px);
+    padding: 40px;
+    border-radius: 25px;
+    border: 1px solid rgba(16, 239, 255, 0.2);
+    box-shadow: 0 0 30px rgba(16, 239, 255, 0.1);
+    text-align: center;
+    overflow: hidden;
+    transition: 0.5s ease;
+}
+
+.login-card h2 {
+    color: #10efff;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-family: 'Playfair Display', serif;
+}
+
+.subtitle {
+    color: #bbb;
+    margin-bottom: 30px;
+}
+
+/* =========================
+   INPUTS Y FORMULARIO
+========================= */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #10efff;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.input-group input:focus {
+    border: 1px solid #10efff;
+    box-shadow: 0 0 15px rgba(16, 239, 255, 0.4);
+}
+
+/* REEMPLAZO DE BOOTSTRAP PARA EL SELECT */
+.form-select-custom {
+    width: 100%;
+    padding: 15px 15px 15px 20px;
+    border-radius: 12px;
+    background: #111;
+    color: white;
+    border: 1px solid rgba(16, 239, 255, 0.3);
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.form-select-custom:focus {
+    border: 1px solid #10efff;
+    box-shadow: 0 0 15px rgba(16, 239, 255, 0.4);
+}
+
+.form-select-custom option {
+    background: #000;
+    color: white;
+}
+
+/* =========================
+   BOTONES Y ENLACES
+========================= */
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: #10efff;
+    color: black;
+    font-weight: bold;
+    transition: 0.4s;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px #10efff;
+    background: white;
+}
+
+#error-msg {
+    color: #ff4d4d;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.extra-links {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.extra-links a {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer; /* <-- ESTO ACTIVA LA MANITO DE DAR CLIC */
+    position: relative;
+    z-index: 10; /* Asegura que ningún otro elemento lo tape */
+    transition: 0.3s;
+}
+
+.extra-links a:hover {
+    color: var(--brand); /* O var(--brand-color) dependiendo de cómo lo tengas en tu login */
+}
+
+/* =========================
+   LOGIN GLOW PREMIUM (ANIMACIONES)
+========================= */
+.login-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(16, 239, 255, 0.15) 0%, transparent 70%);
+    transform: scale(0);
+    transition: 0.6s ease;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.login-card:hover::before {
+    transform: scale(1);
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(16, 239, 255, 0.3), 0 0 60px rgba(16, 239, 255, 0.15);
+    border-color: #10efff;
+}
+
+.login-card * {
+    position: relative;
+    z-index: 2;
+}

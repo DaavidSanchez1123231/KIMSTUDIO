@@ -1,0 +1,109 @@
+<div class="servicios-header">
+    <div class="filtros-categoria">
+        <button [class.active]="filtroActual === 'todos'" (click)="filtroActual = 'todos'">Todos</button>
+        <button [class.active]="filtroActual === 'cabello'" (click)="filtroActual = 'cabello'">Cabello & Tintes</button>
+        <button [class.active]="filtroActual === 'cejas'" (click)="filtroActual = 'cejas'">Mirada & Cejas</button>
+        <button [class.active]="filtroActual === 'uñas'" (click)="filtroActual = 'uñas'">Manicura & Uñas</button>
+    </div>
+    
+    <button class="btn-primary" (click)="abrirModal()">
+        <i class="fas fa-plus"></i> Nuevo Servicio
+    </button>
+</div>
+
+<div class="recent-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Nombre del Servicio</th>
+                <th>Precio (S/)</th>
+                <th>Duración</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="cargando">
+                <td colspan="6" style="text-align: center;">Cargando catálogo desde SQL Server...</td>
+            </tr>
+            
+            <tr *ngIf="!cargando && serviciosFiltrados.length === 0">
+                <td colspan="6" style="text-align: center;">No hay servicios registrados en esta categoría.</td>
+            </tr>
+
+            <tr *ngFor="let servicio of serviciosFiltrados">
+                <td>
+                    <img *ngIf="servicio.imagen_url; else iconoDefault" [src]="servicio.imagen_url" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #68b2a8;">
+                    
+                    <ng-template #iconoDefault>
+                        <div style="width: 45px; height: 45px; border-radius: 50%; background: #2a2a2a; display: flex; align-items: center; justify-content: center; border: 1px solid #444;">
+                            <i class="fas fa-cut" style="color: #68b2a8;"></i>
+                        </div>
+                    </ng-template>
+                </td>
+                <td style="font-weight: bold; color: #fff;">{{ servicio.nombre }}</td>
+                <td style="color: #68b2a8;">S/ {{ servicio.precio | number:'1.2-2' }}</td>
+                <td>{{ servicio.duracion_minutos || 60 }} min</td>
+                <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" [title]="servicio.desc">
+                    {{ servicio.desc || 'Sin descripción' }}
+                </td>
+                <td>
+                    <button class="action-btn cancel" (click)="eliminarServicio(servicio.id_servicio, servicio.nombre)" title="Eliminar Servicio">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Registrar Nuevo Servicio</h3>
+            <span class="close-modal" (click)="cerrarModal()">&times;</span>
+        </div>
+        
+        <form (submit)="guardarServicio($event)">
+            <div class="form-group">
+                <label>Nombre del Servicio</label>
+                <input type="text" [(ngModel)]="nuevoServicio.nombre" name="nombre" required placeholder="Ej: Balayage Miel">
+            </div>
+
+            <div class="form-row" style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Categoría</label>
+                    <select [(ngModel)]="nuevoServicio.categoriaId" name="categoria" required>
+                        <option value="cabello">Cabello & Tintes</option>
+                        <option value="cejas">Mirada & Cejas</option>
+                        <option value="uñas">Manicura & Uñas</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Precio (S/)</label>
+                    <input type="number" step="0.01" [(ngModel)]="nuevoServicio.precio" name="precio" required placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción / Detalles</label>
+                <textarea [(ngModel)]="nuevoServicio.desc" name="desc" rows="3" placeholder="Detalles del servicio..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>URL de la Imagen (Opcional)</label>
+                <input type="url" [(ngModel)]="nuevoServicio.imagen_url" name="imagen_url" placeholder="https://ejemplo.com/foto.jpg">
+            </div>
+
+            <div *ngIf="nuevoServicio.imagen_url" style="text-align: center; margin-bottom: 15px;">
+                <img [src]="nuevoServicio.imagen_url" alt="Previsualización" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid #68b2a8;">
+                <p style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">Vista previa de la imagen</p>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%;">
+                <i class="fas fa-save"></i> Guardar Servicio
+            </button>
+        </form>
+    </div>
+</div>

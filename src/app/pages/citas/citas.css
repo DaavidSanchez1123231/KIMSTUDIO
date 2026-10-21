@@ -1,0 +1,162 @@
+/* =========================================================
+   ESTILOS ESPECÍFICOS PARA GESTIÓN DE CITAS
+   ========================================================= */
+
+.citas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--brand-color);
+}
+
+.search-box input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid rgba(104, 178, 168, 0.3);
+    color: white;
+    padding: 12px 15px 12px 40px;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-box input:focus {
+    border-color: var(--brand-color);
+    box-shadow: 0 0 10px rgba(104, 178, 168, 0.3);
+}
+
+.btn-primary {
+    background: var(--brand-color);
+    color: black;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-primary:hover {
+    background: white;
+    box-shadow: 0 0 15px var(--brand-color);
+    transform: translateY(-2px);
+}
+
+.action-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: 0.3s;
+}
+
+.action-btn.edit:hover { color: var(--brand-color); }
+.action-btn.delete:hover { color: #ff4d4d; }
+
+/* =========================================================
+   MODAL (Formulario Emergente)
+   ========================================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    /* ¡Ajuste Angular! Cambiamos none por flex para que el *ngIf haga su magia */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: #111;
+    border: 1px solid rgba(104, 178, 168, 0.3);
+    padding: 30px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 15px;
+}
+
+.modal-header h3 { color: var(--brand-color); }
+
+.close-modal {
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.close-modal:hover { color: #ff4d4d; }
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(104, 178, 168, 0.2);
+    border-radius: 8px;
+    color: white;
+    outline: none;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: var(--brand-color);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+option { background: #111; color: white; }

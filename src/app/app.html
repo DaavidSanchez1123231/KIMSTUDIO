@@ -1,0 +1,13 @@
+<app-home *ngIf="esInicio"></app-home>
+
+<router-outlet *ngIf="esPublica && !esInicio"></router-outlet>
+
+<div class="app-container" *ngIf="!esPublica">
+  <app-sidebar></app-sidebar>
+  <div class="main-content">
+    <app-topbar></app-topbar>
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<app-cookie-banner></app-cookie-banner>

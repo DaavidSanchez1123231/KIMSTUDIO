@@ -1,0 +1,254 @@
+:root {
+  --brand-color: #38d1d1;
+  --black-pure: #000000;
+  --white: #ffffff;
+  --glass: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--black-pure);
+  color: var(--white);
+  font-family: "Montserrat", sans-serif;
+  overflow-x: hidden;
+}
+
+#particles-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* =========================
+   NAVBAR (IDÉNTICO A HOME)
+========================= */
+nav {
+  position: fixed;
+  width: 100%;
+  padding: 25px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 255, 221, 0.388);
+  z-index: 1000;
+  transition: 0.4s ease;
+}
+
+nav:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 221, 0.388);
+}
+
+.logo {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  color: var(--brand-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+  position: relative;
+  padding: 8px 0;
+}
+
+.nav-links a:hover {
+  color: var(--brand-color);
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: var(--brand-color);
+  transition: 0.4s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.cta-solid {
+  background: var(--brand-color);
+  color: var(--black-pure);
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.4s ease;
+  box-shadow: 0 4px 15px rgba(104, 178, 168, 0.3);
+}
+
+.cta-solid:hover {
+  background: var(--white);
+  transform: scale(1.05);
+}
+
+/* =========================
+   GRID SERVICIOS
+========================= */
+.services-section {
+  position: relative;
+  z-index: 2;
+  padding: 150px 10% 100px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 4rem;
+  color: var(--brand-color);
+  margin-bottom: 15px;
+  font-family: "Playfair Display", serif;
+}
+
+.section-subtitle {
+  color: #aaa;
+  margin-bottom: 60px;
+  font-size: 1.1rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 35px;
+}
+
+.service-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(104, 178, 168, 0.2);
+  border-radius: 25px;
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  transition: 0.5s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ANIMACIÓN GLOW */
+.glow-effect {
+  position: relative;
+}
+
+.glow-effect::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(104, 178, 168, 0.18) 0%, transparent 70%);
+  transform: scale(0);
+  transition: 0.6s ease;
+  pointer-events: none;
+}
+
+.glow-effect:hover::before {
+  transform: scale(1);
+}
+
+.glow-effect:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(104, 178, 168, 0.5), 0 0 60px rgba(104, 178, 168, 0.25);
+}
+
+.service-image-box {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.5s;
+}
+
+.service-card:hover .service-image-box img {
+  transform: scale(1.1);
+}
+
+.service-icon-badge {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background: black;
+  border: 1px solid var(--brand-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--brand-color);
+  z-index: 5;
+}
+
+.service-info {
+  padding: 40px 30px 30px;
+}
+
+.service-info h2 {
+  color: var(--brand-color);
+  margin-bottom: 15px;
+  font-family: "Playfair Display", serif;
+}
+
+.price {
+  color: var(--brand-color);
+  font-weight: bold;
+}
+
+/* PANEL USUARIO */
+.user-panel {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: white;
+}
+
+#usuario-logeado {
+  color: var(--brand-color);
+  font-weight: bold;
+}
+
+#logout-btn {
+  background: var(--brand-color);
+  color: black;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+#logout-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--brand-color);
+}

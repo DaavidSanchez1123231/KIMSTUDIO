@@ -1,0 +1,32 @@
+<div id="particles-js"></div>
+
+<div class="login-wrapper">
+    <div class="login-card">
+      <h2>NOVA Beauty Salon</h2>
+      <p class="subtitle">Inicia sesión para reservar tu cita</p>
+
+      <form (submit)="iniciarSesion($event)">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" [(ngModel)]="usuario" name="usuario" placeholder="Usuario / Correo" required />
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" [(ngModel)]="pass" name="pass" placeholder="Contraseña" required />
+        </div>
+
+        <p *ngIf="mostrarError" id="error-msg">{{ errorMensaje }}</p>
+
+        <button type="submit" class="btn-login" [disabled]="cargando">
+            {{ cargando ? 'Verificando...' : 'Ingresar' }}
+        </button>
+
+        <div class="extra-links">
+          <a routerLink="/crear-cuenta"> Crear cuenta </a>
+          <a routerLink="/recuperar"> ¿Olvidaste tu contraseña? </a>
+          <a routerLink="/"> Volver al inicio </a>
+        </div>
+      </form>
+    </div>
+</div>

@@ -1,0 +1,146 @@
+<div id="particles-js"></div>
+
+<div class="main-content">
+    <nav>
+        <a routerLink="/" class="logo">NOVA Beauty Salon</a>
+        <div class="menu-toggle" (click)="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="nav-links" [class.active]="isMenuOpen">
+            <a routerLink="/">Inicio</a>
+            <a routerLink="/nuestros-servicios">Servicios</a>
+            <a routerLink="/reservas">Reservar</a>
+            <a routerLink="/promociones-publico">Promociones</a>
+            <a routerLink="/nosotros">Nosotros</a>
+            <a routerLink="/contacto">Contacto</a>
+            <a *ngIf="!usuarioLogeado" routerLink="/login" class="cta-nav">RESERVAR CITAS</a>
+        </div>
+        <div class="user-panel" *ngIf="usuarioLogeado">
+            <span id="usuario-logeado">👤 {{ usuarioLogeado }} ({{ rolLogeado }})</span>
+            <button id="logout-btn" (click)="cerrarSesion()">Salir</button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>NOVA Beauty Salon</h1>
+            <p class="hero-text">
+                Descubre una experiencia de belleza premium,
+                donde cada detalle está diseñado para resaltar
+                tu esencia con elegancia, estilo y sofisticación.
+            </p>
+            <div class="hero-buttons">
+                <a routerLink="/reservas" class="cta-solid">Reservar Cita</a>
+                <a href="#servicios" class="cta-outline">Ver Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="video-section" data-aos="fade-up">
+    <h2 class="section-title">Nuestra Transformación</h2>
+    <div class="video-box glow-effect">
+        @if (!videoActivado) {
+            <div class="video-thumbnail" (click)="videoActivado = true">
+                <img src="https://img.youtube.com/vi/sGWBu_pWPXA/hqdefault.jpg" alt="Ver video">
+                <i class="fas fa-play-circle"></i>
+            </div>
+        } @else {
+            <iframe width="560" height="315" 
+                src="https://www.youtube.com/embed/sGWBu_pWPXA?autoplay=1" 
+                title="YouTube video player" frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+        }
+    </div>
+</section>
+
+    <section id="servicios" class="gallery-category">
+        <h2 data-aos="fade-right">Cabello & Tintes</h2>
+        <p class="section-description">Botox capilar, Balayage, Mechas, Morena iluminada.</p>
+        
+        <div class="img-container" data-aos="fade-up">
+            <p *ngIf="cargandoGaleria" style="color: #68b2a8; text-align: center; width: 100%;">Conectando con el servidor...</p>
+            <p *ngIf="!cargandoGaleria && trabajosCabello.length === 0" style="color: white; text-align: center; width: 100%;">Próximamente nuevos trabajos.</p>
+
+            @for (trabajo of trabajosCabello; track trabajo.id_trabajo) {
+                <div class="img-box glow-effect" (click)="abrirModal(trabajo.imgDespues)">
+                    <img [src]="trabajo.imgAntes" alt="Antes">
+                    <img [src]="trabajo.imgDespues" class="after" alt="Después">
+                    <div class="label">{{ trabajo.titulo | uppercase }}</div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="gallery-category">
+        <h2 data-aos="fade-right">Mirada & Cejas</h2>
+        <p class="section-description">Pestañas 1x1, Pigmentación y Depilación.</p>
+        
+        <div class="img-container" data-aos="fade-up">
+            <p *ngIf="cargandoGaleria" style="color: #68b2a8; text-align: center; width: 100%;">Conectando con el servidor...</p>
+            <p *ngIf="!cargandoGaleria && trabajosCejas.length === 0" style="color: white; text-align: center; width: 100%;">Próximamente nuevos trabajos.</p>
+
+            @for (trabajo of trabajosCejas; track trabajo.id_trabajo) {
+                <div class="img-box glow-effect" (click)="abrirModal(trabajo.imgDespues)">
+                    <img [src]="trabajo.imgAntes" alt="Antes">
+                    <img [src]="trabajo.imgDespues" class="after" alt="Después">
+                    <div class="label">{{ trabajo.titulo | uppercase }}</div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="gallery-category">
+        <h2 data-aos="fade-right">Manicura & Uñas</h2>
+        <p class="section-description">Uñas esculpidas, Gel, Acrílico y Nail Art.</p>
+        
+        <div class="img-container" data-aos="fade-up">
+            <p *ngIf="cargandoGaleria" style="color: #68b2a8; text-align: center; width: 100%;">Conectando con el servidor...</p>
+            <p *ngIf="!cargandoGaleria && trabajosUnas.length === 0" style="color: white; text-align: center; width: 100%;">Próximamente nuevos trabajos.</p>
+
+            @for (trabajo of trabajosUnas; track trabajo.id_trabajo) {
+                <div class="img-box glow-effect" (click)="abrirModal(trabajo.imgDespues)">
+                    <img [src]="trabajo.imgAntes" alt="Antes">
+                    <img [src]="trabajo.imgDespues" class="after" alt="Después">
+                    <div class="label">{{ trabajo.titulo | uppercase }}</div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section id="opiniones" class="testimonials">
+        <h2 class="section-title">Opiniones Reales</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <p>"La mejor atención en Lima, mis uñas quedaron perfectas y el color es justo lo que pedí."</p>
+                <span>- Maria Fernanda</span>
+            </div>
+            <div class="testimonial-card glow-effect">
+                <p>"Súper profesional. El tinte me dejó el cabello brillante y saludable."</p>
+                <span>- Claudia S.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <h2>Reserva tu cita hoy</h2>
+        <p>Vive la experiencia premium NOVA Beauty Salon</p>
+        <a routerLink="/login" class="cta-solid">Reservar Ahora</a>
+    </section>
+
+    <footer>
+        <div class="socials">
+            <a href="https://www.instagram.com/km_studio_oficial"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/share/18Ujd4QjSA/"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.tiktok.com/@km_studio_oficial"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p>© 2026 NOVA Beauty Salon - Todos los derechos reservados</p>
+    <nav class="legal-links"><a href="/politica-privacidad">Privacidad</a><a href="/terminos-condiciones">Términos y condiciones</a><a href="/politica-cookies">Cookies</a><a href="/politica-reembolsos">Reembolsos</a></nav>
+    </footer>
+</div>
+
+<div id="imageModal" class="modal" *ngIf="isModalOpen" (click)="cerrarModal()" style="display: block;">
+    <span class="close-modal" (click)="cerrarModal()">&times;</span>
+    <img class="modal-content" [src]="modalImageSrc" (click)="$event.stopPropagation()">
+</div>

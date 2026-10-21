@@ -1,0 +1,87 @@
+/* =========================================================
+   ESTILOS ESPECÍFICOS PARA EL MÓDULO DE CONFIGURACIÓN
+   ========================================================= */
+
+.config-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.config-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(104, 178, 168, 0.15);
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.config-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: white;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.subtitle-card {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 25px;
+}
+
+/* Detalles de Iconos de Categorías */
+.icon-cyan { color: #10efff; text-shadow: 0 0 10px rgba(16, 239, 255, 0.3); }
+.icon-red { color: #ff4d4d; text-shadow: 0 0 10px rgba(255, 77, 77, 0.3); }
+
+/* Campos de Formulario */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+.form-group input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(104, 178, 168, 0.2); border-radius: 8px; color: white; outline: none; font-family: 'Montserrat', sans-serif; }
+.form-group input:focus { border-color: var(--brand-color); box-shadow: 0 0 10px rgba(104, 178, 168, 0.2); }
+
+.form-row { display: flex; gap: 20px; }
+.form-row .form-group { flex: 1; }
+
+/* Inputs bloqueados / de lectura */
+.input-readonly {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: #666 !important;
+    cursor: not-allowed;
+}
+
+/* Botones de Operación de Ajustes */
+.btn-primary-sm {
+    background: var(--brand-color);
+    color: black;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Montserrat', sans-serif;
+}
+.btn-primary-sm:hover { background: white; box-shadow: 0 0 15px var(--brand-color); transform: translateY(-1px); }
+
+/* Variación Roja para Seguridad */
+.border-top-red { border-top: 2px solid #ff4d4d; }
+.btn-danger { background: #ff4d4d; color: white; }
+.btn-danger:hover { background: white; color: black; box-shadow: 0 0 15px #ff4d4d; }
+
+/* Mensaje de Alerta */
+.error-text {
+    color: #ff4d4d;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+    display: none;
+}
+
+/* Adaptabilidad Móvil */
+@media (max-width: 768px) {
+    .form-row { flex-direction: column; gap: 0; }
+    .config-card { padding: 20px; }
+}
