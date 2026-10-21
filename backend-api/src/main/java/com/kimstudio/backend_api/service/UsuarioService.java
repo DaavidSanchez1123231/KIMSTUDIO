@@ -30,7 +30,7 @@ public class UsuarioService {
 
     public Map<String, Object> registrarUsuario(String nombre, String email, String telefono, String password) {
         String passwordEncriptada = passwordEncoder.encode(password);
-        String sql = "EXEC sp_registrar_usuario ?, ?, ?,?";
+        String sql = "SELECT * FROM sp_registrar_usuario(?, ?, ?, ?)";
         Map<String, Object> respuesta = jdbcTemplate.queryForMap(sql, nombre, email, telefono, passwordEncriptada);
         
         
@@ -46,7 +46,7 @@ public class UsuarioService {
     public Map<String, Object> login(String email, String passwordTextoPlano) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        String sql = "SELECT * FROM Usuarios WHERE email = ?";
+        String sql = "SELECT * FROM Usuarios WHERE LOWER(email) = LOWER(?)";
         List<Map<String, Object>> usuarios = jdbcTemplate.queryForList(sql, email);
 
         if (usuarios.isEmpty()) {

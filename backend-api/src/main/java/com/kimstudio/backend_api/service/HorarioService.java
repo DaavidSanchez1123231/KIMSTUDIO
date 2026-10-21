@@ -22,7 +22,7 @@ public class HorarioService {
 
     public Map<String, Object> crearHorario(int idEspecialista, String fecha, String horaInicio, String horaFin) {
         String sql = "INSERT INTO Horarios (id_especialista, fecha, hora_inicio, hora_fin, estado) " +
-                     "VALUES (?, ?, ?, ?, 'disponible')";
+                     "VALUES (?, ?, ?, ?, 'DISPONIBLE')";
         jdbcTemplate.update(sql, idEspecialista, fecha, horaInicio, horaFin);
         
         Map<String, Object> respuesta = new HashMap<>();

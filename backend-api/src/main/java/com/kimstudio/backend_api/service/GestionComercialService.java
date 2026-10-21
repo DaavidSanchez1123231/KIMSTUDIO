@@ -17,7 +17,7 @@ public class GestionComercialService {
     public Map<String, Object> registrarProducto(String nombre, String categoria, 
                                                double precio, int stock, String descripcion) {
     try {
-        String sql = "EXEC sp_crear_producto ?, ?, ?, ?, ?";
+        String sql = "SELECT * FROM sp_crear_producto(?, ?, ?, ?, ?)";
         return jdbcTemplate.queryForMap(sql, nombre, categoria, precio, stock, descripcion);
     } catch (Exception e) {
         // Si el SP no devuelve filas, hacemos INSERT directo
@@ -31,12 +31,12 @@ public class GestionComercialService {
 
     public Map<String, Object> registrarVenta(String cliente, String metodoPago, double montoTotal) {
     try {
-        String sql = "EXEC sp_registrar_venta ?, ?, ?";
+        String sql = "SELECT * FROM sp_registrar_venta(?, ?, ?)";
         return jdbcTemplate.queryForMap(sql, cliente, metodoPago, montoTotal);
     } catch (Exception e) {
         // Fallback directo si el SP falla
         jdbcTemplate.update(
-            "INSERT INTO Ventas (metodo_pago, monto_total, fecha_venta) VALUES (?, ?, GETDATE())",
+            "INSERT INTO Ventas (metodo_pago, monto_total, fecha_venta) VALUES (?, ?, NOW())",
             metodoPago, montoTotal
         );
         return Map.of("mensaje", "Venta procesada con éxito y caja actualizada.");
@@ -44,7 +44,7 @@ public class GestionComercialService {
 }
 
     public Map<String, Object> crearPromocion(String nombre, int descuento, String codigo, String fechaExpiracion, String descripcion) {
-        String sql = "EXEC sp_crear_promocion ?, ?, ?, ?, ?";
+        String sql = "SELECT * FROM sp_crear_promocion(?, ?, ?, ?, ?)";
         return jdbcTemplate.queryForMap(sql, nombre, descuento, codigo, fechaExpiracion, descripcion);
     }
 
@@ -65,9 +65,9 @@ public class GestionComercialService {
     
     public List<Map<String, Object>> obtenerVentasRecientes() {
     String sql = "SELECT v.id_venta, " +
-                 "'VTA-' + RIGHT('0000' + CAST(v.id_venta AS VARCHAR), 4) AS boleta, " +
+                 "'VTA-' || LPAD(CAST(v.id_venta AS VARCHAR), 4, '0') AS boleta, " +
                  "v.fecha_venta AS fecha, " +
-                 "ISNULL(u.nombre, 'Público General') AS cliente, " +
+                 "COALESCE(u.nombre, 'Público General') AS cliente, " +
                  "CASE WHEN v.id_cita IS NOT NULL THEN 'Servicio' ELSE 'Producto' END AS detalle, " +
                  "v.metodo_pago AS metodo, " +
                  "v.monto_total AS total " +
@@ -79,10 +79,10 @@ public class GestionComercialService {
 
 public Map<String, Object> obtenerMetricasHoy() {
     String sql = "SELECT " +
-                 "ISNULL(SUM(monto_total), 0) AS totalCaja, " +
-                 "ISNULL(SUM(CASE WHEN id_cita IS NOT NULL THEN monto_total ELSE 0 END), 0) AS porServicios, " +
-                 "ISNULL(SUM(CASE WHEN id_cita IS NULL THEN monto_total ELSE 0 END), 0) AS porProductos " +
-                 "FROM Ventas WHERE CAST(fecha_venta AS DATE) = CAST(GETDATE() AS DATE)";
+                 "COALESCE(SUM(monto_total), 0) AS \"totalCaja\", " +
+                 "COALESCE(SUM(CASE WHEN id_cita IS NOT NULL THEN monto_total ELSE 0 END), 0) AS \"porServicios\", " +
+                 "COALESCE(SUM(CASE WHEN id_cita IS NULL THEN monto_total ELSE 0 END), 0) AS \"porProductos\" " +
+                 "FROM Ventas WHERE CAST(fecha_venta AS DATE) = CURRENT_DATE";
     return jdbcTemplate.queryForMap(sql);
 }
 

@@ -23,7 +23,7 @@ public class ClienteController {
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> listarClientes() {
         String sql = "SELECT id_usuario, nombre, email AS correo, telefono, " +
-                     "(SELECT COUNT(*) FROM Citas WHERE id_usuario = Usuarios.id_usuario) AS citasTotales " +
+                     "(SELECT COUNT(*) FROM Citas WHERE id_usuario = Usuarios.id_usuario) AS \"citasTotales\" " +
                      "FROM Usuarios WHERE rol = 'cliente'";  // ← id_cliente corregido a id_usuario
 
         List<Map<String, Object>> clientes = jdbcTemplate.queryForList(sql);
@@ -38,7 +38,7 @@ public class ClienteController {
             String telefono = (String) body.get("telefono");
 
             // Verificar si el correo ya existe
-            String sqlCheck = "SELECT COUNT(*) FROM Usuarios WHERE email = ?";
+            String sqlCheck = "SELECT COUNT(*) FROM Usuarios WHERE LOWER(email) = LOWER(?)";
             int existe = jdbcTemplate.queryForObject(sqlCheck, Integer.class, correo);
             if (existe > 0) {
                 return ResponseEntity.status(400).body(Map.of("mensaje", "El correo ya está registrado."));
@@ -48,7 +48,7 @@ public class ClienteController {
             String passwordTemporal = passwordEncoder.encode("Kim2024*");
 
             String sql = "INSERT INTO Usuarios (nombre, email, telefono, contraseña, rol, cuenta_verificada) " +
-                         "VALUES (?, ?, ?, ?, 'cliente', 1)";
+                         "VALUES (?, ?, ?, ?, 'cliente', TRUE)";
             jdbcTemplate.update(sql, nombre, correo, telefono, passwordTemporal);
 
             return ResponseEntity.ok(Map.of("mensaje", "Cliente registrado correctamente."));

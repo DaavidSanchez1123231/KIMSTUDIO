@@ -18,8 +18,8 @@ public class ServicioService {
 
     @Cacheable("serviciosCache")
     public List<Map<String, Object>> obtenerServiciosActivos() {
-        // Añadimos 'categoria AS categoriaId' para que Angular lo reconozca automáticamente
-        String sql = "SELECT id_servicio, nombre AS nombre, descripcion AS [desc], precio, duracion_minutos, imagen_url, categoria AS categoriaId " +
+        // Añadimos 'categoria AS \"categoriaId\"' para que Angular lo reconozca automáticamente
+        String sql = "SELECT id_servicio, nombre AS nombre, descripcion AS \"desc\", precio, duracion_minutos, imagen_url, categoria AS \"categoriaId\" " +
                      "FROM Servicios WHERE estado = '1'";
         return jdbcTemplate.queryForList(sql);
     }
@@ -29,7 +29,7 @@ public class ServicioService {
         
         // Agregamos 'categoria' a la consulta SQL
         String sql = "INSERT INTO Servicios (nombre, descripcion, precio, duracion_minutos, imagen_url, categoria, estado) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, 'ACTIVO')";
+                     "VALUES (?, ?, ?, ?, ?, ?, TRUE)";
         
         // Pasamos la variable 'categoria' al jdbcTemplate
         jdbcTemplate.update(sql, nombre, descripcion, precio, duracionMinutos, imagenUrl, categoria);
@@ -41,7 +41,7 @@ public class ServicioService {
 
     @CacheEvict(value = "serviciosCache", allEntries = true)
     public Map<String, Object> eliminarServicio(int idServicio) {
-        String sql = "UPDATE Servicios SET estado = 'INACTIVO' WHERE id_servicio = ?";
+        String sql = "UPDATE Servicios SET estado = FALSE WHERE id_servicio = ?";
         jdbcTemplate.update(sql, idServicio);
         
         Map<String, Object> respuesta = new HashMap<>();

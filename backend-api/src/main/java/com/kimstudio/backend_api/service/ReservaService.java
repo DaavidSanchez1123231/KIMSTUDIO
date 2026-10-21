@@ -12,17 +12,17 @@ public class ReservaService {
     private JdbcTemplate jdbcTemplate;
 
     public List<Map<String, Object>> obtenerHorariosDisponibles(int idEspecialista, String fecha) {
-        String sql = "EXEC sp_horarios_disponibles ?, ?";
+        String sql = "SELECT * FROM sp_horarios_disponibles(?, ?)";
         return jdbcTemplate.queryForList(sql, idEspecialista, fecha);
     }
 
     public Map<String, Object> reservarCitaTemporal(int idUsuario, int idHorario, int idServicio) {
-        String sql = "EXEC sp_reservar_cita_temporal ?, ?, ?";
+        String sql = "SELECT * FROM sp_reservar_cita_temporal(?, ?, ?)";
         return jdbcTemplate.queryForMap(sql, idUsuario, idHorario, idServicio);
     }
 
     public Map<String, Object> confirmarCita(int idHorario, int idUsuario) {
-        String sql = "EXEC sp_confirmar_cita ?, ?";
+        String sql = "SELECT * FROM sp_confirmar_cita(?, ?)";
         return jdbcTemplate.queryForMap(sql, idHorario, idUsuario);
     }
 }

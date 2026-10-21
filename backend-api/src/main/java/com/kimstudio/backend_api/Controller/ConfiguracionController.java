@@ -19,8 +19,8 @@ public class ConfiguracionController {
     @GetMapping("/empresa")
     public ResponseEntity<Map<String, Object>> obtenerConfiguracion() {
         try {
-            String sql = "SELECT TOP 1 nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
-                         "FROM Configuracion ORDER BY id_config DESC";
+            String sql = "SELECT nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
+                         "FROM Configuracion ORDER BY id_config DESC LIMIT 1";
             List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
             if (result.isEmpty()) {
                 return ResponseEntity.status(404).body(Map.of("mensaje", "Sin configuración."));
@@ -36,8 +36,8 @@ public class ConfiguracionController {
         try {
             String sql = "UPDATE Configuracion SET " +
                          "nombre_salon = ?, telefono_whatsapp = ?, direccion = ?, " +
-                         "instagram = ?, facebook = ?, fecha_actualizacion = GETDATE() " +
-                         "WHERE id_config = (SELECT TOP 1 id_config FROM Configuracion ORDER BY id_config DESC)";
+                         "instagram = ?, facebook = ?, fecha_actualizacion = NOW() " +
+                         "WHERE id_config = (SELECT id_config FROM Configuracion ORDER BY id_config DESC LIMIT 1)";
             jdbcTemplate.update(sql,
                 body.get("nombre_salon"),
                 body.get("telefono_whatsapp"),

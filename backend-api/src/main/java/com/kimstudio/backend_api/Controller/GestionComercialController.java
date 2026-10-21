@@ -62,7 +62,7 @@ public ResponseEntity<?> registrarVenta(@RequestBody Map<String, Object> body) {
     @DeleteMapping("/productos/{id}")
 public ResponseEntity<?> eliminarProducto(@PathVariable int id) {
     try {
-        int filas = jdbcTemplate.update("UPDATE Productos SET estado = 'INACTIVO' WHERE id_producto = ?", id);
+        int filas = jdbcTemplate.update("UPDATE Productos SET estado = FALSE WHERE id_producto = ?", id);
         if (filas == 0) return ResponseEntity.status(404).body(Map.of("mensaje", "Producto no encontrado."));
         return ResponseEntity.ok(Map.of("mensaje", "Producto eliminado correctamente."));
     } catch (Exception e) {
@@ -97,7 +97,7 @@ public ResponseEntity<?> anularVenta(@PathVariable int id, @RequestBody Map<Stri
 public ResponseEntity<?> eliminarPromocion(@PathVariable int id) {
     try {
         int filas = jdbcTemplate.update(
-            "UPDATE Promociones SET estado = 0 WHERE id_promocion = ?", id
+            "UPDATE Promociones SET estado = FALSE WHERE id_promocion = ?", id
         );
         if (filas == 0) {
             return ResponseEntity.status(404).body(Map.of("mensaje", "Promoción no encontrada."));

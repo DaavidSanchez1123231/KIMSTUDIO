@@ -17,19 +17,19 @@ public class EspecialistaService {
     public List<Map<String, Object>> obtenerEspecialistasActivos() {
         // Agregamos el campo 'telefono' a la consulta
         String sql = "SELECT id_especialista, nombre, especialidad, telefono, estado " +
-                     "FROM Especialistas WHERE estado = 1"; 
+                     "FROM Especialistas WHERE estado = TRUE"; 
         return jdbcTemplate.queryForList(sql);
     }
 
     public Map<String, Object> crearEspecialista(String nombre, String especialidad, String telefono) {
         // Guardamos el teléfono en la base de datos
-        String sql = "INSERT INTO Especialistas (nombre, especialidad, telefono, estado) VALUES (?, ?, ?, 1)";
+        String sql = "INSERT INTO Especialistas (nombre, especialidad, telefono, estado) VALUES (?, ?, ?, TRUE)";
         jdbcTemplate.update(sql, nombre, especialidad, telefono);
         return Map.of("mensaje", "Colaborador registrado exitosamente");
     }
 
    public Map<String, Object> eliminarEspecialista(int id) {
-    String sql = "UPDATE Especialistas SET estado = 0 WHERE id_especialista = ?"; 
+    String sql = "UPDATE Especialistas SET estado = FALSE WHERE id_especialista = ?"; 
     jdbcTemplate.update(sql, id);
     return Map.of("mensaje", "Empleado dado de baja correctamente");
     }

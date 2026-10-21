@@ -30,7 +30,7 @@ public class DashboardController {
 
     @GetMapping("/citas-recientes")
 public ResponseEntity<List<Map<String, Object>>> getCitasRecientes() {
-    String sql = "SELECT TOP 5 " +
+    String sql = "SELECT " +
              "c.id_cita, " +
              "h.fecha, " +
              "h.hora_inicio as hora, " +
@@ -41,7 +41,7 @@ public ResponseEntity<List<Map<String, Object>>> getCitasRecientes() {
              "JOIN Usuarios u ON c.id_usuario = u.id_usuario " +
              "JOIN Horarios h ON c.id_horario = h.id_horario " +
              "JOIN Servicios s ON c.id_servicio = s.id_servicio " +
-             "ORDER BY h.fecha DESC, h.hora_inicio DESC";
+             "ORDER BY h.fecha DESC, h.hora_inicio DESC LIMIT 5";
                  
     List<Map<String, Object>> citas = jdbcTemplate.queryForList(sql);
     return ResponseEntity.ok(citas);

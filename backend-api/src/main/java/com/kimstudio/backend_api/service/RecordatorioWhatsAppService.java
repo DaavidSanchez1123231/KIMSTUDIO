@@ -38,7 +38,7 @@ public class RecordatorioWhatsAppService {
     public void enviarRecordatoriosManana() {
         System.out.println("Iniciando agente de recordatorios de WhatsApp...");
         
-        String sql = "EXEC sp_obtener_citas_manana";
+        String sql = "SELECT * FROM sp_obtener_citas_manana()";
         List<Map<String, Object>> citasManana = jdbcTemplate.queryForList(sql);
 
         if (citasManana.isEmpty()) {

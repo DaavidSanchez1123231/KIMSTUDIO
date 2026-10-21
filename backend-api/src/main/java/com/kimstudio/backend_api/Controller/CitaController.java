@@ -42,7 +42,7 @@ public class CitaController {
             String nombreCliente = body.getNombre_cliente();
 
             // 2. Buscar el id_usuario por nombre (búsqueda simple)
-            String sqlUsuario = "SELECT TOP 1 id_usuario FROM Usuarios WHERE nombre LIKE ?";
+            String sqlUsuario = "SELECT id_usuario FROM Usuarios WHERE nombre ILIKE ? LIMIT 1";
             List<Map<String, Object>> usuarios = jdbcTemplate.queryForList(sqlUsuario, "%" + nombreCliente + "%");
 
             if (usuarios.isEmpty()) {
@@ -52,7 +52,7 @@ public class CitaController {
             int idUsuario = ((Number) usuarios.get(0).get("id_usuario")).intValue();
 
             // 3. Verificar si ya existe un horario para esa fecha/hora
-            String sqlHorario = "SELECT id_horario FROM Horarios WHERE fecha = ? AND hora_inicio = ? AND estado = 'disponible'";
+            String sqlHorario = "SELECT id_horario FROM Horarios WHERE fecha = ? AND hora_inicio = ? AND estado = 'DISPONIBLE'";
             List<Map<String, Object>> horarios = jdbcTemplate.queryForList(sqlHorario, fecha, hora);
 
             if (horarios.isEmpty()) {
@@ -92,7 +92,7 @@ public class CitaController {
             jdbcTemplate.update("DELETE FROM Citas WHERE id_cita = ?", id);
 
             // 3. Liberar el horario
-            jdbcTemplate.update("UPDATE Horarios SET estado = 'disponible' WHERE id_horario = ?", idHorario);
+            jdbcTemplate.update("UPDATE Horarios SET estado = 'DISPONIBLE' WHERE id_horario = ?", idHorario);
 
             return ResponseEntity.ok(Map.of("mensaje", "Cita eliminada correctamente."));
 

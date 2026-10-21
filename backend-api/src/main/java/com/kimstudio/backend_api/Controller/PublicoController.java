@@ -38,14 +38,14 @@ public class PublicoController {
         String sql = "SELECT id_promocion, nombre, descuento, codigo, " +
                      "fecha_expiracion, descripcion " +
                      "FROM Promociones WHERE estado = '1' " +
-                     "AND fecha_expiracion >= CAST(GETDATE() AS DATE)";
+                     "AND fecha_expiracion >= CURRENT_DATE";
         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
     }
     @GetMapping("/configuracion")
     public ResponseEntity<Map<String, Object>> obtenerConfiguracionPublica() {
         try {
-            String sql = "SELECT TOP 1 nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
-                        "FROM Configuracion ORDER BY id_config DESC";
+            String sql = "SELECT nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
+                        "FROM Configuracion ORDER BY id_config DESC LIMIT 1";
             List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
             if (result.isEmpty()) {
                 return ResponseEntity.status(404).body(Map.of("mensaje", "Sin configuración."));
