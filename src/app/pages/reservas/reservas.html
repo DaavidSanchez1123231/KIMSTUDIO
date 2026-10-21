@@ -24,51 +24,60 @@
         <h1>Reserva tu cita</h1>
         <p class="subtitle">Agenda tu experiencia premium en NOVA Beauty Salon</p>
 
-        <form (submit)="procesarReserva($event)">
-            
-            <div class="input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Nombre completo" required />
-            </div>
+                <form (submit)="procesarReserva($event)">
 
-            <div class="input-group">
-                <i class="fas fa-phone"></i>
-                <input type="tel" placeholder="Teléfono" required />
-            </div>
-
-            <div class="input-group">
-                <i class="fas fa-envelope"></i>
-                <input type="email" placeholder="Correo electrónico" required />
-            </div>
+            <p class="reservando-como" *ngIf="usuarioLogeado">
+                Reservando como <strong>{{ usuarioLogeado }}</strong>
+            </p>
 
             <div class="input-group">
                 <i class="fas fa-spa"></i>
-                <select required>
-                    <option value="">Selecciona un servicio</option>
-                    <option>Cabello & Tintes</option>
-                    <option>Manicura & Uñas</option>
-                    <option>Mirada & Cejas</option>
-                    <option>Tratamiento Facial</option>
+                <select name="servicio" [(ngModel)]="reserva.idServicio" required>
+                    <option [ngValue]="null">Selecciona un servicio</option>
+                    <option *ngFor="let s of listaServicios" [ngValue]="s.id_servicio">{{ s.nombre }}</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-user-tie"></i>
+                <select name="especialista" [ngModel]="reserva.idEspecialista"
+                        (ngModelChange)="reserva.idEspecialista = $event; cargarHorarios()" required>
+                    <option [ngValue]="null">Selecciona un especialista</option>
+                    <option *ngFor="let e of listaEspecialistas" [ngValue]="e.id_especialista">
+                        {{ e.nombre }} · {{ e.especialidad }}
+                    </option>
                 </select>
             </div>
 
             <div class="input-group">
                 <i class="fas fa-calendar"></i>
-                <input type="date" required />
+                <input type="date" name="fecha" [min]="hoy" [ngModel]="reserva.fecha"
+                       (ngModelChange)="reserva.fecha = $event; cargarHorarios()" required />
             </div>
 
-            <div class="input-group">
-                <i class="fas fa-clock"></i>
-                <input type="time" required />
+            <div class="horarios-box" *ngIf="reserva.idEspecialista && reserva.fecha">
+                <p class="horarios-titulo"><i class="fas fa-clock"></i> Horarios libres</p>
+
+                <p class="aviso" *ngIf="cargandoHorarios">Buscando horarios…</p>
+                <p class="aviso" *ngIf="!cargandoHorarios && horariosCargados && horarios.length === 0">
+                    No hay horarios libres ese día. Prueba otra fecha u otro especialista.
+                </p>
+
+                <div class="horarios-grid">
+                    <button type="button" class="slot" *ngFor="let h of horarios"
+                            [class.activo]="h.id_horario === reserva.idHorario"
+                            (click)="reserva.idHorario = h.id_horario">
+                        {{ h.hora_inicio | slice:0:5 }}
+                    </button>
+                </div>
             </div>
 
-            <div class="input-group">
-                <textarea rows="5" placeholder="Detalles adicionales..."></textarea>
-            </div>
+            <!-- DÉJALO IGUAL: tu bloque <div class="consent"> ... </div> con el checkbox aceptaPoliticas -->
 
-            <div class="consent"><label class="consent-item"><input type="checkbox" name="aceptaPoliticas" [(ngModel)]="aceptaPoliticas"> <span>Acepto la <a href="/politica-reembolsos" target="_blank" rel="noopener">Política de Reembolsos y Cancelaciones</a>, los <a href="/terminos-condiciones" target="_blank" rel="noopener">Términos y Condiciones</a> y autorizo el tratamiento de mis datos según la <a href="/politica-privacidad" target="_blank" rel="noopener">Política de Privacidad</a>. *</span></label></div>
-
-            <button type="submit" class="btn-reserva">RESERVAR CITA</button>
+            <button type="submit" class="btn-reserva"
+                    [disabled]="cargando || !reserva.idServicio || !reserva.idHorario">
+                {{ cargando ? 'RESERVANDO…' : 'RESERVAR CITA' }}
+            </button>
         </form>
     </div>
 </section>

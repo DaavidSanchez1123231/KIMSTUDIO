@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // <-- Necesario para capturar los datos
+import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -17,20 +17,27 @@ declare var particlesJS: any;
 export class ReservasComponent implements OnInit, AfterViewInit {
   usuarioLogeado: string | null = null;
   rolLogeado: string | null = null;
-  cargando: boolean = false;
+
+  cargando = false;            // enviando la reserva
+  cargandoHorarios = false;    // consultando horarios libres
+  horariosCargados = false;    // ya se consultó (para poder decir "no hay horarios")
 
   listaServicios: any[] = [];
+  listaEspecialistas: any[] = [];
+  horarios: any[] = [];
 
-  // Objeto reactivo para el formulario de cliente
+  // El cliente NO se envía: el backend lo toma del token (así nadie reserva a nombre de otro)
   reserva = {
-    nombre: '',
-    telefono: '',
-    correo: '',
-    id_servicio: '',
+    idServicio: null as number | null,
+    idEspecialista: null as number | null,
     fecha: '',
-    hora: '',
-    detalles: '' // Notas adicionales
+    idHorario: null as number | null
   };
+
+  aceptaPoliticas = false;
+
+  // YYYY-MM-DD en hora local (evita que después de las 7 pm aparezca "mañana")
+  hoy = new Date().toLocaleDateString('en-CA');
 
   constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
@@ -41,15 +48,13 @@ export class ReservasComponent implements OnInit, AfterViewInit {
 
       if (!this.usuarioLogeado) {
         alert("Debes iniciar sesión para reservar una cita.");
-        this.router.navigate(['/login']); 
-      } else {
-        // Pre-llenamos el correo si lo usamos como nombre de usuario al logear
-        this.reserva.correo = this.usuarioLogeado;
+        this.router.navigate(['/login']);
+        return;
       }
     }
 
-    // Cargamos los servicios disponibles desde SQL Server
     this.obtenerServicios();
+    this.obtenerEspecialistas();
   }
 
   private getHeaders(): HttpHeaders {
@@ -60,13 +65,48 @@ export class ReservasComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Endpoints públicos: solo traen lo activo y no exponen datos internos
   obtenerServicios(): void {
-    // Usamos el mismo endpoint que configuramos para el panel administrativo
-    this.http.get<any[]>(`${environment.apiUrl}/servicios`, { headers: this.getHeaders() }).subscribe({
-      next: (data) => this.listaServicios = data,
-      error: (err) => {
-        console.error('Error al cargar catálogo de servicios:', err);
+    this.http.get<any[]>(`${environment.apiUrl}/publico/servicios`).subscribe({
+      next: (data) => { this.listaServicios = data; this.cdr.detectChanges(); },
+      error: (err) => { console.error('Error al cargar servicios:', err); this.cdr.detectChanges(); }
+    });
+  }
+
+  obtenerEspecialistas(): void {
+    this.http.get<any[]>(`${environment.apiUrl}/publico/especialistas`).subscribe({
+      next: (data) => { this.listaEspecialistas = data; this.cdr.detectChanges(); },
+      error: (err) => { console.error('Error al cargar especialistas:', err); this.cdr.detectChanges(); }
+    });
+  }
+
+  /** Se ejecuta al cambiar especialista o fecha: pide solo los horarios libres reales. */
+  cargarHorarios(): void {
+    this.reserva.idHorario = null;
+    this.horarios = [];
+    this.horariosCargados = false;
+
+    if (!this.reserva.idEspecialista || !this.reserva.fecha) {
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.cargandoHorarios = true;
+    this.http.get<any[]>(`${environment.apiUrl}/reservas/disponibles`, {
+      headers: this.getHeaders(),
+      params: { idEspecialista: this.reserva.idEspecialista, fecha: this.reserva.fecha }
+    }).subscribe({
+      next: (data) => {
+        this.horarios = data;
+        this.horariosCargados = true;
+        this.cargandoHorarios = false;
         this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar horarios:', err);
+        this.cargandoHorarios = false;
+        this.cdr.detectChanges();
+        this.manejarSesion(err);
       }
     });
   }
@@ -91,32 +131,46 @@ export class ReservasComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/login']);
   }
 
-  aceptaPoliticas = false;
-
   procesarReserva(event: Event): void {
     event.preventDefault();
     if (!this.aceptaPoliticas) { alert('Debes aceptar la Política de Reembolsos, los Términos y la Política de Privacidad para reservar.'); return; }
-    this.cargando = true;
+    if (!this.reserva.idServicio || !this.reserva.idHorario || this.cargando) { return; }
 
-    // Enviamos la petición al backend
-    this.http.post(`${environment.apiUrl}/citas/cliente/reservar`, this.reserva, { headers: this.getHeaders() }).subscribe({
+    this.cargando = true;
+    const cuerpo = { idHorario: this.reserva.idHorario, idServicio: this.reserva.idServicio };
+
+    this.http.post<{ exito: boolean; mensaje: string }>(
+      `${environment.apiUrl}/citas/cliente/reservar`, cuerpo, { headers: this.getHeaders() }
+    ).subscribe({
       next: () => {
         alert("✨ Tu cita fue reservada correctamente. Te esperamos en NOVA Beauty Salon.");
         this.cargando = false;
-        this.router.navigate(['/']); // Redirigimos al inicio tras el éxito
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Error al reservar:', err);
         this.cargando = false;
-        this.cdr.detectChanges();
 
-        // Manejo de conflictos de horario (HTTP 409 Conflict)
         if (err.status === 409) {
-          alert("El horario seleccionado ya está ocupado. Por favor elige otra hora o fecha.");
-        } else {
+          // Alguien tomó ese horario justo antes: avisamos y mostramos los que siguen libres
+          alert(err.error?.mensaje ?? "Ese horario ya está ocupado. Elige otro.");
+          this.cargarHorarios();
+        } else if (!this.manejarSesion(err)) {
           alert("Ocurrió un error al procesar tu reserva. Por favor, intenta de nuevo.");
         }
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  /** Token vencido (dura 10 h) o inválido: Spring responde 401/403 → volver a iniciar sesión. */
+  private manejarSesion(err: any): boolean {
+    if (err.status === 401 || err.status === 403) {
+      alert("Tu sesión venció. Inicia sesión de nuevo para reservar.");
+      localStorage.clear();
+      this.router.navigate(['/login']);
+      return true;
+    }
+    return false;
   }
 }

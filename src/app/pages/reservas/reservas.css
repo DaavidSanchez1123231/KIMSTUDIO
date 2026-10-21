@@ -189,3 +189,34 @@ form { display: flex; flex-direction: column; gap: 20px; }
 @media(max-width:768px) {
     nav { flex-direction: column; gap: 20px; }
 }
+/* =========================
+   HORARIOS LIBRES
+========================= */
+.reservando-como { color: #bbb; font-size: 0.95rem; text-align: left; }
+.reservando-como strong { color: var(--brand-color); }
+
+.horarios-box { text-align: left; }
+.horarios-titulo { color: var(--brand-color); margin-bottom: 12px; font-weight: 600; }
+.horarios-titulo i { margin-right: 8px; }
+.aviso { color: #bbb; font-size: 0.9rem; margin-bottom: 10px; }
+
+.horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+}
+
+.slot {
+    padding: 12px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(104, 178, 168, 0.35);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--white);
+    font-family: inherit;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+.slot:hover { border-color: var(--brand-color); box-shadow: 0 0 12px rgba(104, 178, 168, 0.4); }
+.slot.activo { background: var(--brand-color); color: #000; font-weight: 700; }
+
+.btn-reserva:disabled { opacity: 0.45; cursor: not-allowed; }
