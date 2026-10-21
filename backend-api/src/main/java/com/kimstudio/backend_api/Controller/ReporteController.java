@@ -1,41 +1,60 @@
 package com.kimstudio.backend_api.Controller;
 
+import com.kimstudio.backend_api.service.ReporteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reportes")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ReporteController {
 
+    @Autowired private ReporteService reporteService;
+
     @GetMapping("/dashboard")
-    public ResponseEntity<Map<String, Object>> obtenerMetricas(
-            @RequestParam(required = false) String desde, 
-            @RequestParam(required = false) String hasta) {
-            
-        Map<String, Object> respuesta = new HashMap<>();
+    public ResponseEntity<?> dashboard(@RequestParam(required = false) String desde,
+                                       @RequestParam(required = false) String hasta) {
+        try {
+            LocalDate[] rango = rango(desde, hasta);
+            return ResponseEntity.ok(reporteService.dashboard(rango[0], rango[1]));
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            return error("Rango de fechas inválido. Usa el formato AAAA-MM-DD y que «desde» no sea posterior a «hasta».");
+        }
+    }
 
-        // 1. Estructura de Balance
-        Map<String, Object> balance = new HashMap<>();
-        balance.put("ingresosBrutos", 8500.00);
-        balance.put("insumosComisiones", 2100.00);
-        balance.put("utilidadNeta", 6400.00);
-        respuesta.put("balance", balance);
+    @GetMapping("/exportar/pdf")
+    public ResponseEntity<?> pdf(@RequestParam(required = false) String desde,
+                                 @RequestParam(required = false) String hasta) {
+        try {
+            LocalDate[] rango = rango(desde, hasta);
+            byte[] contenido = reporteService.generarPdf(rango[0], rango[1]);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"Reporte_NOVA_" + rango[0] + "_" + rango[1] + ".pdf\"")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(contenido);
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            return error("Rango de fechas inválido. Usa el formato AAAA-MM-DD y que «desde» no sea posterior a «hasta».");
+        }
+    }
 
-        // 2. Estructura de Servicios Top
-        List<Map<String, Object>> servicios = new ArrayList<>();
-        servicios.add(Map.of("nombre", "Balayage / Tintes", "porcentaje", 65));
-        servicios.add(Map.of("nombre", "Botox Capilar", "porcentaje", 25));
-        servicios.add(Map.of("nombre", "Uñas Acrílicas", "porcentaje", 10));
-        respuesta.put("serviciosTop", servicios);
+    /** Sin parámetros: del día 1 del mes actual a hoy. Máximo 366 días. */
+    private static LocalDate[] rango(String desde, String hasta) {
+        LocalDate fin = (hasta == null || hasta.isBlank()) ? LocalDate.now() : LocalDate.parse(hasta.trim());
+        LocalDate ini = (desde == null || desde.isBlank()) ? fin.withDayOfMonth(1) : LocalDate.parse(desde.trim());
+        if (ini.isAfter(fin) || ini.plusDays(366).isBefore(fin)) throw new IllegalArgumentException("rango");
+        return new LocalDate[]{ini, fin};
+    }
 
-        // 3. Estructura de Empleados Top
-        List<Map<String, Object>> empleados = new ArrayList<>();
-        empleados.add(Map.of("nombre", "Klara Mendoza", "puesto", "Estilista Principal", "monto", 4250.00));
-        empleados.add(Map.of("nombre", "Lucía Torres", "puesto", "Manicurista", "monto", 1800.00));
-        respuesta.put("empleadosTop", empleados);
-
-        return ResponseEntity.ok(respuesta);
+    private static ResponseEntity<Map<String, Object>> error(String mensaje) {
+        Map<String, Object> cuerpo = new HashMap<>();
+        cuerpo.put("mensaje", mensaje);
+        return ResponseEntity.badRequest().body(cuerpo);
     }
 }

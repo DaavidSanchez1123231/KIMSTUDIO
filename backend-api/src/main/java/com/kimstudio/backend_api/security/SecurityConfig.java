@@ -54,7 +54,10 @@ public class SecurityConfig {
                                      "/api/promociones", "/api/promociones/**").hasAuthority("admin")
                     
                     .requestMatchers("/api/reservas/**").authenticated()
-                    .requestMatchers("/api/citas/**").authenticated()
+                    .requestMatchers("/api/ventas", "/api/ventas/**").hasAnyAuthority("admin", "recepcion")
+                    .requestMatchers(HttpMethod.GET, "/api/productos", "/api/promociones").hasAnyAuthority("admin", "recepcion")
+                    .requestMatchers("/api/citas", "/api/citas/**").hasAnyAuthority("admin", "recepcion")
+                    .requestMatchers("/api/horarios", "/api/horarios/**").hasAnyAuthority("admin", "recepcion")
                     .anyRequest().authenticated()
                 );
                 
