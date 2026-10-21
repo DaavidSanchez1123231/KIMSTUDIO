@@ -32,6 +32,13 @@ public class PublicoController {
                      "FROM Servicios WHERE estado = '1'";
         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
     }
+        @GetMapping("/especialistas")
+    public ResponseEntity<List<Map<String, Object>>> obtenerEspecialistasPublicos() {
+        // Solo datos para elegir: NO se expone el teléfono ni el estado
+        String sql = "SELECT id_especialista, nombre, especialidad " +
+                     "FROM Especialistas WHERE estado = TRUE ORDER BY nombre";
+        return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
+    }
 
     @GetMapping("/promociones")
     public ResponseEntity<List<Map<String, Object>>> obtenerPromocionesPublicas() {
