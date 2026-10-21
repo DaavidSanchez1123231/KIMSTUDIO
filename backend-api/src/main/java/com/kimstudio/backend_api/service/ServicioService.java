@@ -31,11 +31,22 @@ public class ServicioService {
         String sql = "INSERT INTO Servicios (nombre, descripcion, precio, duracion_minutos, imagen_url, categoria, estado) " +
                      "VALUES (?, ?, ?, ?, ?, ?, TRUE)";
         
-        // Pasamos la variable 'categoria' al jdbcTemplate
         jdbcTemplate.update(sql, nombre, descripcion, precio, duracionMinutos, imagenUrl, categoria);
         
         Map<String, Object> respuesta = new HashMap<>();
         respuesta.put("mensaje", "Servicio creado exitosamente");
+        return respuesta;
+    }
+    @CacheEvict(value = "serviciosCache", allEntries = true)
+    public Map<String, Object> actualizarServicio(int idServicio, String nombre, String descripcion, double precio,
+                                                  int duracionMinutos, String imagenUrl, String categoria) {
+        String sql = "UPDATE Servicios SET nombre = ?, descripcion = ?, precio = ?, duracion_minutos = ?, "
+                   + "imagen_url = ?, categoria = ? WHERE id_servicio = ? AND estado = TRUE";
+        int filas = jdbcTemplate.update(sql, nombre, descripcion, precio, duracionMinutos, imagenUrl, categoria, idServicio);
+
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("actualizado", filas > 0);
+        respuesta.put("mensaje", filas > 0 ? "Servicio actualizado correctamente" : "Servicio no encontrado");
         return respuesta;
     }
 

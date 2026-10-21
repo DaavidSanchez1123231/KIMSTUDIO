@@ -56,6 +56,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/reservas/**").authenticated()
                     .requestMatchers("/api/ventas", "/api/ventas/**").hasAnyAuthority("admin", "recepcion")
                     .requestMatchers(HttpMethod.GET, "/api/productos", "/api/promociones").hasAnyAuthority("admin", "recepcion")
+                    .requestMatchers("/api/citas/cliente/**").authenticated()
                     .requestMatchers("/api/citas", "/api/citas/**").hasAnyAuthority("admin", "recepcion")
                     .requestMatchers("/api/horarios", "/api/horarios/**").hasAnyAuthority("admin", "recepcion")
                     .anyRequest().authenticated()
