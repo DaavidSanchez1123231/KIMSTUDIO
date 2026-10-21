@@ -1,0 +1,432 @@
+<main class="productos-page">
+
+  <!-- ENCABEZADO -->
+  <section class="productos-intro">
+    <div class="productos-intro-copy">
+      <span class="productos-kicker">
+        <i class="fas fa-boxes"></i>
+        CONTROL DE INVENTARIO
+      </span>
+
+      <h1>Nuestros <span>productos</span></h1>
+
+      <p>
+        Gestiona el inventario del salón, controla las existencias
+        y consulta los precios de tus productos profesionales.
+      </p>
+    </div>
+
+    <div class="productos-intro-icon" aria-hidden="true">
+      <i class="fas fa-box-open"></i>
+    </div>
+  </section>
+
+  <!-- BÚSQUEDA Y ACCIONES -->
+  <section class="productos-toolbar">
+
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+
+      <input
+        type="search"
+        [(ngModel)]="textoBusqueda"
+        (input)="filtrarProductos()"
+        placeholder="Buscar producto por nombre..."
+        aria-label="Buscar productos por nombre"
+      />
+
+      <span class="search-decoration">
+        <i class="fas fa-filter"></i>
+      </span>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="abrirModal()"
+    >
+      <i class="fas fa-plus"></i>
+      <span>Agregar producto</span>
+    </button>
+
+  </section>
+
+  <!-- CATÁLOGO DE INVENTARIO -->
+  <section class="inventario-section">
+
+    <div class="inventario-heading">
+      <div class="inventario-heading-info">
+        <span class="heading-icon">
+          <i class="fas fa-warehouse"></i>
+        </span>
+
+        <div>
+          <h2>Inventario del salón</h2>
+          <p>Productos, categorías, precios y existencias.</p>
+        </div>
+      </div>
+
+      <span class="inventario-status">
+        <span class="status-dot"></span>
+        Inventario
+      </span>
+    </div>
+
+    <!-- CUADRÍCULA DE PRODUCTOS -->
+    <div class="productos-grid">
+
+      <!-- CARGANDO -->
+      <div
+        *ngIf="cargando"
+        class="product-state"
+      >
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Cargando inventario desde el servidor...</span>
+      </div>
+
+      <!-- SIN RESULTADOS -->
+      <div
+        *ngIf="!cargando && productosFiltrados.length === 0"
+        class="product-state empty-products"
+      >
+        <div class="empty-icon">
+          <i class="fas fa-box-open"></i>
+        </div>
+
+        <h3>No se encontraron productos</h3>
+
+        <p>
+          No hay productos que coincidan con tu búsqueda.
+          Puedes agregar uno nuevo al inventario.
+        </p>
+
+        <button
+          type="button"
+          class="empty-action"
+          (click)="abrirModal()"
+        >
+          <i class="fas fa-plus"></i>
+          Agregar producto
+        </button>
+      </div>
+
+      <!-- PRODUCTOS -->
+      @for (producto of productosFiltrados; track producto.id_producto) {
+        <article class="producto-card">
+
+          <!-- PARTE SUPERIOR -->
+          <div class="product-top">
+
+            <span
+              class="stock-badge"
+              [ngClass]="producto.stockClass"
+            >
+              <span class="stock-indicator"></span>
+              Stock: {{ producto.stock }} und.
+            </span>
+
+            <span class="category-tag">
+              {{ producto.categoria || 'General' }}
+            </span>
+
+          </div>
+
+          <!-- ICONO DEL PRODUCTO -->
+          <div class="product-visual">
+            <div class="product-visual-ring">
+              <i class="fas fa-box-open"></i>
+            </div>
+
+            <span class="product-visual-label">
+              NOVA ESSENTIALS
+            </span>
+
+            <div class="product-visual-decoration"></div>
+          </div>
+
+          <!-- INFORMACIÓN -->
+          <div class="producto-info">
+
+            <span class="product-overline">
+              PRODUCTO DE SALÓN
+            </span>
+
+            <h3>{{ producto.nombre }}</h3>
+
+            <p class="product-desc">
+              {{ producto.desc || 'Sin descripción disponible.' }}
+            </p>
+
+            <!-- PRECIO Y ACCIONES -->
+            <div class="price-row">
+
+              <div class="product-price">
+                <span>Precio de venta</span>
+
+                <strong>
+                  <small>S/</small>
+                  {{ producto.precio | number:'1.2-2' }}
+                </strong>
+              </div>
+
+              <div class="actions">
+
+                <button
+                  type="button"
+                  class="action-btn edit"
+                  title="Editar producto"
+                  aria-label="Editar producto"
+                >
+                  <i class="fas fa-pen"></i>
+                </button>
+
+                <button
+                  type="button"
+                  (click)="eliminarProducto(
+                    producto.id_producto,
+                    producto.nombre
+                  )"
+                  class="action-btn delete"
+                  title="Eliminar producto"
+                  aria-label="Eliminar producto"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="product-card-glow"></div>
+
+        </article>
+      }
+
+    </div>
+
+    <!-- PIE DEL INVENTARIO -->
+    <div class="inventario-footer">
+      <span>
+        <i class="fas fa-shield-alt"></i>
+        Administración del inventario
+      </span>
+
+      <span class="footer-brand">
+        NOVA <strong>BEAUTY SALON</strong>
+      </span>
+    </div>
+
+  </section>
+
+  <!-- MODAL: NUEVO PRODUCTO -->
+  <div
+    class="modal-overlay"
+    *ngIf="isModalOpen"
+    (click)="cerrarModal()"
+  >
+
+    <section
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-producto-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- ENCABEZADO DEL MODAL -->
+      <div class="modal-header">
+
+        <div class="modal-heading">
+          <span class="modal-icon">
+            <i class="fas fa-box-open"></i>
+          </span>
+
+          <div>
+            <span class="modal-kicker">NOVA BEAUTY SALON</span>
+            <h2 id="modal-producto-title">Nuevo producto</h2>
+            <p>Registra un producto en el inventario.</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="cerrarModal()"
+          title="Cerrar formulario"
+          aria-label="Cerrar formulario"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+      </div>
+
+      <!-- FORMULARIO -->
+      <form
+        class="producto-form"
+        (submit)="guardarProducto($event)"
+      >
+
+        <div class="form-section-label">
+          <i class="fas fa-info-circle"></i>
+          Información del producto
+        </div>
+
+        <!-- NOMBRE -->
+        <div class="form-group">
+          <label for="producto-nombre">
+            Nombre del producto
+          </label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-box"></i>
+
+            <input
+              id="producto-nombre"
+              type="text"
+              [(ngModel)]="nuevoProducto.nombre"
+              name="nombre"
+              required
+              placeholder="Ej. Protector Térmico Capilar"
+            />
+          </div>
+        </div>
+
+        <!-- CATEGORÍA -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="producto-categoria">
+              Categoría
+            </label>
+
+            <div class="form-input-wrapper select-wrapper">
+              <i class="fas fa-layer-group"></i>
+
+              <select
+                id="producto-categoria"
+                [(ngModel)]="nuevoProducto.categoria"
+                name="categoria"
+                required
+              >
+                <option value="" disabled>
+                  Selecciona una categoría
+                </option>
+
+                <option value="Cabello">Cabello</option>
+                <option value="Uñas">Uñas</option>
+                <option value="Cejas">Cejas y mirada</option>
+              </select>
+
+              <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+          <!-- PRECIO -->
+          <div class="form-group">
+            <label for="producto-precio">
+              Precio de venta (S/)
+            </label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-wallet"></i>
+
+              <input
+                id="producto-precio"
+                type="number"
+                [(ngModel)]="nuevoProducto.precio"
+                name="precio"
+                min="0"
+                step="0.01"
+                required
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STOCK Y DESCRIPCIÓN -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="producto-stock">
+              Cantidad en stock
+            </label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-cubes"></i>
+
+              <input
+                id="producto-stock"
+                type="number"
+                [(ngModel)]="nuevoProducto.stock"
+                name="stock"
+                min="0"
+                step="1"
+                required
+                placeholder="Ej. 20"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="producto-desc">
+              Descripción
+            </label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-align-left"></i>
+
+              <input
+                id="producto-desc"
+                type="text"
+                [(ngModel)]="nuevoProducto.desc"
+                name="desc"
+                required
+                placeholder="Ej. Insumo reparador"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AVISO -->
+        <div class="form-note">
+          <i class="fas fa-info-circle"></i>
+
+          <span>
+            Verifica el precio, la categoría y la cantidad antes de
+            guardar el producto.
+          </span>
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cerrarModal()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn-save"
+          >
+            <i class="fas fa-save"></i>
+            Guardar producto
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+
+</main>

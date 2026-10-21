@@ -1,0 +1,697 @@
+<div id="particles-js"></div>
+
+<div class="main-content">
+
+  <!-- ==================================
+       NAVEGACIÓN PRINCIPAL
+  =================================== -->
+  <nav class="navbar">
+
+    <a routerLink="/" class="logo">
+      <i class="fas fa-spa" aria-hidden="true"></i>
+
+      <span>
+        NOVA
+        <small>BEAUTY SALON</small>
+      </span>
+    </a>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-label="Abrir menú de navegación"
+    >
+      <i
+        class="fas"
+        [ngClass]="isMenuOpen ? 'fa-times' : 'fa-bars'"
+      ></i>
+    </button>
+
+    <div class="nav-links" [class.active]="isMenuOpen">
+
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Inicio
+      </a>
+
+      <a routerLink="/nuestros-servicios" routerLinkActive="active">
+        Servicios
+      </a>
+
+      <a routerLink="/reservas" routerLinkActive="active">
+        Reservar
+      </a>
+
+      <a routerLink="/promociones-publico" routerLinkActive="active">
+        Promociones
+      </a>
+
+      <a routerLink="/nosotros" routerLinkActive="active">
+        Nosotros
+      </a>
+
+      <a routerLink="/contacto" routerLinkActive="active">
+        Contacto
+      </a>
+
+      <a
+        *ngIf="!usuarioLogeado"
+        routerLink="/login"
+        class="cta-nav"
+      >
+        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+        Reservar cita
+      </a>
+
+    </div>
+
+    <!-- USUARIO CON SESIÓN INICIADA -->
+    <div class="user-panel" *ngIf="usuarioLogeado">
+
+      <span id="usuario-logeado">
+        <i class="fas fa-user-circle" aria-hidden="true"></i>
+
+        <span class="user-details">
+          {{ usuarioLogeado }}
+          <small>{{ rolLogeado }}</small>
+        </span>
+      </span>
+
+      <button
+        type="button"
+        id="logout-btn"
+        (click)="cerrarSesion()"
+      >
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+        Salir
+      </button>
+
+    </div>
+
+  </nav>
+
+  <!-- ==================================
+       PORTADA PRINCIPAL
+  =================================== -->
+  <section class="hero">
+
+    <div class="hero-content">
+
+      <span class="hero-eyebrow">
+        <span class="eyebrow-line"></span>
+        TU MOMENTO, TU BELLEZA
+        <span class="eyebrow-line"></span>
+      </span>
+
+      <h1>
+        NOVA
+        <span class="hero-title-sub">BEAUTY SALON</span>
+      </h1>
+
+      <h2 class="hero-heading">
+        Tu belleza merece
+        <span>brillar.</span>
+      </h2>
+
+      <p class="hero-text">
+        Descubre una experiencia de belleza premium,
+        donde cada detalle está diseñado para resaltar
+        tu esencia con elegancia, estilo y sofisticación.
+      </p>
+
+      <div class="hero-buttons">
+
+        <a routerLink="/reservas" class="cta-solid">
+          <i class="fas fa-calendar-check" aria-hidden="true"></i>
+          Reservar cita
+        </a>
+
+        <a href="#servicios" class="cta-outline">
+          Descubrir servicios
+          <i class="fas fa-arrow-down" aria-hidden="true"></i>
+        </a>
+
+      </div>
+
+      <div class="hero-features">
+
+        <div class="hero-feature">
+          <i class="fas fa-gem" aria-hidden="true"></i>
+
+          <span>
+            <strong>Estilo premium</strong>
+            <small>Detalles que enamoran</small>
+          </span>
+        </div>
+
+        <div class="hero-feature">
+          <i class="fas fa-heart" aria-hidden="true"></i>
+
+          <span>
+            <strong>Cuidado personal</strong>
+            <small>Tu belleza es única</small>
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="hero-decoration" aria-hidden="true">
+      <div class="hero-orbit orbit-one"></div>
+      <div class="hero-orbit orbit-two"></div>
+
+      <div class="hero-center">
+        <i class="fas fa-spa"></i>
+        <span>NOVA</span>
+        <small>BEAUTY SALON</small>
+      </div>
+
+      <div class="hero-decoration-dot dot-one"></div>
+      <div class="hero-decoration-dot dot-two"></div>
+      <div class="hero-decoration-dot dot-three"></div>
+    </div>
+
+    <a href="#transformacion" class="scroll-indicator">
+      <span>Descubre NOVA</span>
+      <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </a>
+
+  </section>
+
+  <!-- ==================================
+       VIDEO DE TRANSFORMACIÓN
+  =================================== -->
+  <section
+    id="transformacion"
+    class="video-section"
+    data-aos="fade-up"
+  >
+
+    <div class="section-heading">
+
+      <span class="section-eyebrow">
+        BELLEZA EN CADA DETALLE
+      </span>
+
+      <h2 class="section-title">
+        Nuestra <span>transformación</span>
+      </h2>
+
+      <p class="section-description">
+        Descubre cómo pequeños detalles pueden crear grandes cambios.
+      </p>
+
+    </div>
+
+    <div class="video-box glow-effect">
+
+      @if (!videoActivado) {
+
+        <button
+          type="button"
+          class="video-thumbnail"
+          (click)="videoActivado = true"
+          aria-label="Reproducir video de transformación"
+        >
+
+          <img
+            src="https://img.youtube.com/vi/sGWBu_pWPXA/hqdefault.jpg"
+            alt="Video de transformación de belleza"
+          />
+
+          <span class="video-overlay"></span>
+
+          <span class="play-button">
+            <i class="fas fa-play" aria-hidden="true"></i>
+          </span>
+
+          <span class="video-label">
+            Ver nuestra transformación
+          </span>
+
+        </button>
+
+      } @else {
+
+        <iframe
+          src="https://www.youtube.com/embed/sGWBu_pWPXA?autoplay=1"
+          title="NOVA Beauty Salon - Video de transformación"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+
+      }
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       GALERÍA: CABELLO Y TINTES
+  =================================== -->
+  <section id="servicios" class="gallery-category">
+
+    <div class="section-heading" data-aos="fade-right">
+
+      <span class="section-eyebrow">
+        ESTILO Y PERSONALIDAD
+      </span>
+
+      <h2 class="section-title">
+        Cabello <span>&amp; Tintes</span>
+      </h2>
+
+      <p class="section-description">
+        Botox capilar, balayage, mechas y morena iluminada.
+        Encuentra el estilo que mejor expresa tu esencia.
+      </p>
+
+    </div>
+
+    <div class="img-container" data-aos="fade-up">
+
+      <p *ngIf="cargandoGaleria" class="gallery-status">
+        <i class="fas fa-circle-notch fa-spin"></i>
+        Conectando con el servidor...
+      </p>
+
+      <p
+        *ngIf="!cargandoGaleria && trabajosCabello.length === 0"
+        class="gallery-status empty"
+      >
+        Próximamente nuevos trabajos.
+      </p>
+
+      @for (trabajo of trabajosCabello; track trabajo.id_trabajo) {
+
+        <article
+          class="img-box glow-effect"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Ver resultado: ' + trabajo.titulo"
+          (click)="abrirModal(trabajo.imgDespues)"
+          (keydown.enter)="abrirModal(trabajo.imgDespues)"
+          (keydown.space)="$event.preventDefault(); abrirModal(trabajo.imgDespues)"
+        >
+
+          <img
+            [src]="trabajo.imgAntes"
+            [alt]="'Antes: ' + trabajo.titulo"
+            loading="lazy"
+          />
+
+          <img
+            [src]="trabajo.imgDespues"
+            class="after"
+            [alt]="'Después: ' + trabajo.titulo"
+            loading="lazy"
+          />
+
+          <span class="image-badge">NOVA BEAUTY</span>
+
+          <div class="label">
+            {{ trabajo.titulo | uppercase }}
+          </div>
+
+          <span class="image-action">
+            <i class="fas fa-search-plus"></i>
+            Ver resultado
+          </span>
+
+        </article>
+
+      }
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       GALERÍA: MIRADA Y CEJAS
+  =================================== -->
+  <section class="gallery-category">
+
+    <div class="section-heading" data-aos="fade-right">
+
+      <span class="section-eyebrow">
+        RESALTA TU MIRADA
+      </span>
+
+      <h2 class="section-title">
+        Mirada <span>&amp; Cejas</span>
+      </h2>
+
+      <p class="section-description">
+        Pestañas 1x1, pigmentación y depilación
+        para destacar la belleza natural de tu rostro.
+      </p>
+
+    </div>
+
+    <div class="img-container" data-aos="fade-up">
+
+      <p *ngIf="cargandoGaleria" class="gallery-status">
+        <i class="fas fa-circle-notch fa-spin"></i>
+        Conectando con el servidor...
+      </p>
+
+      <p
+        *ngIf="!cargandoGaleria && trabajosCejas.length === 0"
+        class="gallery-status empty"
+      >
+        Próximamente nuevos trabajos.
+      </p>
+
+      @for (trabajo of trabajosCejas; track trabajo.id_trabajo) {
+
+        <article
+          class="img-box glow-effect"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Ver resultado: ' + trabajo.titulo"
+          (click)="abrirModal(trabajo.imgDespues)"
+          (keydown.enter)="abrirModal(trabajo.imgDespues)"
+          (keydown.space)="$event.preventDefault(); abrirModal(trabajo.imgDespues)"
+        >
+
+          <img
+            [src]="trabajo.imgAntes"
+            [alt]="'Antes: ' + trabajo.titulo"
+            loading="lazy"
+          />
+
+          <img
+            [src]="trabajo.imgDespues"
+            class="after"
+            [alt]="'Después: ' + trabajo.titulo"
+            loading="lazy"
+          />
+
+          <span class="image-badge">NOVA BEAUTY</span>
+
+          <div class="label">
+            {{ trabajo.titulo | uppercase }}
+          </div>
+
+          <span class="image-action">
+            <i class="fas fa-search-plus"></i>
+            Ver resultado
+          </span>
+
+        </article>
+
+      }
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       GALERÍA: MANICURA Y UÑAS
+  =================================== -->
+  <section class="gallery-category">
+
+    <div class="section-heading" data-aos="fade-right">
+
+      <span class="section-eyebrow">
+        ARTE EN TUS MANOS
+      </span>
+
+      <h2 class="section-title">
+        Manicura <span>&amp; Uñas</span>
+      </h2>
+
+      <p class="section-description">
+        Uñas esculpidas, gel, acrílico y nail art.
+        Diseños únicos para completar tu estilo.
+      </p>
+
+    </div>
+
+    <div class="img-container" data-aos="fade-up">
+
+      <p *ngIf="cargandoGaleria" class="gallery-status">
+        <i class="fas fa-circle-notch fa-spin"></i>
+        Conectando con el servidor...
+      </p>
+
+      <p
+        *ngIf="!cargandoGaleria && trabajosUnas.length === 0"
+        class="gallery-status empty"
+      >
+        Próximamente nuevos trabajos.
+      </p>
+
+      @for (trabajo of trabajosUnas; track trabajo.id_trabajo) {
+
+        <article
+          class="img-box glow-effect"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Ver resultado: ' + trabajo.titulo"
+          (click)="abrirModal(trabajo.imgDespues)"
+          (keydown.enter)="abrirModal(trabajo.imgDespues)"
+          (keydown.space)="$event.preventDefault(); abrirModal(trabajo.imgDespues)"
+        >
+
+          <img
+            [src]="trabajo.imgAntes"
+            [alt]="'Antes: ' + trabajo.titulo"
+            loading="lazy"
+          />
+
+          <img
+            [src]="trabajo.imgDespues"
+            class="after"
+            [alt]="'Después: ' + trabajo.titulo"
+            loading="lazy"
+          />
+
+          <span class="image-badge">NOVA BEAUTY</span>
+
+          <div class="label">
+            {{ trabajo.titulo | uppercase }}
+          </div>
+
+          <span class="image-action">
+            <i class="fas fa-search-plus"></i>
+            Ver resultado
+          </span>
+
+        </article>
+
+      }
+
+    </div>
+
+  </section>
+
+  <!-- ENLACE A TODOS LOS SERVICIOS -->
+  <div class="services-more">
+    <a routerLink="/nuestros-servicios" class="cta-outline">
+      Explorar todos los servicios
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <!-- ==================================
+       OPINIONES
+  =================================== -->
+  <section id="opiniones" class="testimonials">
+
+    <div class="section-heading">
+
+      <span class="section-eyebrow">
+        EXPERIENCIAS QUE INSPIRAN
+      </span>
+
+      <h2 class="section-title">
+        Opiniones <span>reales</span>
+      </h2>
+
+      <p class="section-description">
+        Cada experiencia es una oportunidad para hacerte brillar.
+      </p>
+
+    </div>
+
+    <div class="testimonials-grid">
+
+      <article class="testimonial-card">
+
+        <div class="testimonial-stars" aria-label="5 estrellas">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+
+        <i class="fas fa-quote-left quote-icon"></i>
+
+        <p>
+          "La mejor atención en Lima, mis uñas quedaron perfectas
+          y el color es justo lo que pedí."
+        </p>
+
+        <span class="testimonial-author">
+          <i class="fas fa-user-circle"></i>
+          María Fernanda
+        </span>
+
+      </article>
+
+      <article class="testimonial-card glow-effect">
+
+        <div class="testimonial-stars" aria-label="5 estrellas">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+
+        <i class="fas fa-quote-left quote-icon"></i>
+
+        <p>
+          "Súper profesional. El tinte me dejó el cabello brillante
+          y saludable."
+        </p>
+
+        <span class="testimonial-author">
+          <i class="fas fa-user-circle"></i>
+          Claudia S.
+        </span>
+
+      </article>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       LLAMADA A LA ACCIÓN
+  =================================== -->
+  <section class="final-cta">
+
+    <div class="final-cta-content">
+
+      <span class="section-eyebrow">
+        ES TU MOMENTO DE BRILLAR
+      </span>
+
+      <h2>
+        Regálate un momento
+        <span>para ti.</span>
+      </h2>
+
+      <p>
+        Vive la experiencia premium de NOVA Beauty Salon
+        y descubre una nueva forma de resaltar tu belleza.
+      </p>
+
+      <a routerLink="/login" class="cta-solid">
+        <i class="fas fa-calendar-check"></i>
+        Reserva tu cita
+        <i class="fas fa-arrow-right"></i>
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       PIE DE PÁGINA
+  =================================== -->
+  <footer class="site-footer">
+
+    <a routerLink="/" class="footer-logo">
+      <i class="fas fa-spa"></i>
+      <span>NOVA <small>BEAUTY SALON</small></span>
+    </a>
+
+    <p class="footer-description">
+      Belleza, bienestar y estilo en un solo lugar.
+    </p>
+
+    <div class="socials">
+
+      <a
+        href="https://www.instagram.com/km_studio_oficial"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram de NOVA Beauty Salon"
+      >
+        <i class="fab fa-instagram"></i>
+      </a>
+
+      <a
+        href="https://www.facebook.com/share/18Ujd4QjSA/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Facebook de NOVA Beauty Salon"
+      >
+        <i class="fab fa-facebook-f"></i>
+      </a>
+
+      <a
+        href="https://www.tiktok.com/@km_studio_oficial"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="TikTok de NOVA Beauty Salon"
+      >
+        <i class="fab fa-tiktok"></i>
+      </a>
+
+    </div>
+
+    <nav class="legal-links" aria-label="Enlaces legales">
+      <a href="/politica-privacidad">Privacidad</a>
+      <a href="/terminos-condiciones">Términos y condiciones</a>
+      <a href="/politica-cookies">Cookies</a>
+      <a href="/politica-reembolsos">Reembolsos</a>
+    </nav>
+
+    <p class="copyright">
+      © 2026 NOVA Beauty Salon — Todos los derechos reservados
+    </p>
+
+  </footer>
+
+</div>
+
+<!-- ==================================
+     MODAL DE IMAGEN
+=================================== -->
+<div
+  id="imageModal"
+  class="modal"
+  *ngIf="isModalOpen"
+  (click)="cerrarModal()"
+>
+
+  <button
+    type="button"
+    class="close-modal"
+    aria-label="Cerrar imagen"
+    (click)="cerrarModal(); $event.stopPropagation()"
+  >
+    &times;
+  </button>
+
+  <img
+    class="modal-content"
+    [src]="modalImageSrc"
+    alt="Resultado del tratamiento"
+    (click)="$event.stopPropagation()"
+  />
+
+  <p class="modal-caption">
+    NOVA BEAUTY SALON
+  </p>
+
+</div>

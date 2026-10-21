@@ -1,0 +1,382 @@
+<div id="particles-js"></div>
+
+<div class="main-content contact-page">
+
+  <!-- NAVBAR -->
+  <header class="contact-navbar">
+    <a routerLink="/" class="contact-logo">
+      NOVA <span>Beauty Salon</span>
+    </a>
+
+    <nav class="contact-nav-links" aria-label="Navegación principal">
+      <a routerLink="/">Inicio</a>
+      <a routerLink="/nuestros-servicios">Servicios</a>
+      <a routerLink="/reservas">Reservar</a>
+      <a routerLink="/promociones-publico">Promociones</a>
+      <a routerLink="/nosotros">Nosotros</a>
+      <a routerLink="/contacto" class="active">Contacto</a>
+
+      <a
+        *ngIf="!usuarioLogeado"
+        routerLink="/login"
+        class="cta-nav"
+      >
+        Reservar cita
+      </a>
+    </nav>
+
+    <div class="user-panel" *ngIf="usuarioLogeado">
+      <span class="user-name">
+        <i class="fas fa-user-circle"></i>
+        {{ usuarioLogeado }}
+        <small>({{ rolLogeado }})</small>
+      </span>
+
+      <button
+        type="button"
+        class="logout-btn"
+        (click)="cerrarSesion()"
+      >
+        <i class="fas fa-sign-out-alt"></i>
+        Salir
+      </button>
+    </div>
+  </header>
+
+  <!-- ENCABEZADO -->
+  <section class="contact-hero">
+    <div class="hero-content">
+      <span class="section-kicker">
+        <i class="fas fa-sparkles"></i>
+        ESTAMOS AQUÍ PARA TI
+      </span>
+
+      <h1>
+        Hablemos de tu
+        <span>belleza.</span>
+      </h1>
+
+      <p>
+        ¿Tienes alguna consulta o deseas reservar una cita?
+        Escríbenos y nuestro equipo te ayudará a encontrar la
+        experiencia perfecta para ti.
+      </p>
+
+      <div class="hero-decoration">
+        <span></span>
+        <i class="fas fa-gem"></i>
+        <span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO Y FORMULARIO -->
+  <section class="contact-section">
+    <div class="contact-container">
+
+      <!-- INFORMACIÓN DE CONTACTO -->
+      <aside class="contact-info glass-card">
+
+        <div class="card-heading">
+          <span class="heading-icon">
+            <i class="fas fa-comments"></i>
+          </span>
+
+          <div>
+            <span class="small-label">CONECTA CON NOVA</span>
+            <h2>Información de contacto</h2>
+          </div>
+        </div>
+
+        <p class="contact-description">
+          Queremos escucharte. Comunícate con nosotros a través
+          de nuestros canales oficiales y resolveremos tus dudas.
+        </p>
+
+        <div class="contact-details">
+
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-phone-alt"></i>
+            </div>
+
+            <div class="info-text">
+              <span>Teléfono</span>
+              <p>{{ config.telefono }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+
+            <div class="info-text">
+              <span>Correo electrónico</span>
+              <p>{{ config.correo }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+
+            <div class="info-text">
+              <span>Dirección</span>
+              <p>{{ config.direccion }}</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="contact-divider"></div>
+
+        <div class="social-heading">
+          <h3>Síguenos en redes</h3>
+          <p>Descubre novedades, estilos y promociones.</p>
+        </div>
+
+        <div class="socials">
+
+          <a
+            [href]="config.instagram"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            title="Instagram"
+          >
+            <i class="fab fa-instagram"></i>
+          </a>
+
+          <a
+            [href]="config.facebook"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            title="Facebook"
+          >
+            <i class="fab fa-facebook-f"></i>
+          </a>
+
+          <a
+            [href]="config.tiktok"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+            title="TikTok"
+          >
+            <i class="fab fa-tiktok"></i>
+          </a>
+
+          <a
+            [href]="config.whatsapp"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp"
+            title="WhatsApp"
+          >
+            <i class="fab fa-whatsapp"></i>
+          </a>
+
+        </div>
+
+        <div class="contact-decoration">
+          <i class="fas fa-spa"></i>
+        </div>
+      </aside>
+
+      <!-- FORMULARIO -->
+      <div class="contact-form glass-card">
+
+        <div class="form-heading">
+          <span class="small-label">QUEREMOS CONOCERTE</span>
+          <h2>Envíanos un mensaje</h2>
+          <p>
+            Completa el formulario y nos pondremos en contacto contigo.
+          </p>
+        </div>
+
+        <form (submit)="enviarMensaje($event)">
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="contacto-nombre">Nombre completo</label>
+
+              <div class="input-wrapper">
+                <i class="fas fa-user"></i>
+
+                <input
+                  id="contacto-nombre"
+                  type="text"
+                  [(ngModel)]="mensajeContacto.nombre"
+                  name="nombre"
+                  placeholder="Ingresa tu nombre"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="contacto-telefono">Teléfono</label>
+
+              <div class="input-wrapper">
+                <i class="fas fa-mobile-alt"></i>
+
+                <input
+                  id="contacto-telefono"
+                  type="tel"
+                  [(ngModel)]="mensajeContacto.telefono"
+                  name="telefono"
+                  placeholder="Tu número de teléfono"
+                  autocomplete="tel"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="contacto-correo">Correo electrónico</label>
+
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+
+              <input
+                id="contacto-correo"
+                type="email"
+                [(ngModel)]="mensajeContacto.correo"
+                name="correo"
+                placeholder="ejemplo@correo.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="contacto-mensaje">¿En qué podemos ayudarte?</label>
+
+            <div class="textarea-wrapper">
+              <textarea
+                id="contacto-mensaje"
+                [(ngModel)]="mensajeContacto.mensaje"
+                name="mensaje"
+                placeholder="Cuéntanos tu consulta..."
+                rows="5"
+                required
+              ></textarea>
+            </div>
+
+            <span class="field-hint">
+              Estamos encantados de ayudarte.
+            </span>
+          </div>
+
+          <div class="consent">
+            <label class="consent-item">
+              <input
+                type="checkbox"
+                name="aceptaPrivacidad"
+                [(ngModel)]="mensajeContacto.aceptaPrivacidad"
+                required
+              />
+
+              <span>
+                Autorizo el uso de mis datos para responder esta consulta,
+                según la
+                <a
+                  routerLink="/politica-privacidad"
+                  target="_blank"
+                >
+                  Política de Privacidad
+                </a>.
+              </span>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-contact"
+            [disabled]="enviandoMensaje"
+          >
+            <span>
+              <i
+                [class]="enviandoMensaje
+                  ? 'fas fa-spinner fa-spin'
+                  : 'fas fa-paper-plane'"
+              ></i>
+
+              {{ enviandoMensaje ? 'ENVIANDO...' : 'ENVIAR MENSAJE' }}
+            </span>
+          </button>
+
+          <p class="form-security">
+            <i class="fas fa-lock"></i>
+            Tu información será tratada de acuerdo con nuestra política
+            de privacidad.
+          </p>
+
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MAPA -->
+  <section class="map-section">
+    <div class="map-heading">
+      <span class="small-label">ENCUÉNTRANOS</span>
+      <h2>Visítanos en <span>NOVA</span></h2>
+      <p>
+        Nos encantará recibirte y brindarte una experiencia de belleza
+        excepcional.
+      </p>
+    </div>
+
+    <div class="map-container">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.611685638433!2d-77.042793!3d-12.046374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8c5f2c9f2b1%3A0x2f0c4c7d6b9d8f7!2sLima%2C%20Peru!5e0!3m2!1ses!2spe!4v1710000000000!5m2!1ses!2spe"
+        title="Ubicación de NOVA Beauty Salon en Google Maps"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="contact-cta">
+    <div class="cta-content">
+      <i class="fas fa-gem"></i>
+      <h2>Tu próxima experiencia de belleza comienza aquí.</h2>
+      <p>
+        Date el tiempo que mereces. Nosotros nos encargamos del resto.
+      </p>
+
+      <a routerLink="/reservas" class="cta-button">
+        RESERVAR MI CITA
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="contact-footer">
+    <a routerLink="/" class="footer-logo">
+      NOVA <span>Beauty Salon</span>
+    </a>
+
+    <p>
+      © 2026 NOVA Beauty Salon · Todos los derechos reservados.
+    </p>
+
+    <nav class="legal-links" aria-label="Enlaces legales">
+      <a routerLink="/politica-privacidad">Privacidad</a>
+      <a routerLink="/terminos-condiciones">Términos y condiciones</a>
+      <a routerLink="/politica-cookies">Cookies</a>
+      <a routerLink="/politica-reembolsos">Reembolsos</a>
+    </nav>
+  </footer>
+
+</div>

@@ -1,0 +1,349 @@
+<div id="particles-js"></div>
+
+<div class="promos-page">
+
+  <!-- ==================================
+       NAVEGACIÓN
+  =================================== -->
+  <nav class="promos-navbar">
+
+    <a routerLink="/" class="logo">
+      <i class="fas fa-spa" aria-hidden="true"></i>
+
+      <span>
+        NOVA
+        <small>BEAUTY SALON</small>
+      </span>
+    </a>
+
+    <div class="nav-links">
+
+      <a routerLink="/">Inicio</a>
+
+      <a routerLink="/nuestros-servicios">Servicios</a>
+
+      <a routerLink="/reservas">Reservar</a>
+
+      <a routerLink="/promociones-publico" class="active">
+        Promociones
+      </a>
+
+      <a routerLink="/nosotros">Nosotros</a>
+
+      <a routerLink="/contacto">Contacto</a>
+
+    </div>
+
+    <!-- USUARIO CON SESIÓN INICIADA -->
+    <div class="user-panel" *ngIf="usuarioLogeado">
+
+      <span id="usuario-logeado">
+        <i class="fas fa-user-circle" aria-hidden="true"></i>
+        {{ usuarioLogeado }}
+      </span>
+
+      <button
+        type="button"
+        id="logout-btn"
+        (click)="cerrarSesion()"
+      >
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+        Salir
+      </button>
+
+    </div>
+
+  </nav>
+
+  <!-- ==================================
+       PORTADA DE PROMOCIONES
+  =================================== -->
+  <section class="promo-hero">
+
+    <div class="promo-orbit promo-orbit-one"></div>
+    <div class="promo-orbit promo-orbit-two"></div>
+
+    <div class="promo-hero-content">
+
+      <span class="eyebrow">
+        <span></span>
+        BENEFICIOS EXCLUSIVOS
+        <span></span>
+      </span>
+
+      <h1>
+        Promociones
+        <span>especiales</span>
+      </h1>
+
+      <p class="hero-description">
+        Tu belleza merece lo mejor.
+        Descubre nuestras ofertas y disfruta tu experiencia
+        NOVA Beauty Salon a un precio especial.
+      </p>
+
+      <a href="#ofertas" class="hero-button">
+        Descubrir ofertas
+        <i class="fas fa-arrow-down" aria-hidden="true"></i>
+      </a>
+
+      <div class="hero-decoration-label">
+        <i class="fas fa-gem" aria-hidden="true"></i>
+        NOVA BEAUTY SALON
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       LISTADO DE PROMOCIONES
+  =================================== -->
+  <main id="ofertas" class="promo-section">
+
+    <div class="section-heading">
+
+      <span class="section-eyebrow">
+        UN DETALLE ESPECIAL PARA TI
+      </span>
+
+      <h2 class="section-title">
+        Nuestras <span>ofertas vigentes</span>
+      </h2>
+
+      <p class="section-description">
+        Aprovecha nuestras promociones y regálate
+        un momento para resaltar tu belleza.
+      </p>
+
+      <div class="title-divider">
+        <span></span>
+        <i class="fas fa-gem" aria-hidden="true"></i>
+        <span></span>
+      </div>
+
+    </div>
+
+    <!-- CARGANDO PROMOCIONES -->
+    <div *ngIf="cargando" class="promo-message">
+
+      <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+
+      <h3>Preparando tus promociones</h3>
+
+      <p>
+        Estamos buscando las mejores ofertas para ti.
+      </p>
+
+    </div>
+
+    <!-- SIN PROMOCIONES -->
+    <div
+      *ngIf="!cargando && promociones.length === 0"
+      class="promo-message empty-message"
+    >
+
+      <i class="fas fa-gift" aria-hidden="true"></i>
+
+      <h3>Próximamente nuevas ofertas</h3>
+
+      <p>
+        Por el momento no tenemos promociones activas.
+        Vuelve pronto para descubrir nuevas sorpresas.
+      </p>
+
+      <a routerLink="/nuestros-servicios" class="btn-secondary">
+        Explorar servicios
+        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+      </a>
+
+    </div>
+
+    <!-- TARJETAS DE PROMOCIONES -->
+    <div
+      *ngIf="!cargando && promociones.length > 0"
+      class="promos-grid"
+    >
+
+      @for (promo of promociones; track promo.id_promocion) {
+
+        <article class="promo-card glow-effect">
+
+          <!-- DECORACIÓN SUPERIOR -->
+          <div class="promo-card-top">
+
+            <div class="promo-icon">
+              <i class="fas fa-gift" aria-hidden="true"></i>
+            </div>
+
+            <span class="promo-label">
+              OFERTA ESPECIAL
+            </span>
+
+          </div>
+
+          <!-- DESCUENTO -->
+          <div class="discount-badge">
+            <i class="fas fa-tags" aria-hidden="true"></i>
+            {{ promo.descuentoTexto }}
+          </div>
+
+          <!-- INFORMACIÓN -->
+          <div class="promo-info">
+
+            <h3>{{ promo.titulo }}</h3>
+
+            <p class="promo-description">
+              {{ promo.descripcion }}
+            </p>
+
+          </div>
+
+          <!-- VIGENCIA -->
+          <div class="promo-date">
+
+            <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+
+            <div>
+              <span>Vigencia de la promoción</span>
+              <strong>{{ promo.fechaFormateada }}</strong>
+            </div>
+
+          </div>
+
+          <!-- CÓDIGO PROMOCIONAL -->
+          <div class="code-panel">
+
+            <span class="code-label">
+              TU CÓDIGO PROMOCIONAL
+            </span>
+
+            <div class="code-tag">
+              <i class="fas fa-ticket-alt" aria-hidden="true"></i>
+              <strong>{{ promo.codigo }}</strong>
+            </div>
+
+            <p>
+              Presenta este código al gestionar tu reserva.
+            </p>
+
+          </div>
+
+          <!-- ACCIÓN -->
+          <a
+            routerLink="/reservas"
+            class="btn-reserva"
+          >
+            <span>Reservar ahora</span>
+
+            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
+
+          <div class="promo-card-bottom">
+            <i class="fas fa-spa" aria-hidden="true"></i>
+            NOVA BEAUTY SALON
+          </div>
+
+        </article>
+
+      }
+
+    </div>
+
+    <!-- LLAMADA FINAL -->
+    <section
+      class="promo-cta"
+      *ngIf="!cargando && promociones.length > 0"
+    >
+
+      <div class="promo-cta-icon">
+        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+      </div>
+
+      <div class="promo-cta-text">
+
+        <h3>¿Encontraste tu promoción favorita?</h3>
+
+        <p>
+          Reserva tu cita y disfruta tu próxima experiencia NOVA.
+        </p>
+
+      </div>
+
+      <a routerLink="/reservas" class="cta-solid">
+        Reservar cita
+        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+      </a>
+
+    </section>
+
+  </main>
+
+  <!-- ==================================
+       PIE DE PÁGINA
+  =================================== -->
+  <footer class="promos-footer">
+
+    <a routerLink="/" class="footer-logo">
+      <i class="fas fa-spa" aria-hidden="true"></i>
+
+      <span>
+        NOVA
+        <small>BEAUTY SALON</small>
+      </span>
+    </a>
+
+    <p class="footer-description">
+      Belleza, bienestar y estilo en un solo lugar.
+    </p>
+
+    <div class="footer-socials">
+
+      <a
+        href="https://www.instagram.com/km_studio_oficial"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram"
+      >
+        <i class="fab fa-instagram"></i>
+      </a>
+
+      <a
+        href="https://www.facebook.com/share/18Ujd4QjSA/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Facebook"
+      >
+        <i class="fab fa-facebook-f"></i>
+      </a>
+
+      <a
+        href="https://www.tiktok.com/@km_studio_oficial"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="TikTok"
+      >
+        <i class="fab fa-tiktok"></i>
+      </a>
+
+    </div>
+
+    <nav class="legal-links" aria-label="Enlaces legales">
+
+      <a href="/politica-privacidad">Privacidad</a>
+
+      <a href="/terminos-condiciones">Términos y condiciones</a>
+
+      <a href="/politica-cookies">Cookies</a>
+
+      <a href="/politica-reembolsos">Reembolsos</a>
+
+    </nav>
+
+    <p class="copyright">
+      © 2026 NOVA Beauty Salon · Todos los derechos reservados
+    </p>
+
+  </footer>
+
+</div>

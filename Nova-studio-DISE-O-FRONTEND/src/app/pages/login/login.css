@@ -1,0 +1,725 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* ======================================
+   CONFIGURACIÓN GENERAL
+====================================== */
+
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  background: #020708;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.login-wrapper {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+  padding: 35px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #020708;
+}
+
+/* ======================================
+   FONDO ARTÍSTICO NOVA
+====================================== */
+
+.login-wrapper {
+  position: relative;
+  isolation: isolate;
+
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+
+  padding: 35px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  /* Imagen de fondo */
+  background-color: #020708;
+  background-image: url('/assets/nova-login-bg.webp');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Capa oscura y resplandor turquesa */
+
+.login-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 8, 10, 0.12),
+      rgba(0, 8, 10, 0.25)
+    ),
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(0, 225, 245, 0.06),
+      transparent 55%
+    );
+}
+
+/* Capa de partículas */
+
+#particles-js {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* La tarjeta debe quedar por encima del fondo */
+
+.login-card {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  max-width: 770px;
+
+  padding: 42px 70px 38px;
+
+  text-align: center;
+
+  background: rgba(0, 10, 12, 0.83);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(0, 239, 255, 0.85);
+  border-radius: 36px;
+
+  box-shadow:
+    0 0 15px rgba(0, 239, 255, 0.15),
+    0 0 35px rgba(0, 239, 255, 0.10),
+    inset 0 0 30px rgba(0, 239, 255, 0.035);
+
+  transition:
+    box-shadow 0.4s ease,
+    border-color 0.4s ease,
+    transform 0.4s ease;
+
+  animation: card-appear 0.8s ease both;
+}
+
+/* ======================================
+   TARJETA PRINCIPAL DE CRISTAL
+====================================== */
+
+.login-card {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  max-width: 770px;
+
+  padding: 42px 70px 38px;
+
+  text-align: center;
+
+  background: rgba(0, 10, 12, 0.83);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(0, 239, 255, 0.85);
+  border-radius: 36px;
+
+  box-shadow:
+    0 0 15px rgba(0, 239, 255, 0.15),
+    0 0 35px rgba(0, 239, 255, 0.10),
+    inset 0 0 30px rgba(0, 239, 255, 0.035);
+
+  transition:
+    box-shadow 0.4s ease,
+    border-color 0.4s ease,
+    transform 0.4s ease;
+
+  animation: card-appear 0.8s ease both;
+}
+
+/* Reflejo interior */
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(0, 239, 255, 0.09),
+      transparent 55%
+    );
+
+  opacity: 0.8;
+}
+
+/* Mantener el contenido encima del reflejo */
+
+.login-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.login-card:hover {
+  border-color: #45f7ff;
+
+  box-shadow:
+    0 0 20px rgba(0, 239, 255, 0.22),
+    0 0 50px rgba(0, 239, 255, 0.12),
+    inset 0 0 30px rgba(0, 239, 255, 0.04);
+}
+
+/* ======================================
+   LOGOTIPO NOVA BEAUTY SALON
+====================================== */
+
+.brand-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+
+  margin: 0 auto 20px;
+}
+
+.brand-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 78px;
+  height: 90px;
+  flex-shrink: 0;
+
+  color: #20efff;
+  font-size: 62px;
+
+  filter: drop-shadow(
+    0 0 12px rgba(0, 239, 255, 0.35)
+  );
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-copy h1 {
+  margin: 0;
+
+  color: #25f2ff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  font-weight: 600;
+  line-height: 1;
+
+  letter-spacing: 5px;
+
+  text-shadow:
+    0 0 10px rgba(0, 239, 255, 0.45),
+    0 0 30px rgba(0, 239, 255, 0.17);
+}
+
+.brand-subtitle {
+  width: 100%;
+  margin-top: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.brand-subtitle p {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 500;
+
+  letter-spacing: 6px;
+  white-space: nowrap;
+}
+
+.brand-subtitle span {
+  display: block;
+  width: 34px;
+  height: 1px;
+
+  background: #d9ffff;
+
+  box-shadow: 0 0 6px rgba(0, 239, 255, 0.5);
+}
+
+/* ======================================
+   TEXTO DE BIENVENIDA
+====================================== */
+
+.subtitle {
+  margin: 22px 0 38px;
+
+  color: #c0dce2;
+
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.5;
+
+  letter-spacing: 0.2px;
+}
+
+/* ======================================
+   CAMPOS DE ENTRADA
+====================================== */
+
+.input-group {
+  position: relative;
+  width: 100%;
+  margin-bottom: 19px;
+}
+
+.input-group i {
+  position: absolute;
+
+  top: 50%;
+  left: 30px;
+
+  transform: translateY(-50%);
+
+  color: #00efff;
+  font-size: 27px;
+
+  pointer-events: none;
+
+  filter: drop-shadow(
+    0 0 5px rgba(0, 239, 255, 0.25)
+  );
+
+  transition: color 0.3s ease;
+}
+
+.input-group input {
+  display: block;
+  width: 100%;
+  height: 76px;
+
+  padding: 0 25px 0 84px;
+
+  color: #ffffff;
+  background: rgba(0, 18, 21, 0.48);
+
+  border: 1px solid rgba(0, 239, 255, 0.75);
+  border-radius: 28px;
+
+  outline: none;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+
+.input-group input::placeholder {
+  color: #91a8b2;
+  opacity: 1;
+}
+
+.input-group input:focus {
+  border-color: #5bfaff;
+
+  background: rgba(0, 27, 31, 0.75);
+
+  box-shadow:
+    0 0 12px rgba(0, 239, 255, 0.17),
+    inset 0 0 12px rgba(0, 239, 255, 0.035);
+}
+
+.input-group:focus-within i {
+  color: #72fbff;
+}
+
+/* ======================================
+   MENSAJES DE ERROR
+====================================== */
+
+#error-msg {
+  margin: 25px 0;
+
+  color: #ff5363;
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+#error-msg i {
+  margin-right: 6px;
+}
+
+/* ======================================
+   BOTÓN INGRESAR
+====================================== */
+
+.btn-login {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  width: 100%;
+  min-height: 76px;
+
+  margin-top: 28px;
+  padding: 18px 25px;
+
+  border: 1px solid rgba(144, 255, 255, 0.9);
+  border-radius: 28px;
+
+  background: linear-gradient(
+    110deg,
+    #49f5ff 0%,
+    #08d9ed 50%,
+    #00c8e7 100%
+  );
+
+  color: #001014;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 23px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 15px rgba(0, 239, 255, 0.32),
+    0 0 35px rgba(0, 239, 255, 0.13),
+    inset 0 1px 4px rgba(255, 255, 255, 0.7);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+}
+
+.btn-login i {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 0 22px rgba(0, 239, 255, 0.5),
+    0 0 48px rgba(0, 239, 255, 0.2);
+}
+
+.btn-login:hover:not(:disabled) i {
+  transform: translateX(5px);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.btn-login:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  filter: grayscale(0.15);
+}
+
+/* ======================================
+   ENLACES INFERIORES
+====================================== */
+
+.extra-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 46px;
+  padding-top: 24px;
+
+  border-top: 1px solid rgba(0, 239, 255, 0.26);
+}
+
+.extra-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  min-width: 0;
+  padding: 4px 6px;
+
+  color: #21efff;
+  text-decoration: none;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  transition:
+    color 0.3s ease,
+    text-shadow 0.3s ease;
+
+  overflow-wrap: anywhere;
+}
+
+.extra-links a + a {
+  border-left: 1px solid rgba(0, 239, 255, 0.28);
+  padding-left: 20px;
+}
+
+.extra-links a i {
+  flex-shrink: 0;
+  font-size: 23px;
+}
+
+.extra-links a:hover {
+  color: #ffffff;
+
+  text-shadow:
+    0 0 8px rgba(0, 239, 255, 0.8);
+}
+
+/* ======================================
+   ANIMACIÓN DE APARICIÓN
+====================================== */
+
+@keyframes card-appear {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================================
+   TABLET
+====================================== */
+
+@media (max-width: 800px) {
+
+  .login-wrapper {
+    padding: 28px 18px;
+  }
+
+  .login-card {
+    max-width: 620px;
+    padding: 38px 35px;
+    border-radius: 28px;
+  }
+
+  .brand-copy h1 {
+    font-size: 4rem;
+  }
+
+  .brand-emblem {
+    width: 58px;
+    font-size: 48px;
+  }
+
+  .brand-subtitle p {
+    font-size: 14px;
+    letter-spacing: 4px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+  }
+
+  .extra-links {
+    gap: 7px;
+    margin-top: 35px;
+  }
+
+  .extra-links a {
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .extra-links a + a {
+    padding-left: 12px;
+  }
+
+  .extra-links a i {
+    font-size: 19px;
+  }
+}
+
+/* ======================================
+   CELULARES
+====================================== */
+
+@media (max-width: 520px) {
+
+  .login-wrapper {
+    padding: 22px 14px;
+  }
+
+  .login-wrapper::before {
+    background-position: 58% center;
+  }
+
+  .login-card {
+    width: 100%;
+    padding: 32px 22px;
+    border-radius: 24px;
+  }
+
+  .brand-header {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .brand-emblem {
+    width: 42px;
+    height: 60px;
+    font-size: 37px;
+  }
+
+  .brand-copy h1 {
+    font-size: clamp(2.6rem, 12vw, 3.7rem);
+    letter-spacing: 2px;
+  }
+
+  .brand-subtitle {
+    gap: 7px;
+    margin-top: 8px;
+  }
+
+  .brand-subtitle p {
+    font-size: 11px;
+    letter-spacing: 3px;
+  }
+
+  .brand-subtitle span {
+    width: 18px;
+  }
+
+  .subtitle {
+    margin: 20px 0 28px;
+    font-size: 14px;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  .input-group input {
+    height: 62px;
+    padding: 0 15px 0 58px;
+    border-radius: 20px;
+    font-size: 14px;
+  }
+
+  .input-group i {
+    left: 20px;
+    font-size: 21px;
+  }
+
+  .btn-login {
+    min-height: 62px;
+    margin-top: 22px;
+    border-radius: 20px;
+    font-size: 18px;
+  }
+
+  #error-msg {
+    font-size: 13px;
+  }
+
+  .extra-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin-top: 28px;
+    padding-top: 15px;
+  }
+
+  .extra-links a {
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 13px 8px;
+    font-size: 13px;
+  }
+
+  .extra-links a + a {
+    border-left: none;
+    border-top: 1px solid rgba(0, 239, 255, 0.15);
+    padding-left: 8px;
+  }
+
+  .extra-links a i {
+    width: 24px;
+    text-align: center;
+    font-size: 19px;
+  }
+}
+
+/* ======================================
+   REDUCIR ANIMACIONES SI SE SOLICITA
+====================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+}

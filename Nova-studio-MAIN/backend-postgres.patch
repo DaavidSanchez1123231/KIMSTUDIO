@@ -1,0 +1,393 @@
+diff --git a/backend-api/pom.xml b/backend-api/pom.xml
+index 7344cb1..c89f9e6 100644
+--- a/backend-api/pom.xml
++++ b/backend-api/pom.xml
+@@ -74,8 +74,8 @@
+ 		</dependency>
+ 
+ 		<dependency>
+-			<groupId>com.microsoft.sqlserver</groupId>
+-			<artifactId>mssql-jdbc</artifactId>
++			<groupId>org.postgresql</groupId>
++			<artifactId>postgresql</artifactId>
+ 			<scope>runtime</scope>
+ 		</dependency>
+ 		<dependency>
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/CitaController.java b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/CitaController.java
+index 73a434e..e5d5378 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/CitaController.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/CitaController.java
+@@ -42,7 +42,7 @@ public class CitaController {
+             String nombreCliente = body.getNombre_cliente();
+ 
+             // 2. Buscar el id_usuario por nombre (búsqueda simple)
+-            String sqlUsuario = "SELECT TOP 1 id_usuario FROM Usuarios WHERE nombre LIKE ?";
++            String sqlUsuario = "SELECT id_usuario FROM Usuarios WHERE nombre ILIKE ? LIMIT 1";
+             List<Map<String, Object>> usuarios = jdbcTemplate.queryForList(sqlUsuario, "%" + nombreCliente + "%");
+ 
+             if (usuarios.isEmpty()) {
+@@ -52,7 +52,7 @@ public class CitaController {
+             int idUsuario = ((Number) usuarios.get(0).get("id_usuario")).intValue();
+ 
+             // 3. Verificar si ya existe un horario para esa fecha/hora
+-            String sqlHorario = "SELECT id_horario FROM Horarios WHERE fecha = ? AND hora_inicio = ? AND estado = 'disponible'";
++            String sqlHorario = "SELECT id_horario FROM Horarios WHERE fecha = ? AND hora_inicio = ? AND estado = 'DISPONIBLE'";
+             List<Map<String, Object>> horarios = jdbcTemplate.queryForList(sqlHorario, fecha, hora);
+ 
+             if (horarios.isEmpty()) {
+@@ -92,7 +92,7 @@ public class CitaController {
+             jdbcTemplate.update("DELETE FROM Citas WHERE id_cita = ?", id);
+ 
+             // 3. Liberar el horario
+-            jdbcTemplate.update("UPDATE Horarios SET estado = 'disponible' WHERE id_horario = ?", idHorario);
++            jdbcTemplate.update("UPDATE Horarios SET estado = 'DISPONIBLE' WHERE id_horario = ?", idHorario);
+ 
+             return ResponseEntity.ok(Map.of("mensaje", "Cita eliminada correctamente."));
+ 
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ClienteController.java b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ClienteController.java
+index 50f9483..0e5eaac 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ClienteController.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ClienteController.java
+@@ -23,7 +23,7 @@ public class ClienteController {
+     @GetMapping
+     public ResponseEntity<List<Map<String, Object>>> listarClientes() {
+         String sql = "SELECT id_usuario, nombre, email AS correo, telefono, " +
+-                     "(SELECT COUNT(*) FROM Citas WHERE id_usuario = Usuarios.id_usuario) AS citasTotales " +
++                     "(SELECT COUNT(*) FROM Citas WHERE id_usuario = Usuarios.id_usuario) AS \"citasTotales\" " +
+                      "FROM Usuarios WHERE rol = 'cliente'";  // ← id_cliente corregido a id_usuario
+ 
+         List<Map<String, Object>> clientes = jdbcTemplate.queryForList(sql);
+@@ -38,7 +38,7 @@ public class ClienteController {
+             String telefono = (String) body.get("telefono");
+ 
+             // Verificar si el correo ya existe
+-            String sqlCheck = "SELECT COUNT(*) FROM Usuarios WHERE email = ?";
++            String sqlCheck = "SELECT COUNT(*) FROM Usuarios WHERE LOWER(email) = LOWER(?)";
+             int existe = jdbcTemplate.queryForObject(sqlCheck, Integer.class, correo);
+             if (existe > 0) {
+                 return ResponseEntity.status(400).body(Map.of("mensaje", "El correo ya está registrado."));
+@@ -48,7 +48,7 @@ public class ClienteController {
+             String passwordTemporal = passwordEncoder.encode("Kim2024*");
+ 
+             String sql = "INSERT INTO Usuarios (nombre, email, telefono, contraseña, rol, cuenta_verificada) " +
+-                         "VALUES (?, ?, ?, ?, 'cliente', 1)";
++                         "VALUES (?, ?, ?, ?, 'cliente', TRUE)";
+             jdbcTemplate.update(sql, nombre, correo, telefono, passwordTemporal);
+ 
+             return ResponseEntity.ok(Map.of("mensaje", "Cliente registrado correctamente."));
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ConfiguracionController.java b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ConfiguracionController.java
+index 4b8d51e..77f69b2 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ConfiguracionController.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/ConfiguracionController.java
+@@ -19,8 +19,8 @@ public class ConfiguracionController {
+     @GetMapping("/empresa")
+     public ResponseEntity<Map<String, Object>> obtenerConfiguracion() {
+         try {
+-            String sql = "SELECT TOP 1 nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
+-                         "FROM Configuracion ORDER BY id_config DESC";
++            String sql = "SELECT nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
++                         "FROM Configuracion ORDER BY id_config DESC LIMIT 1";
+             List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
+             if (result.isEmpty()) {
+                 return ResponseEntity.status(404).body(Map.of("mensaje", "Sin configuración."));
+@@ -36,8 +36,8 @@ public class ConfiguracionController {
+         try {
+             String sql = "UPDATE Configuracion SET " +
+                          "nombre_salon = ?, telefono_whatsapp = ?, direccion = ?, " +
+-                         "instagram = ?, facebook = ?, fecha_actualizacion = GETDATE() " +
+-                         "WHERE id_config = (SELECT TOP 1 id_config FROM Configuracion ORDER BY id_config DESC)";
++                         "instagram = ?, facebook = ?, fecha_actualizacion = NOW() " +
++                         "WHERE id_config = (SELECT id_config FROM Configuracion ORDER BY id_config DESC LIMIT 1)";
+             jdbcTemplate.update(sql,
+                 body.get("nombre_salon"),
+                 body.get("telefono_whatsapp"),
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/DashboardController.java b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/DashboardController.java
+index d9d3f78..408ebe6 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/DashboardController.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/DashboardController.java
+@@ -30,7 +30,7 @@ public class DashboardController {
+ 
+     @GetMapping("/citas-recientes")
+ public ResponseEntity<List<Map<String, Object>>> getCitasRecientes() {
+-    String sql = "SELECT TOP 5 " +
++    String sql = "SELECT " +
+              "c.id_cita, " +
+              "h.fecha, " +
+              "h.hora_inicio as hora, " +
+@@ -41,7 +41,7 @@ public ResponseEntity<List<Map<String, Object>>> getCitasRecientes() {
+              "JOIN Usuarios u ON c.id_usuario = u.id_usuario " +
+              "JOIN Horarios h ON c.id_horario = h.id_horario " +
+              "JOIN Servicios s ON c.id_servicio = s.id_servicio " +
+-             "ORDER BY h.fecha DESC, h.hora_inicio DESC";
++             "ORDER BY h.fecha DESC, h.hora_inicio DESC LIMIT 5";
+                  
+     List<Map<String, Object>> citas = jdbcTemplate.queryForList(sql);
+     return ResponseEntity.ok(citas);
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/GestionComercialController.java b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/GestionComercialController.java
+index 25bba3f..2e83d5e 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/GestionComercialController.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/GestionComercialController.java
+@@ -62,7 +62,7 @@ public ResponseEntity<?> registrarVenta(@RequestBody Map<String, Object> body) {
+     @DeleteMapping("/productos/{id}")
+ public ResponseEntity<?> eliminarProducto(@PathVariable int id) {
+     try {
+-        int filas = jdbcTemplate.update("UPDATE Productos SET estado = 'INACTIVO' WHERE id_producto = ?", id);
++        int filas = jdbcTemplate.update("UPDATE Productos SET estado = FALSE WHERE id_producto = ?", id);
+         if (filas == 0) return ResponseEntity.status(404).body(Map.of("mensaje", "Producto no encontrado."));
+         return ResponseEntity.ok(Map.of("mensaje", "Producto eliminado correctamente."));
+     } catch (Exception e) {
+@@ -97,7 +97,7 @@ public ResponseEntity<?> anularVenta(@PathVariable int id, @RequestBody Map<Stri
+ public ResponseEntity<?> eliminarPromocion(@PathVariable int id) {
+     try {
+         int filas = jdbcTemplate.update(
+-            "UPDATE Promociones SET estado = 0 WHERE id_promocion = ?", id
++            "UPDATE Promociones SET estado = FALSE WHERE id_promocion = ?", id
+         );
+         if (filas == 0) {
+             return ResponseEntity.status(404).body(Map.of("mensaje", "Promoción no encontrada."));
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/PublicoController.java b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/PublicoController.java
+index 591f860..9bc80b1 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/Controller/PublicoController.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/Controller/PublicoController.java
+@@ -38,14 +38,14 @@ public class PublicoController {
+         String sql = "SELECT id_promocion, nombre, descuento, codigo, " +
+                      "fecha_expiracion, descripcion " +
+                      "FROM Promociones WHERE estado = '1' " +
+-                     "AND fecha_expiracion >= CAST(GETDATE() AS DATE)";
++                     "AND fecha_expiracion >= CURRENT_DATE";
+         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
+     }
+     @GetMapping("/configuracion")
+     public ResponseEntity<Map<String, Object>> obtenerConfiguracionPublica() {
+         try {
+-            String sql = "SELECT TOP 1 nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
+-                        "FROM Configuracion ORDER BY id_config DESC";
++            String sql = "SELECT nombre_salon, telefono_whatsapp, direccion, instagram, facebook " +
++                        "FROM Configuracion ORDER BY id_config DESC LIMIT 1";
+             List<Map<String, Object>> result = jdbcTemplate.queryForList(sql);
+             if (result.isEmpty()) {
+                 return ResponseEntity.status(404).body(Map.of("mensaje", "Sin configuración."));
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/repository/UsuarioRepository.java b/backend-api/src/main/java/com/kimstudio/backend_api/repository/UsuarioRepository.java
+index 1d3092e..cca5734 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/repository/UsuarioRepository.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/repository/UsuarioRepository.java
+@@ -12,10 +12,10 @@ public class UsuarioRepository {
+     @Autowired private JdbcTemplate jdbcTemplate;
+ 
+     public Map<String, Object> registrarUsuario(String nombre, String email, String pass) {
+-        return jdbcTemplate.queryForMap("EXEC sp_registrar_usuario ?, ?, ?", nombre, email, pass);
++        return jdbcTemplate.queryForMap("SELECT * FROM sp_registrar_usuario(?, ?, ?)", nombre, email, pass);
+     }
+     public List<Map<String, Object>> buscarPorEmail(String email) {
+-        return jdbcTemplate.queryForList("SELECT * FROM Usuarios WHERE email = ?", email);
++        return jdbcTemplate.queryForList("SELECT * FROM Usuarios WHERE LOWER(email) = LOWER(?)", email);
+     }
+    
+     public int actualizarRol(int idUsuario, String nuevoRol) {
+@@ -23,7 +23,7 @@ public class UsuarioRepository {
+         return jdbcTemplate.update(sql, nuevoRol, idUsuario);
+     }
+     public int verificarCuenta(String email) {
+-        String sql = "UPDATE Usuarios SET cuenta_verificada = 1 WHERE email = ?";
++        String sql = "UPDATE Usuarios SET cuenta_verificada = TRUE WHERE LOWER(email) = LOWER(?)";
+         return jdbcTemplate.update(sql, email);
+     }
+ }
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/service/EspecialistaService.java b/backend-api/src/main/java/com/kimstudio/backend_api/service/EspecialistaService.java
+index 2fef306..509e640 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/service/EspecialistaService.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/service/EspecialistaService.java
+@@ -17,19 +17,19 @@ public class EspecialistaService {
+     public List<Map<String, Object>> obtenerEspecialistasActivos() {
+         // Agregamos el campo 'telefono' a la consulta
+         String sql = "SELECT id_especialista, nombre, especialidad, telefono, estado " +
+-                     "FROM Especialistas WHERE estado = 1"; 
++                     "FROM Especialistas WHERE estado = TRUE"; 
+         return jdbcTemplate.queryForList(sql);
+     }
+ 
+     public Map<String, Object> crearEspecialista(String nombre, String especialidad, String telefono) {
+         // Guardamos el teléfono en la base de datos
+-        String sql = "INSERT INTO Especialistas (nombre, especialidad, telefono, estado) VALUES (?, ?, ?, 1)";
++        String sql = "INSERT INTO Especialistas (nombre, especialidad, telefono, estado) VALUES (?, ?, ?, TRUE)";
+         jdbcTemplate.update(sql, nombre, especialidad, telefono);
+         return Map.of("mensaje", "Colaborador registrado exitosamente");
+     }
+ 
+    public Map<String, Object> eliminarEspecialista(int id) {
+-    String sql = "UPDATE Especialistas SET estado = 0 WHERE id_especialista = ?"; 
++    String sql = "UPDATE Especialistas SET estado = FALSE WHERE id_especialista = ?"; 
+     jdbcTemplate.update(sql, id);
+     return Map.of("mensaje", "Empleado dado de baja correctamente");
+     }
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/service/GestionComercialService.java b/backend-api/src/main/java/com/kimstudio/backend_api/service/GestionComercialService.java
+index 1486587..ca0033d 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/service/GestionComercialService.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/service/GestionComercialService.java
+@@ -17,7 +17,7 @@ public class GestionComercialService {
+     public Map<String, Object> registrarProducto(String nombre, String categoria, 
+                                                double precio, int stock, String descripcion) {
+     try {
+-        String sql = "EXEC sp_crear_producto ?, ?, ?, ?, ?";
++        String sql = "SELECT * FROM sp_crear_producto(?, ?, ?, ?, ?)";
+         return jdbcTemplate.queryForMap(sql, nombre, categoria, precio, stock, descripcion);
+     } catch (Exception e) {
+         // Si el SP no devuelve filas, hacemos INSERT directo
+@@ -31,12 +31,12 @@ public class GestionComercialService {
+ 
+     public Map<String, Object> registrarVenta(String cliente, String metodoPago, double montoTotal) {
+     try {
+-        String sql = "EXEC sp_registrar_venta ?, ?, ?";
++        String sql = "SELECT * FROM sp_registrar_venta(?, ?, ?)";
+         return jdbcTemplate.queryForMap(sql, cliente, metodoPago, montoTotal);
+     } catch (Exception e) {
+         // Fallback directo si el SP falla
+         jdbcTemplate.update(
+-            "INSERT INTO Ventas (metodo_pago, monto_total, fecha_venta) VALUES (?, ?, GETDATE())",
++            "INSERT INTO Ventas (metodo_pago, monto_total, fecha_venta) VALUES (?, ?, NOW())",
+             metodoPago, montoTotal
+         );
+         return Map.of("mensaje", "Venta procesada con éxito y caja actualizada.");
+@@ -44,7 +44,7 @@ public class GestionComercialService {
+ }
+ 
+     public Map<String, Object> crearPromocion(String nombre, int descuento, String codigo, String fechaExpiracion, String descripcion) {
+-        String sql = "EXEC sp_crear_promocion ?, ?, ?, ?, ?";
++        String sql = "SELECT * FROM sp_crear_promocion(?, ?, ?, ?, ?)";
+         return jdbcTemplate.queryForMap(sql, nombre, descuento, codigo, fechaExpiracion, descripcion);
+     }
+ 
+@@ -65,9 +65,9 @@ public class GestionComercialService {
+     
+     public List<Map<String, Object>> obtenerVentasRecientes() {
+     String sql = "SELECT v.id_venta, " +
+-                 "'VTA-' + RIGHT('0000' + CAST(v.id_venta AS VARCHAR), 4) AS boleta, " +
++                 "'VTA-' || LPAD(CAST(v.id_venta AS VARCHAR), 4, '0') AS boleta, " +
+                  "v.fecha_venta AS fecha, " +
+-                 "ISNULL(u.nombre, 'Público General') AS cliente, " +
++                 "COALESCE(u.nombre, 'Público General') AS cliente, " +
+                  "CASE WHEN v.id_cita IS NOT NULL THEN 'Servicio' ELSE 'Producto' END AS detalle, " +
+                  "v.metodo_pago AS metodo, " +
+                  "v.monto_total AS total " +
+@@ -79,10 +79,10 @@ public class GestionComercialService {
+ 
+ public Map<String, Object> obtenerMetricasHoy() {
+     String sql = "SELECT " +
+-                 "ISNULL(SUM(monto_total), 0) AS totalCaja, " +
+-                 "ISNULL(SUM(CASE WHEN id_cita IS NOT NULL THEN monto_total ELSE 0 END), 0) AS porServicios, " +
+-                 "ISNULL(SUM(CASE WHEN id_cita IS NULL THEN monto_total ELSE 0 END), 0) AS porProductos " +
+-                 "FROM Ventas WHERE CAST(fecha_venta AS DATE) = CAST(GETDATE() AS DATE)";
++                 "COALESCE(SUM(monto_total), 0) AS \"totalCaja\", " +
++                 "COALESCE(SUM(CASE WHEN id_cita IS NOT NULL THEN monto_total ELSE 0 END), 0) AS \"porServicios\", " +
++                 "COALESCE(SUM(CASE WHEN id_cita IS NULL THEN monto_total ELSE 0 END), 0) AS \"porProductos\" " +
++                 "FROM Ventas WHERE CAST(fecha_venta AS DATE) = CURRENT_DATE";
+     return jdbcTemplate.queryForMap(sql);
+ }
+ 
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/service/HorarioService.java b/backend-api/src/main/java/com/kimstudio/backend_api/service/HorarioService.java
+index 4c66b0b..969cd48 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/service/HorarioService.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/service/HorarioService.java
+@@ -22,7 +22,7 @@ public class HorarioService {
+ 
+     public Map<String, Object> crearHorario(int idEspecialista, String fecha, String horaInicio, String horaFin) {
+         String sql = "INSERT INTO Horarios (id_especialista, fecha, hora_inicio, hora_fin, estado) " +
+-                     "VALUES (?, ?, ?, ?, 'disponible')";
++                     "VALUES (?, ?, ?, ?, 'DISPONIBLE')";
+         jdbcTemplate.update(sql, idEspecialista, fecha, horaInicio, horaFin);
+         
+         Map<String, Object> respuesta = new HashMap<>();
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/service/RecordatorioWhatsAppService.java b/backend-api/src/main/java/com/kimstudio/backend_api/service/RecordatorioWhatsAppService.java
+index 4bcacd8..404833b 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/service/RecordatorioWhatsAppService.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/service/RecordatorioWhatsAppService.java
+@@ -38,7 +38,7 @@ public class RecordatorioWhatsAppService {
+     public void enviarRecordatoriosManana() {
+         System.out.println("Iniciando agente de recordatorios de WhatsApp...");
+         
+-        String sql = "EXEC sp_obtener_citas_manana";
++        String sql = "SELECT * FROM sp_obtener_citas_manana()";
+         List<Map<String, Object>> citasManana = jdbcTemplate.queryForList(sql);
+ 
+         if (citasManana.isEmpty()) {
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/service/ReservaService.java b/backend-api/src/main/java/com/kimstudio/backend_api/service/ReservaService.java
+index f62e50b..740ba95 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/service/ReservaService.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/service/ReservaService.java
+@@ -12,17 +12,17 @@ public class ReservaService {
+     private JdbcTemplate jdbcTemplate;
+ 
+     public List<Map<String, Object>> obtenerHorariosDisponibles(int idEspecialista, String fecha) {
+-        String sql = "EXEC sp_horarios_disponibles ?, ?";
++        String sql = "SELECT * FROM sp_horarios_disponibles(?, ?)";
+         return jdbcTemplate.queryForList(sql, idEspecialista, fecha);
+     }
+ 
+     public Map<String, Object> reservarCitaTemporal(int idUsuario, int idHorario, int idServicio) {
+-        String sql = "EXEC sp_reservar_cita_temporal ?, ?, ?";
++        String sql = "SELECT * FROM sp_reservar_cita_temporal(?, ?, ?)";
+         return jdbcTemplate.queryForMap(sql, idUsuario, idHorario, idServicio);
+     }
+ 
+     public Map<String, Object> confirmarCita(int idHorario, int idUsuario) {
+-        String sql = "EXEC sp_confirmar_cita ?, ?";
++        String sql = "SELECT * FROM sp_confirmar_cita(?, ?)";
+         return jdbcTemplate.queryForMap(sql, idHorario, idUsuario);
+     }
+ }
+\ No newline at end of file
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/service/ServicioService.java b/backend-api/src/main/java/com/kimstudio/backend_api/service/ServicioService.java
+index 5b09473..ad8511e 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/service/ServicioService.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/service/ServicioService.java
+@@ -18,8 +18,8 @@ public class ServicioService {
+ 
+     @Cacheable("serviciosCache")
+     public List<Map<String, Object>> obtenerServiciosActivos() {
+-        // Añadimos 'categoria AS categoriaId' para que Angular lo reconozca automáticamente
+-        String sql = "SELECT id_servicio, nombre AS nombre, descripcion AS [desc], precio, duracion_minutos, imagen_url, categoria AS categoriaId " +
++        // Añadimos 'categoria AS \"categoriaId\"' para que Angular lo reconozca automáticamente
++        String sql = "SELECT id_servicio, nombre AS nombre, descripcion AS \"desc\", precio, duracion_minutos, imagen_url, categoria AS \"categoriaId\" " +
+                      "FROM Servicios WHERE estado = '1'";
+         return jdbcTemplate.queryForList(sql);
+     }
+@@ -29,7 +29,7 @@ public class ServicioService {
+         
+         // Agregamos 'categoria' a la consulta SQL
+         String sql = "INSERT INTO Servicios (nombre, descripcion, precio, duracion_minutos, imagen_url, categoria, estado) " +
+-                     "VALUES (?, ?, ?, ?, ?, ?, 'ACTIVO')";
++                     "VALUES (?, ?, ?, ?, ?, ?, TRUE)";
+         
+         // Pasamos la variable 'categoria' al jdbcTemplate
+         jdbcTemplate.update(sql, nombre, descripcion, precio, duracionMinutos, imagenUrl, categoria);
+@@ -41,7 +41,7 @@ public class ServicioService {
+ 
+     @CacheEvict(value = "serviciosCache", allEntries = true)
+     public Map<String, Object> eliminarServicio(int idServicio) {
+-        String sql = "UPDATE Servicios SET estado = 'INACTIVO' WHERE id_servicio = ?";
++        String sql = "UPDATE Servicios SET estado = FALSE WHERE id_servicio = ?";
+         jdbcTemplate.update(sql, idServicio);
+         
+         Map<String, Object> respuesta = new HashMap<>();
+diff --git a/backend-api/src/main/java/com/kimstudio/backend_api/service/UsuarioService.java b/backend-api/src/main/java/com/kimstudio/backend_api/service/UsuarioService.java
+index 98cb21e..732b8e7 100644
+--- a/backend-api/src/main/java/com/kimstudio/backend_api/service/UsuarioService.java
++++ b/backend-api/src/main/java/com/kimstudio/backend_api/service/UsuarioService.java
+@@ -30,7 +30,7 @@ public class UsuarioService {
+ 
+     public Map<String, Object> registrarUsuario(String nombre, String email, String telefono, String password) {
+         String passwordEncriptada = passwordEncoder.encode(password);
+-        String sql = "EXEC sp_registrar_usuario ?, ?, ?,?";
++        String sql = "SELECT * FROM sp_registrar_usuario(?, ?, ?, ?)";
+         Map<String, Object> respuesta = jdbcTemplate.queryForMap(sql, nombre, email, telefono, passwordEncriptada);
+         
+         
+@@ -46,7 +46,7 @@ public class UsuarioService {
+     public Map<String, Object> login(String email, String passwordTextoPlano) {
+         Map<String, Object> respuesta = new HashMap<>();
+ 
+-        String sql = "SELECT * FROM Usuarios WHERE email = ?";
++        String sql = "SELECT * FROM Usuarios WHERE LOWER(email) = LOWER(?)";
+         List<Map<String, Object>> usuarios = jdbcTemplate.queryForList(sql, email);
+ 
+         if (usuarios.isEmpty()) {

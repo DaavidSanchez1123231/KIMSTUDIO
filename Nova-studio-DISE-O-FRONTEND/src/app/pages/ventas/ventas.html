@@ -1,0 +1,492 @@
+<main class="ventas-page">
+
+  <!-- ENCABEZADO -->
+  <section class="ventas-intro">
+    <div class="ventas-intro-copy">
+      <span class="ventas-kicker">
+        <i class="fas fa-chart-line"></i>
+        CONTROL FINANCIERO
+      </span>
+
+      <h1>Gestión de <span>ventas y caja</span></h1>
+
+      <p>
+        Supervisa los ingresos del salón, registra operaciones y
+        consulta los movimientos de caja desde un solo lugar.
+      </p>
+    </div>
+
+    <div class="ventas-intro-icon" aria-hidden="true">
+      <i class="fas fa-cash-register"></i>
+    </div>
+  </section>
+
+  <!-- MÉTRICAS FINANCIERAS -->
+  <section class="ventas-metricas">
+
+    <article class="metrica-box">
+      <div class="metrica-top">
+        <span class="metrica-icon">
+          <i class="fas fa-wallet"></i>
+        </span>
+
+        <span class="metrica-label">INGRESOS</span>
+      </div>
+
+      <p>Total de caja hoy</p>
+
+      <h3>
+        <small>S/</small>
+        {{ metricas.totalCaja | number:'1.2-2' }}
+      </h3>
+
+      <div class="metrica-footer">
+        <span>Resumen de caja</span>
+        <i class="fas fa-chart-line"></i>
+      </div>
+
+      <div class="metrica-glow"></div>
+    </article>
+
+    <article class="metrica-box cian-glow">
+      <div class="metrica-top">
+        <span class="metrica-icon">
+          <i class="fas fa-spa"></i>
+        </span>
+
+        <span class="metrica-label">SERVICIOS</span>
+      </div>
+
+      <p>Ingresos por servicios</p>
+
+      <h3>
+        <small>S/</small>
+        {{ metricas.porServicios | number:'1.2-2' }}
+      </h3>
+
+      <div class="metrica-footer">
+        <span>Servicios realizados</span>
+        <i class="fas fa-arrow-trend-up"></i>
+      </div>
+
+      <div class="metrica-glow"></div>
+    </article>
+
+    <article class="metrica-box">
+      <div class="metrica-top">
+        <span class="metrica-icon">
+          <i class="fas fa-box-open"></i>
+        </span>
+
+        <span class="metrica-label">PRODUCTOS</span>
+      </div>
+
+      <p>Ingresos por productos</p>
+
+      <h3>
+        <small>S/</small>
+        {{ metricas.porProductos | number:'1.2-2' }}
+      </h3>
+
+      <div class="metrica-footer">
+        <span>Ventas de productos</span>
+        <i class="fas fa-receipt"></i>
+      </div>
+
+      <div class="metrica-glow"></div>
+    </article>
+
+  </section>
+
+  <!-- BÚSQUEDA Y NUEVA VENTA -->
+  <section class="ventas-toolbar">
+
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+
+      <input
+        type="search"
+        [(ngModel)]="textoBusqueda"
+        (input)="filtrarVentas()"
+        placeholder="Buscar cliente, boleta o concepto..."
+        aria-label="Buscar ventas"
+      />
+
+      <span class="search-decoration">
+        <i class="fas fa-filter"></i>
+      </span>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="abrirModal()"
+    >
+      <i class="fas fa-plus"></i>
+      <span>Registrar venta</span>
+    </button>
+
+  </section>
+
+  <!-- TABLA DE VENTAS -->
+  <section class="recent-table-container">
+
+    <div class="table-heading">
+      <div class="table-heading-info">
+        <span class="table-heading-icon">
+          <i class="fas fa-file-invoice-dollar"></i>
+        </span>
+
+        <div>
+          <h2>Registro de operaciones</h2>
+          <p>Consulta los comprobantes y movimientos registrados.</p>
+        </div>
+      </div>
+
+      <span class="table-status">
+        <span class="status-dot"></span>
+        Registro de caja
+      </span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="ventas-table">
+
+        <thead>
+          <tr>
+            <th>Boleta</th>
+            <th>Fecha y hora</th>
+            <th>Cliente</th>
+            <th>Concepto</th>
+            <th>Método de pago</th>
+            <th>Total</th>
+            <th class="actions-heading">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- CARGANDO -->
+          <tr *ngIf="cargando">
+            <td colspan="7">
+              <div class="table-feedback">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Cargando registros de caja...</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- SIN RESULTADOS -->
+          <tr *ngIf="!cargando && ventasFiltradas.length === 0">
+            <td colspan="7">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <i class="fas fa-receipt"></i>
+                </div>
+
+                <h3>No se encontraron ventas</h3>
+
+                <p>
+                  No hay operaciones que coincidan con tu búsqueda.
+                  Puedes registrar una nueva venta.
+                </p>
+
+                <button
+                  type="button"
+                  class="empty-action"
+                  (click)="abrirModal()"
+                >
+                  <i class="fas fa-plus"></i>
+                  Registrar venta
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- OPERACIONES -->
+          @for (venta of ventasFiltradas; track venta.id_venta) {
+            <tr>
+
+              <td data-label="Boleta">
+                <span class="boleta-number">
+                  <i class="fas fa-file-invoice"></i>
+                  {{ venta.boleta }}
+                </span>
+              </td>
+
+              <td data-label="Fecha y hora">
+                <div class="fecha-cell">
+                  <i class="far fa-clock"></i>
+                  <span>
+                    {{ venta.fecha | date:'dd/MM/yyyy HH:mm' }}
+                  </span>
+                </div>
+              </td>
+
+              <td data-label="Cliente">
+                <div class="cliente-cell">
+                  <span class="cliente-avatar">
+                    <i class="fas fa-user"></i>
+                  </span>
+
+                  <span>
+                    {{ venta.cliente || 'Público General' }}
+                  </span>
+                </div>
+              </td>
+
+              <td data-label="Concepto">
+                <div class="concepto-cell">
+                  <i class="fas fa-receipt"></i>
+                  <span>{{ venta.detalle }}</span>
+                </div>
+              </td>
+
+              <td data-label="Método de pago">
+                <span
+                  class="pay-method"
+                  [ngClass]="(venta.metodo || '').toLowerCase()"
+                >
+                  <i
+                    [ngClass]="{
+                      'fas fa-mobile-alt':
+                        (venta.metodo || '').toLowerCase() === 'yape',
+                      'fas fa-money-bill-wave':
+                        (venta.metodo || '').toLowerCase() === 'efectivo',
+                      'fas fa-credit-card':
+                        (venta.metodo || '').toLowerCase() === 'tarjeta'
+                    }"
+                  ></i>
+
+                  {{ venta.metodo | titlecase }}
+                </span>
+              </td>
+
+              <td data-label="Total">
+                <span class="total-amount">
+                  S/ {{ venta.total | number:'1.2-2' }}
+                </span>
+              </td>
+
+              <td data-label="Acciones">
+                <div class="action-buttons">
+
+                  <button
+                    type="button"
+                    class="action-btn print"
+                    title="Reimprimir comprobante"
+                    aria-label="Reimprimir comprobante"
+                  >
+                    <i class="fas fa-print"></i>
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="anularVenta(venta.id_venta, venta.boleta)"
+                    class="action-btn cancel"
+                    title="Anular venta"
+                    aria-label="Anular venta"
+                  >
+                    <i class="fas fa-ban"></i>
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span>
+        <i class="fas fa-shield-alt"></i>
+        Control de operaciones de caja
+      </span>
+
+      <span class="footer-brand">
+        NOVA <strong>BEAUTY SALON</strong>
+      </span>
+    </div>
+
+  </section>
+
+  <!-- MODAL: REGISTRAR VENTA -->
+  <div
+    class="modal-overlay"
+    *ngIf="isModalOpen"
+    (click)="cerrarModal()"
+  >
+
+    <section
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-venta-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- ENCABEZADO DEL MODAL -->
+      <div class="modal-header">
+
+        <div class="modal-heading">
+          <span class="modal-icon">
+            <i class="fas fa-cash-register"></i>
+          </span>
+
+          <div>
+            <span class="modal-kicker">NOVA BEAUTY SALON</span>
+            <h2 id="modal-venta-title">Registrar venta</h2>
+            <p>Completa los datos de la operación.</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="cerrarModal()"
+          aria-label="Cerrar formulario"
+          title="Cerrar"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+      </div>
+
+      <!-- FORMULARIO -->
+      <form
+        class="venta-form"
+        (submit)="registrarVenta($event)"
+      >
+
+        <div class="form-section-label">
+          <i class="fas fa-file-invoice-dollar"></i>
+          Detalles de la operación
+        </div>
+
+        <!-- CLIENTE -->
+        <div class="form-group">
+          <label for="venta-cliente">Cliente (opcional)</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-user"></i>
+
+            <input
+              id="venta-cliente"
+              type="text"
+              [(ngModel)]="nuevaVenta.cliente"
+              name="cliente"
+              placeholder="Ej. Carlos Mendoza"
+            />
+          </div>
+
+          <span class="field-hint">
+            Déjalo vacío para registrar una venta a público general.
+          </span>
+        </div>
+
+        <!-- TIPO DE VENTA -->
+        <div class="form-group">
+          <label for="venta-tipo">Tipo de venta</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="fas fa-list-alt"></i>
+
+            <select
+              id="venta-tipo"
+              [(ngModel)]="nuevaVenta.tipo"
+              name="tipo"
+              required
+            >
+              <option value="servicio">Servicio realizado</option>
+              <option value="producto">Venta de producto</option>
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+
+        <!-- MÉTODO Y MONTO -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="venta-metodo">Método de pago</label>
+
+            <div class="form-input-wrapper select-wrapper">
+              <i class="fas fa-credit-card"></i>
+
+              <select
+                id="venta-metodo"
+                [(ngModel)]="nuevaVenta.metodo"
+                name="metodo"
+                required
+              >
+                <option value="Yape">Yape / Plin</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+              </select>
+
+              <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="venta-total">Monto total (S/)</label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-wallet"></i>
+
+              <input
+                id="venta-total"
+                type="number"
+                [(ngModel)]="nuevaVenta.total"
+                name="total"
+                min="0.01"
+                step="0.01"
+                required
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AVISO -->
+        <div class="form-note">
+          <i class="fas fa-info-circle"></i>
+
+          <span>
+            Verifica el importe y el método de pago antes de confirmar.
+          </span>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cerrarModal()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn-save"
+          >
+            <i class="fas fa-check-circle"></i>
+            Confirmar venta
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+
+</main>

@@ -1,0 +1,305 @@
+<main class="reportes-page">
+
+    <!-- Encabezado -->
+    <section class="reportes-intro">
+        <div class="intro-copy">
+            <span class="section-eyebrow">
+                <i class="fas fa-chart-line"></i>
+                ANALÍTICA Y RENDIMIENTO
+            </span>
+
+            <h1>Centro de <span>reportes</span></h1>
+
+            <p>
+                Analiza el rendimiento de tu salón, descubre tus servicios más
+                solicitados y consulta los resultados financieros del período.
+            </p>
+        </div>
+
+        <div class="intro-decoration">
+            <i class="fas fa-chart-pie"></i>
+        </div>
+    </section>
+
+    <!-- Filtros y exportación -->
+    <section class="reportes-toolbar">
+
+        <div class="filter-heading">
+            <div class="filter-icon">
+                <i class="far fa-calendar-alt"></i>
+            </div>
+
+            <div>
+                <h2>Período de consulta</h2>
+                <p>Selecciona las fechas para actualizar tus indicadores.</p>
+            </div>
+        </div>
+
+        <div class="reportes-header">
+            <div class="date-filter-group">
+                <div class="date-input">
+                    <label for="fecha-desde">Desde</label>
+                    <input
+                        id="fecha-desde"
+                        type="date"
+                        [(ngModel)]="fechaDesde"
+                    >
+                </div>
+
+                <div class="date-input">
+                    <label for="fecha-hasta">Hasta</label>
+                    <input
+                        id="fecha-hasta"
+                        type="date"
+                        [(ngModel)]="fechaHasta"
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    (click)="actualizarFiltro()"
+                    class="btn-primary-sm"
+                    [disabled]="cargando"
+                >
+                    <i
+                        class="fas"
+                        [ngClass]="cargando ? 'fa-spinner fa-spin' : 'fa-sync-alt'"
+                    ></i>
+
+                    {{ cargando ? 'Calculando...' : 'Actualizar' }}
+                </button>
+            </div>
+
+            <button
+                type="button"
+                (click)="exportarReporte()"
+                class="btn-primary export-btn"
+                [disabled]="cargando"
+            >
+                <i class="fas fa-file-pdf"></i>
+                Exportar PDF
+            </button>
+        </div>
+    </section>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando" class="reportes-loading">
+        <div class="loading-spinner"></div>
+        <h3>Actualizando reportes</h3>
+        <p>Estamos calculando los resultados del período seleccionado.</p>
+    </div>
+
+    <!-- Indicadores y gráficos -->
+    <section class="reportes-grid">
+
+        <!-- Servicios más solicitados -->
+        <article class="reporte-card">
+            <div class="card-heading">
+                <div class="card-heading-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+
+                <div>
+                    <h3>Servicios destacados</h3>
+                    <p class="subtitle-card">
+                        Servicios con más citas reservadas
+                    </p>
+                </div>
+            </div>
+
+            <div class="chart-content">
+
+                <div
+                    *ngIf="serviciosTop.length === 0 && !cargando"
+                    class="empty-report"
+                >
+                    <i class="fas fa-chart-bar"></i>
+                    <p>No hay citas registradas en este rango.</p>
+                </div>
+
+                @for (servicio of serviciosTop; track servicio.nombre) {
+                    <div class="chart-bar-group">
+                        <div class="bar-info">
+                            <span class="bar-label">
+                                {{ servicio.nombre }}
+                            </span>
+
+                            <span class="pct-val">
+                                {{ servicio.porcentaje }}%
+                            </span>
+                        </div>
+
+                        <div
+                            class="bar-container"
+                            role="progressbar"
+                            [attr.aria-valuenow]="servicio.porcentaje"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            [attr.aria-label]="servicio.nombre"
+                        >
+                            <div
+                                class="bar-fill"
+                                [style.width.%]="servicio.porcentaje"
+                            ></div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="card-bottom-note">
+                <i class="fas fa-info-circle"></i>
+                <span>Distribución porcentual de los servicios.</span>
+            </div>
+        </article>
+
+        <!-- Productividad por empleado -->
+        <article class="reporte-card">
+            <div class="card-heading">
+                <div class="card-heading-icon gold">
+                    <i class="fas fa-medal"></i>
+                </div>
+
+                <div>
+                    <h3>Productividad del equipo</h3>
+                    <p class="subtitle-card">
+                        Monto facturado por empleado
+                    </p>
+                </div>
+            </div>
+
+            <div class="ranking-content">
+
+                <div
+                    *ngIf="empleadosTop.length === 0 && !cargando"
+                    class="empty-report"
+                >
+                    <i class="fas fa-user-chart"></i>
+                    <p>No hay atenciones facturadas en este rango.</p>
+                </div>
+
+                @for (empleado of empleadosTop; track empleado.nombre; let i = $index) {
+                    <div class="employee-rank">
+                        <div class="rank-info">
+                            <span
+                                class="number-rank"
+                                [class.first]="i === 0"
+                                [class.second]="i === 1"
+                                [class.third]="i === 2"
+                            >
+                                @if (i === 0) {
+                                    <i class="fas fa-crown"></i>
+                                } @else {
+                                    {{ i + 1 }}
+                                }
+                            </span>
+
+                            <div class="employee-details">
+                                <h4>{{ empleado.nombre }}</h4>
+                                <p>{{ empleado.puesto }}</p>
+                            </div>
+                        </div>
+
+                        <span class="rank-amount">
+                            S/ {{ empleado.monto | number:'1.2-2' }}
+                        </span>
+                    </div>
+                }
+            </div>
+
+            <div class="card-bottom-note">
+                <i class="fas fa-info-circle"></i>
+                <span>Ordenado según los datos recibidos.</span>
+            </div>
+        </article>
+    </section>
+
+    <!-- Resumen financiero -->
+    <section class="balance-container">
+        <div class="balance-header">
+            <div class="balance-heading">
+                <div class="balance-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+
+                <div>
+                    <h2>Resumen financiero</h2>
+                    <p>Resultados económicos del período seleccionado.</p>
+                </div>
+            </div>
+
+            <span class="balance-currency">
+                <i class="fas fa-coins"></i>
+                Moneda: PEN (S/)
+            </span>
+        </div>
+
+        <div class="balance-grid">
+
+            <article class="balance-item text-success">
+                <div class="balance-item-top">
+                    <span class="balance-label">Ingresos brutos</span>
+
+                    <span class="balance-item-icon">
+                        <i class="fas fa-arrow-trend-up"></i>
+                    </span>
+                </div>
+
+                <h3>
+                    S/ {{ balance.ingresosBrutos | number:'1.2-2' }}
+                </h3>
+
+                <p>
+                    <i class="fas fa-circle"></i>
+                    Ingresos registrados
+                </p>
+            </article>
+
+            <article class="balance-item text-danger">
+                <div class="balance-item-top">
+                    <span class="balance-label">Insumos / Comisiones</span>
+
+                    <span class="balance-item-icon">
+                        <i class="fas fa-receipt"></i>
+                    </span>
+                </div>
+
+                <h3>
+                    S/ {{ balance.insumosComisiones | number:'1.2-2' }}
+                </h3>
+
+                <p>
+                    <i class="fas fa-circle"></i>
+                    Costos registrados
+                </p>
+            </article>
+
+            <article class="balance-item text-cian">
+                <div class="balance-item-top">
+                    <span class="balance-label">Utilidad neta total</span>
+
+                    <span class="balance-item-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </span>
+                </div>
+
+                <h3>
+                    S/ {{ balance.utilidadNeta | number:'1.2-2' }}
+                </h3>
+
+                <p>
+                    <i class="fas fa-circle"></i>
+                    Resultado del período
+                </p>
+            </article>
+        </div>
+
+        <div class="balance-footer">
+            <i class="fas fa-shield-alt"></i>
+            <span>
+                Los resultados corresponden a los datos disponibles
+                para el período seleccionado.
+            </span>
+        </div>
+    </section>
+
+</main>

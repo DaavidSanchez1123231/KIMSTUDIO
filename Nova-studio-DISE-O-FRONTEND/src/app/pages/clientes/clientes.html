@@ -1,0 +1,380 @@
+<main class="clientes-page">
+
+  <!-- ENCABEZADO -->
+  <section class="clientes-intro">
+    <div class="clientes-intro-copy">
+      <span class="clientes-kicker">
+        <i class="fas fa-users"></i>
+        GESTIÓN DE CLIENTES
+      </span>
+
+      <h1>Nuestros <span>clientes</span></h1>
+
+      <p>
+        Administra la información de tus clientes y consulta su
+        historial de citas desde el panel de NOVA Beauty Salon.
+      </p>
+    </div>
+
+    <div class="clientes-intro-icon" aria-hidden="true">
+      <i class="fas fa-user-friends"></i>
+    </div>
+  </section>
+
+  <!-- BÚSQUEDA Y ACCIONES -->
+  <section class="clientes-toolbar">
+
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+
+      <input
+        type="search"
+        [(ngModel)]="textoBusqueda"
+        (input)="filtrarClientes()"
+        placeholder="Buscar por nombre, correo o teléfono..."
+        aria-label="Buscar clientes"
+      />
+
+      <span class="search-decoration">
+        <i class="fas fa-filter"></i>
+      </span>
+    </div>
+
+    <button
+      type="button"
+      (click)="abrirModal()"
+      class="btn-primary"
+    >
+      <i class="fas fa-user-plus"></i>
+      <span>Registrar cliente</span>
+    </button>
+
+  </section>
+
+  <!-- TABLA DE CLIENTES -->
+  <section class="recent-table-container">
+
+    <div class="table-heading">
+      <div class="table-heading-info">
+        <span class="table-heading-icon">
+          <i class="fas fa-address-book"></i>
+        </span>
+
+        <div>
+          <h2>Directorio de clientes</h2>
+          <p>Información y actividad de los clientes registrados.</p>
+        </div>
+      </div>
+
+      <span class="table-status">
+        <span class="status-dot"></span>
+        Directorio
+      </span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="clientes-table">
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Correo electrónico</th>
+            <th>Teléfono / celular</th>
+            <th>Citas totales</th>
+            <th class="actions-heading">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- ESTADO DE CARGA -->
+          <tr *ngIf="cargando">
+            <td colspan="6">
+              <div class="table-feedback">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Cargando registros de clientes...</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ESTADO VACÍO -->
+          <tr *ngIf="!cargando && clientesFiltrados.length === 0">
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <i class="fas fa-user-friends"></i>
+                </div>
+
+                <h3>No se encontraron clientes</h3>
+
+                <p>
+                  No hay clientes que coincidan con tu búsqueda.
+                  Puedes registrar uno nuevo para comenzar.
+                </p>
+
+                <button
+                  type="button"
+                  class="empty-action"
+                  (click)="abrirModal()"
+                >
+                  <i class="fas fa-user-plus"></i>
+                  Registrar cliente
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- CLIENTES -->
+          @for (cliente of clientesFiltrados; track cliente.id_usuario) {
+            <tr>
+
+              <td data-label="ID">
+                <span class="client-id">
+                  #{{ cliente.id_usuario }}
+                </span>
+              </td>
+
+              <td data-label="Cliente">
+                <div class="client-cell">
+                  <span class="client-avatar">
+                    <i class="fas fa-user"></i>
+                  </span>
+
+                  <span class="client-name">
+                    {{ cliente.nombre }}
+                  </span>
+                </div>
+              </td>
+
+              <td data-label="Correo electrónico">
+                <div class="contact-cell">
+                  <i class="fas fa-envelope"></i>
+                  <span>{{ cliente.correo }}</span>
+                </div>
+              </td>
+
+              <td data-label="Teléfono / celular">
+                <div class="contact-cell">
+                  <i class="fas fa-phone-alt"></i>
+                  <span>{{ cliente.telefono || 'No registrado' }}</span>
+                </div>
+              </td>
+
+              <td data-label="Citas totales">
+                <span class="badge-citas">
+                  <i class="fas fa-calendar-check"></i>
+                  {{ cliente.citasTotales || 0 }}
+                  {{ cliente.citasTotales === 1 ? 'cita' : 'citas' }}
+                </span>
+              </td>
+
+              <td data-label="Acciones">
+                <div class="action-buttons">
+
+                  <button
+                    type="button"
+                    class="action-btn edit"
+                    title="Editar cliente"
+                    aria-label="Editar cliente"
+                  >
+                    <i class="fas fa-pen"></i>
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="eliminarCliente(
+                      cliente.id_usuario,
+                      cliente.nombre
+                    )"
+                    class="action-btn delete"
+                    title="Eliminar cliente"
+                    aria-label="Eliminar cliente"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span>
+        <i class="fas fa-shield-alt"></i>
+        Información del directorio de clientes
+      </span>
+
+      <span class="footer-brand">
+        NOVA <strong>BEAUTY SALON</strong>
+      </span>
+    </div>
+
+  </section>
+
+  <!-- MODAL: REGISTRAR CLIENTE -->
+  <div
+    class="modal-overlay"
+    *ngIf="isModalOpen"
+    (click)="cerrarModal()"
+  >
+
+    <section
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-cliente-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- ENCABEZADO DEL MODAL -->
+      <div class="modal-header">
+
+        <div class="modal-heading">
+          <span class="modal-icon">
+            <i class="fas fa-user-plus"></i>
+          </span>
+
+          <div>
+            <span class="modal-kicker">NOVA BEAUTY SALON</span>
+            <h2 id="modal-cliente-title">Registrar cliente</h2>
+            <p>Completa la información del nuevo cliente.</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="cerrarModal()"
+          aria-label="Cerrar formulario"
+          title="Cerrar"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+      </div>
+
+      <!-- FORMULARIO -->
+      <form
+        class="cliente-form"
+        (submit)="guardarCliente($event)"
+      >
+
+        <div class="form-section-label">
+          <i class="fas fa-address-card"></i>
+          Datos personales
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-nombre">Nombre completo</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-user"></i>
+
+            <input
+              id="cliente-nombre"
+              type="text"
+              [(ngModel)]="nuevoCliente.nombre"
+              name="nombre"
+              required
+              autocomplete="name"
+              placeholder="Ej. Juan David Sánchez"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-correo">Correo electrónico</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-envelope"></i>
+
+            <input
+              id="cliente-correo"
+              type="email"
+              [(ngModel)]="nuevoCliente.correo"
+              name="correo"
+              required
+              autocomplete="email"
+              placeholder="nombre@correo.com"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="cliente-telefono">Teléfono / celular</label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-phone-alt"></i>
+
+              <input
+                id="cliente-telefono"
+                type="tel"
+                [(ngModel)]="nuevoCliente.telefono"
+                name="telefono"
+                required
+                autocomplete="tel"
+                placeholder="Ej. 999888777"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cliente-notas">Notas especiales</label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-sticky-note"></i>
+
+              <input
+                id="cliente-notas"
+                type="text"
+                [(ngModel)]="nuevoCliente.notas"
+                name="notas"
+                placeholder="Opcional"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-note">
+          <i class="fas fa-info-circle"></i>
+          <span>
+            Revisa los datos antes de guardar el registro.
+          </span>
+        </div>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cerrarModal()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn-save"
+          >
+            <i class="fas fa-check"></i>
+            Guardar cliente
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+
+</main>

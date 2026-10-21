@@ -1,0 +1,345 @@
+<main class="promociones-page">
+
+    <!-- Encabezado del módulo -->
+    <section class="promos-intro">
+        <div class="intro-copy">
+            <span class="section-eyebrow">
+                <i class="fas fa-gem"></i>
+                MARKETING Y FIDELIZACIÓN
+            </span>
+
+            <h1>Gestión de <span>promociones</span></h1>
+
+            <p>
+                Crea campañas, administra tus descuentos y premia la fidelidad
+                de tus clientes.
+            </p>
+        </div>
+
+        <div class="intro-decoration">
+            <i class="fas fa-tags"></i>
+        </div>
+    </section>
+
+    <!-- Barra de acciones -->
+    <section class="promos-toolbar">
+        <div class="toolbar-copy">
+            <h2>Campañas promocionales</h2>
+            <p>Consulta y administra tus ofertas registradas.</p>
+        </div>
+
+        <div class="toolbar-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+
+                <input
+                    type="text"
+                    [(ngModel)]="textoBusqueda"
+                    (input)="filtrarPromos()"
+                    placeholder="Buscar promoción..."
+                    aria-label="Buscar promoción"
+                >
+            </div>
+
+            <button
+                type="button"
+                class="btn-primary"
+                (click)="abrirModal()"
+            >
+                <i class="fas fa-plus"></i>
+                <span>Crear promoción</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Contenido de promociones -->
+    <section class="promos-grid">
+
+        <!-- Estado de carga -->
+        <div
+            *ngIf="cargando"
+            class="promos-feedback"
+        >
+            <div class="loading-spinner"></div>
+            <h3>Cargando campañas</h3>
+            <p>Estamos obteniendo tus promociones registradas.</p>
+        </div>
+
+        <!-- Sin resultados -->
+        <div
+            *ngIf="!cargando && promosFiltradas.length === 0"
+            class="promos-feedback"
+        >
+            <div class="feedback-icon">
+                <i class="fas fa-tags"></i>
+            </div>
+
+            <h3>No se encontraron promociones</h3>
+
+            <p>
+                No hay campañas que coincidan con tu búsqueda.
+                Puedes registrar una nueva promoción.
+            </p>
+
+            <button
+                type="button"
+                class="btn-secondary"
+                (click)="abrirModal()"
+            >
+                <i class="fas fa-plus"></i>
+                Crear promoción
+            </button>
+        </div>
+
+        <!-- Tarjetas -->
+        @for (promo of promosFiltradas; track promo.id_promocion) {
+            <article
+                class="promo-card"
+                [class.expired]="promo.expirada"
+            >
+                <div class="promo-card-top">
+                    <div class="promo-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+
+                    <span class="status-tag" [ngClass]="promo.claseEstado">
+                        <span class="status-dot"></span>
+                        {{ promo.estado }}
+                    </span>
+                </div>
+
+                <div
+                    class="promo-discount"
+                    [class.gray]="promo.expirada"
+                >
+                    <span class="discount-label">DESCUENTO ESPECIAL</span>
+                    <strong>{{ promo.descuentoTexto }}</strong>
+                </div>
+
+                <div class="promo-content">
+                    <h3>{{ promo.titulo }}</h3>
+
+                    <p class="promo-description">
+                        {{ promo.descripcion }}
+                    </p>
+
+                    <div class="promo-date">
+                        <div class="date-icon">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+
+                        <div class="date-details">
+                            <span>Válida hasta</span>
+                            <strong>{{ promo.fechaFormateada }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="promo-code">
+                        <div class="code-info">
+                            <i class="fas fa-ticket-alt"></i>
+
+                            <div>
+                                <span>Código de promoción</span>
+                                <strong>{{ promo.codigo }}</strong>
+                            </div>
+                        </div>
+
+                        <span class="code-decoration">%</span>
+                    </div>
+
+                    <div class="promo-footer">
+                        <span class="footer-label">
+                            <i class="fas fa-bullhorn"></i>
+                            Campaña promocional
+                        </span>
+
+                        <div class="promo-actions">
+                            <button
+                                type="button"
+                                class="action-btn edit"
+                                title="Editar promoción"
+                                aria-label="Editar promoción"
+                            >
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <button
+                                type="button"
+                                (click)="eliminarPromo(
+                                    promo.id_promocion,
+                                    promo.titulo
+                                )"
+                                class="action-btn delete"
+                                title="Eliminar promoción"
+                                aria-label="Eliminar promoción"
+                            >
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-glow"></div>
+            </article>
+        }
+    </section>
+
+    <!-- Modal: crear promoción -->
+    <div
+        class="modal-overlay"
+        *ngIf="isModalOpen"
+        (click)="cerrarModal()"
+    >
+        <section
+            class="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="promo-modal-title"
+            (click)="$event.stopPropagation()"
+        >
+            <header class="modal-header">
+                <div class="modal-heading">
+                    <div class="modal-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+
+                    <div>
+                        <span class="modal-eyebrow">NUEVA CAMPAÑA</span>
+                        <h2 id="promo-modal-title">Crear promoción</h2>
+                        <p>Completa los datos de tu oferta.</p>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    class="close-modal"
+                    (click)="cerrarModal()"
+                    aria-label="Cerrar modal"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+            </header>
+
+            <form (submit)="guardarPromo($event)">
+                <div class="form-section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Información de la campaña
+                </div>
+
+                <div class="form-group">
+                    <label for="promo-nombre">Nombre de la promoción</label>
+
+                    <div class="input-with-icon">
+                        <i class="fas fa-tag"></i>
+
+                        <input
+                            id="promo-nombre"
+                            type="text"
+                            [(ngModel)]="nuevaPromo.nombre"
+                            name="nombre"
+                            required
+                            placeholder="Ej. Belleza de temporada"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="promo-descuento">Descuento (%)</label>
+
+                        <div class="input-with-icon">
+                            <i class="fas fa-percent"></i>
+
+                            <input
+                                id="promo-descuento"
+                                type="number"
+                                [(ngModel)]="nuevaPromo.descuento"
+                                name="descuento"
+                                min="1"
+                                max="100"
+                                required
+                                placeholder="20"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promo-codigo">Código de cupón</label>
+
+                        <div class="input-with-icon">
+                            <i class="fas fa-ticket-alt"></i>
+
+                            <input
+                                id="promo-codigo"
+                                type="text"
+                                [(ngModel)]="nuevaPromo.codigo"
+                                (input)="nuevaPromo.codigo = nuevaPromo.codigo.toUpperCase()"
+                                name="codigo"
+                                required
+                                placeholder="BELLEZA20"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="promo-fecha">Fecha de expiración</label>
+
+                    <div class="input-with-icon">
+                        <i class="far fa-calendar-alt"></i>
+
+                        <input
+                            id="promo-fecha"
+                            type="date"
+                            [(ngModel)]="nuevaPromo.fecha_expiracion"
+                            name="fecha_expiracion"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="promo-descripcion">Descripción de la oferta</label>
+
+                    <div class="input-with-icon textarea-icon">
+                        <i class="fas fa-align-left"></i>
+
+                        <textarea
+                            id="promo-descripcion"
+                            [(ngModel)]="nuevaPromo.descripcion"
+                            name="descripcion"
+                            required
+                            rows="3"
+                            placeholder="Describe los beneficios y condiciones de la promoción..."
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-note">
+                    <i class="fas fa-lightbulb"></i>
+
+                    <p>
+                        Verifica el descuento, el código y la fecha antes
+                        de registrar la campaña.
+                    </p>
+                </div>
+
+                <div class="modal-actions">
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        (click)="cerrarModal()"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-primary submit-btn">
+                        <i class="fas fa-rocket"></i>
+                        Lanzar promoción
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+</main>

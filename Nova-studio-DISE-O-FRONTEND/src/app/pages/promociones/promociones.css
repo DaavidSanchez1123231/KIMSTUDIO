@@ -1,0 +1,1082 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+:host {
+    display: block;
+    min-width: 0;
+    color: #f4f7fa;
+}
+
+.promociones-page {
+    --promo-bg: #080d12;
+    --promo-card: #101820;
+    --promo-card-soft: #141f28;
+    --promo-cyan: #10efff;
+    --promo-cyan-soft: #68b2a8;
+    --promo-text: #f4f7fa;
+    --promo-muted: #8c9ca8;
+    --promo-border: rgba(104, 178, 168, 0.2);
+    --promo-danger: #ff5d70;
+    --promo-success: #53e0b0;
+
+    width: 100%;
+    min-width: 0;
+    padding: 28px;
+    color: var(--promo-text);
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+}
+
+.promociones-page *,
+.promociones-page *::before,
+.promociones-page *::after {
+    box-sizing: border-box;
+}
+
+.promociones-page button,
+.promociones-page input,
+.promociones-page textarea {
+    font: inherit;
+}
+
+.promociones-page button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================
+   ENCABEZADO
+========================================= */
+
+.promociones-page .promos-intro {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    overflow: hidden;
+    padding: 30px 32px;
+    margin-bottom: 30px;
+    border: 1px solid var(--promo-border);
+    border-radius: 22px;
+    background:
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(16, 239, 255, 0.12),
+            transparent 32%
+        ),
+        linear-gradient(125deg, #111b23, #0b1218 68%);
+}
+
+.promociones-page .intro-copy {
+    position: relative;
+    z-index: 1;
+}
+
+.promociones-page .section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 13px;
+    color: var(--promo-cyan);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.promociones-page .promos-intro h1 {
+    margin: 0;
+    color: var(--promo-text);
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.65rem, 3vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.promociones-page .promos-intro h1 span {
+    color: var(--promo-cyan);
+}
+
+.promociones-page .promos-intro p {
+    max-width: 650px;
+    margin: 11px 0 0;
+    color: var(--promo-muted);
+    font-size: 0.88rem;
+    line-height: 1.8;
+}
+
+.promociones-page .intro-decoration {
+    display: grid;
+    flex: 0 0 100px;
+    width: 100px;
+    height: 100px;
+    place-items: center;
+    border: 1px solid rgba(16, 239, 255, 0.2);
+    border-radius: 25px;
+    background: rgba(16, 239, 255, 0.055);
+    color: var(--promo-cyan);
+    font-size: 2.8rem;
+    transform: rotate(5deg);
+}
+
+.promociones-page .intro-decoration i {
+    filter: drop-shadow(0 0 13px rgba(16, 239, 255, 0.35));
+}
+
+/* =========================================
+   BARRA DE HERRAMIENTAS
+========================================= */
+
+.promociones-page .promos-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 25px;
+}
+
+.promociones-page .toolbar-copy h2 {
+    margin: 0 0 7px;
+    color: var(--promo-text);
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.promociones-page .toolbar-copy p {
+    margin: 0;
+    color: var(--promo-muted);
+    font-size: 0.82rem;
+    line-height: 1.6;
+}
+
+.promociones-page .toolbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 0;
+}
+
+.promociones-page .search-box {
+    position: relative;
+    width: min(310px, 100%);
+}
+
+.promociones-page .search-box > i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    z-index: 1;
+    color: var(--promo-cyan);
+    font-size: 0.9rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.promociones-page .search-box input {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 15px 12px 42px;
+    border: 1px solid var(--promo-border);
+    border-radius: 12px;
+    outline: none;
+    background: #101820;
+    color: var(--promo-text);
+    font-size: 0.8rem;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.promociones-page .search-box input::placeholder {
+    color: #71808b;
+}
+
+.promociones-page .search-box input:focus {
+    border-color: var(--promo-cyan);
+    box-shadow: 0 0 0 3px rgba(16, 239, 255, 0.08);
+}
+
+.promociones-page .btn-primary,
+.promociones-page .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 12px 18px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: linear-gradient(110deg, var(--promo-cyan-soft), var(--promo-cyan));
+    color: #071116;
+    font-size: 0.79rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+.promociones-page .btn-primary:hover,
+.promociones-page .btn-secondary:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 6px 24px rgba(16, 239, 255, 0.16);
+    transform: translateY(-2px);
+}
+
+.promociones-page .btn-primary:focus-visible,
+.promociones-page .btn-secondary:focus-visible,
+.promociones-page .btn-cancel:focus-visible,
+.promociones-page .action-btn:focus-visible,
+.promociones-page .close-modal:focus-visible {
+    outline: 2px solid var(--promo-cyan);
+    outline-offset: 3px;
+}
+
+.promociones-page .btn-secondary {
+    margin-top: 8px;
+}
+
+/* =========================================
+   GRILLA Y TARJETAS
+========================================= */
+
+.promociones-page .promos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    align-items: stretch;
+}
+
+.promociones-page .promo-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--promo-border);
+    border-radius: 19px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 31, 40, 0.98),
+            rgba(12, 19, 25, 0.98)
+        );
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.13);
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.promociones-page .promo-card:hover {
+    border-color: rgba(16, 239, 255, 0.55);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+    transform: translateY(-5px);
+}
+
+.promociones-page .promo-card-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 21px 21px 16px;
+}
+
+.promociones-page .promo-icon {
+    display: grid;
+    flex: 0 0 43px;
+    width: 43px;
+    height: 43px;
+    place-items: center;
+    border: 1px solid rgba(16, 239, 255, 0.21);
+    border-radius: 13px;
+    background: rgba(16, 239, 255, 0.075);
+    color: var(--promo-cyan);
+    font-size: 1.1rem;
+}
+
+.promociones-page .status-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    max-width: 65%;
+    padding: 7px 10px;
+    border: 1px solid transparent;
+    border-radius: 30px;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.promociones-page .status-dot {
+    flex: 0 0 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.promociones-page .status-tag.active {
+    border-color: rgba(83, 224, 176, 0.2);
+    background: rgba(83, 224, 176, 0.09);
+    color: var(--promo-success);
+}
+
+.promociones-page .status-tag.disable {
+    border-color: rgba(255, 93, 112, 0.2);
+    background: rgba(255, 93, 112, 0.09);
+    color: var(--promo-danger);
+}
+
+/* Descuento */
+
+.promociones-page .promo-discount {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden;
+    padding: 22px;
+    border-top: 1px solid rgba(16, 239, 255, 0.1);
+    border-bottom: 1px solid rgba(16, 239, 255, 0.12);
+    background:
+        radial-gradient(
+            circle at 85% 50%,
+            rgba(16, 239, 255, 0.13),
+            transparent 45%
+        ),
+        rgba(16, 239, 255, 0.035);
+}
+
+.promociones-page .discount-label {
+    color: var(--promo-muted);
+    font-size: 0.63rem;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.promociones-page .promo-discount strong {
+    color: var(--promo-cyan);
+    font-size: clamp(1.7rem, 3vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.promociones-page .promo-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 21px;
+}
+
+.promociones-page .promo-content h3 {
+    margin: 0 0 10px;
+    color: var(--promo-text);
+    font-family: 'Cinzel', serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.promociones-page .promo-description {
+    min-height: 48px;
+    margin: 0 0 21px;
+    color: var(--promo-muted);
+    font-size: 0.78rem;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.promociones-page .promo-date {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 17px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.055);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.promociones-page .date-icon {
+    display: grid;
+    flex: 0 0 35px;
+    width: 35px;
+    height: 35px;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(16, 239, 255, 0.08);
+    color: var(--promo-cyan);
+}
+
+.promociones-page .date-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.promociones-page .date-details span {
+    color: var(--promo-muted);
+    font-size: 0.68rem;
+}
+
+.promociones-page .date-details strong {
+    color: var(--promo-text);
+    font-size: 0.78rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+/* Código promocional */
+
+.promociones-page .promo-code {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 13px;
+    border: 1px dashed rgba(16, 239, 255, 0.35);
+    border-radius: 11px;
+    background: rgba(16, 239, 255, 0.035);
+}
+
+.promociones-page .code-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.promociones-page .code-info > i {
+    flex: 0 0 auto;
+    color: var(--promo-cyan);
+    font-size: 1rem;
+}
+
+.promociones-page .code-info div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.promociones-page .code-info span {
+    color: var(--promo-muted);
+    font-size: 0.61rem;
+}
+
+.promociones-page .code-info strong {
+    color: var(--promo-text);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    overflow-wrap: anywhere;
+}
+
+.promociones-page .code-decoration {
+    flex: 0 0 auto;
+    color: rgba(16, 239, 255, 0.22);
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+/* Acciones de tarjeta */
+
+.promociones-page .promo-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.promociones-page .footer-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--promo-muted);
+    font-size: 0.64rem;
+    line-height: 1.5;
+}
+
+.promociones-page .footer-label i {
+    color: var(--promo-cyan);
+}
+
+.promociones-page .promo-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.promociones-page .action-btn {
+    display: grid;
+    flex: 0 0 35px;
+    width: 35px;
+    height: 35px;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--promo-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease;
+}
+
+.promociones-page .action-btn.edit:hover {
+    border-color: rgba(16, 239, 255, 0.25);
+    background: rgba(16, 239, 255, 0.09);
+    color: var(--promo-cyan);
+}
+
+.promociones-page .action-btn.delete:hover {
+    border-color: rgba(255, 93, 112, 0.25);
+    background: rgba(255, 93, 112, 0.1);
+    color: var(--promo-danger);
+}
+
+/* Tarjeta expirada */
+
+.promociones-page .promo-card.expired {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.promociones-page .promo-card.expired .promo-discount {
+    border-color: rgba(255, 255, 255, 0.055);
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.promociones-page .promo-discount.gray strong {
+    color: #89939a;
+}
+
+.promociones-page .promo-card.expired .promo-icon {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.035);
+    color: #849099;
+}
+
+.promociones-page .promo-card.expired .date-icon,
+.promociones-page .promo-card.expired .code-info > i {
+    color: #849099;
+}
+
+/* =========================================
+   CARGA Y ESTADO VACÍO
+========================================= */
+
+.promociones-page .promos-feedback {
+    display: flex;
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 290px;
+    padding: 35px 22px;
+    border: 1px dashed var(--promo-border);
+    border-radius: 20px;
+    background: rgba(16, 24, 32, 0.55);
+    text-align: center;
+}
+
+.promociones-page .promos-feedback h3 {
+    margin: 16px 0 8px;
+    color: var(--promo-text);
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.promociones-page .promos-feedback p {
+    max-width: 440px;
+    margin: 0;
+    color: var(--promo-muted);
+    font-size: 0.82rem;
+    line-height: 1.8;
+}
+
+.promociones-page .feedback-icon {
+    display: grid;
+    width: 65px;
+    height: 65px;
+    place-items: center;
+    border: 1px solid var(--promo-border);
+    border-radius: 19px;
+    background: rgba(16, 239, 255, 0.06);
+    color: var(--promo-cyan);
+    font-size: 1.65rem;
+}
+
+.promociones-page .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(16, 239, 255, 0.12);
+    border-top-color: var(--promo-cyan);
+    border-radius: 50%;
+    animation: promoSpin 0.8s linear infinite;
+}
+
+@keyframes promoSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================
+   MODAL
+========================================= */
+
+.promociones-page .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 24px;
+    background: rgba(2, 7, 11, 0.82);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    animation: promoOverlayIn 0.2s ease;
+}
+
+.promociones-page .modal-content {
+    width: 100%;
+    max-width: 610px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    padding: 28px;
+    border: 1px solid rgba(16, 239, 255, 0.24);
+    border-radius: 22px;
+    background:
+        radial-gradient(
+            circle at 100% 0,
+            rgba(16, 239, 255, 0.075),
+            transparent 35%
+        ),
+        #0e161d;
+    box-shadow: 0 25px 90px rgba(0, 0, 0, 0.55);
+    animation: promoModalIn 0.3s ease;
+}
+
+.promociones-page .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 26px;
+    padding-bottom: 21px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.promociones-page .modal-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.promociones-page .modal-icon {
+    display: grid;
+    flex: 0 0 49px;
+    width: 49px;
+    height: 49px;
+    place-items: center;
+    border: 1px solid rgba(16, 239, 255, 0.2);
+    border-radius: 15px;
+    background: rgba(16, 239, 255, 0.08);
+    color: var(--promo-cyan);
+    font-size: 1.25rem;
+}
+
+.promociones-page .modal-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--promo-cyan);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.promociones-page .modal-heading h2 {
+    margin: 0;
+    color: var(--promo-text);
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.promociones-page .modal-heading p {
+    margin: 6px 0 0;
+    color: var(--promo-muted);
+    font-size: 0.76rem;
+    line-height: 1.6;
+}
+
+.promociones-page .close-modal {
+    display: grid;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--promo-muted);
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.promociones-page .close-modal:hover {
+    border-color: rgba(255, 93, 112, 0.3);
+    background: rgba(255, 93, 112, 0.1);
+    color: var(--promo-danger);
+}
+
+.promociones-page .form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 19px;
+    color: var(--promo-cyan);
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.promociones-page .form-group {
+    min-width: 0;
+    margin-bottom: 19px;
+}
+
+.promociones-page .form-group label {
+    display: block;
+    margin-bottom: 9px;
+    color: #d4dce2;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.promociones-page .form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.promociones-page .input-with-icon {
+    position: relative;
+}
+
+.promociones-page .input-with-icon > i {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    z-index: 1;
+    color: var(--promo-cyan);
+    font-size: 0.85rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.promociones-page .input-with-icon input,
+.promociones-page .input-with-icon textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 13px 14px 13px 40px;
+    border: 1px solid rgba(104, 178, 168, 0.19);
+    border-radius: 11px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--promo-text);
+    font-size: 0.78rem;
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.promociones-page .input-with-icon input {
+    min-height: 46px;
+}
+
+.promociones-page .input-with-icon textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+.promociones-page .input-with-icon input::placeholder,
+.promociones-page .input-with-icon textarea::placeholder {
+    color: #697984;
+}
+
+.promociones-page .input-with-icon input:focus,
+.promociones-page .input-with-icon textarea:focus {
+    border-color: var(--promo-cyan);
+    background: rgba(16, 239, 255, 0.025);
+    box-shadow: 0 0 0 3px rgba(16, 239, 255, 0.07);
+}
+
+.promociones-page .input-with-icon input[type="date"] {
+    color-scheme: dark;
+}
+
+.promociones-page .textarea-icon > i {
+    top: 17px;
+    transform: none;
+}
+
+.promociones-page .modal-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-top: 5px;
+    padding: 13px;
+    border: 1px solid rgba(16, 239, 255, 0.12);
+    border-radius: 11px;
+    background: rgba(16, 239, 255, 0.04);
+}
+
+.promociones-page .modal-note > i {
+    margin-top: 2px;
+    color: var(--promo-cyan);
+    font-size: 0.9rem;
+}
+
+.promociones-page .modal-note p {
+    margin: 0;
+    color: var(--promo-muted);
+    font-size: 0.7rem;
+    line-height: 1.7;
+}
+
+.promociones-page .modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.promociones-page .btn-cancel {
+    min-height: 44px;
+    padding: 11px 19px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.035);
+    color: #c0cbd2;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.promociones-page .btn-cancel:hover {
+    border-color: rgba(255, 255, 255, 0.23);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.promociones-page .submit-btn {
+    min-height: 44px;
+}
+
+@keyframes promoOverlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes promoModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1200px) {
+    .promociones-page .promos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .promociones-page .promos-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .promociones-page .toolbar-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .promociones-page .search-box {
+        flex: 1;
+        width: auto;
+    }
+}
+
+@media (max-width: 700px) {
+    .promociones-page {
+        padding: 18px;
+    }
+
+    .promociones-page .promos-intro {
+        padding: 24px 21px;
+        border-radius: 17px;
+    }
+
+    .promociones-page .intro-decoration {
+        flex-basis: 65px;
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+        font-size: 1.8rem;
+    }
+
+    .promociones-page .promos-intro h1 {
+        font-size: 1.55rem;
+    }
+
+    .promociones-page .promos-intro p {
+        font-size: 0.8rem;
+    }
+
+    .promociones-page .promos-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 17px;
+    }
+
+    .promociones-page .toolbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .promociones-page .search-box {
+        width: 100%;
+    }
+
+    .promociones-page .toolbar-actions > .btn-primary {
+        width: 100%;
+    }
+
+    .promociones-page .promo-description {
+        min-height: auto;
+    }
+
+    .promociones-page .modal-overlay {
+        align-items: flex-start;
+        padding: 14px;
+    }
+
+    .promociones-page .modal-content {
+        max-height: calc(100vh - 28px);
+        padding: 21px;
+        border-radius: 17px;
+    }
+}
+
+@media (max-width: 450px) {
+    .promociones-page {
+        padding: 13px;
+    }
+
+    .promociones-page .promos-intro {
+        padding: 21px 17px;
+    }
+
+    .promociones-page .intro-decoration {
+        display: none;
+    }
+
+    .promociones-page .section-eyebrow {
+        font-size: 0.61rem;
+        letter-spacing: 1.2px;
+    }
+
+    .promociones-page .promos-intro h1 {
+        font-size: 1.35rem;
+    }
+
+    .promociones-page .form-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    .promociones-page .modal-heading {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .promociones-page .modal-icon {
+        flex-basis: 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        font-size: 1rem;
+    }
+
+    .promociones-page .modal-heading h2 {
+        font-size: 1.05rem;
+    }
+
+    .promociones-page .modal-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .promociones-page .modal-actions button {
+        width: 100%;
+    }
+
+    .promociones-page .promo-footer {
+        align-items: flex-start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .promociones-page *,
+    .promociones-page *::before,
+    .promociones-page *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

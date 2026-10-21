@@ -1,0 +1,583 @@
+<main class="empleados-page">
+
+  <!-- ENCABEZADO -->
+  <section class="empleados-intro">
+    <div class="empleados-intro-copy">
+      <span class="empleados-kicker">
+        <i class="fas fa-user-tie"></i>
+        GESTIÓN DEL EQUIPO
+      </span>
+
+      <h1>Nuestro <span>equipo</span></h1>
+
+      <p>
+        Administra los colaboradores de NOVA Beauty Salon y organiza
+        sus especialidades y horarios de atención.
+      </p>
+    </div>
+
+    <div class="empleados-intro-icon" aria-hidden="true">
+      <i class="fas fa-users"></i>
+    </div>
+  </section>
+
+  <!-- BÚSQUEDA Y ACCIONES -->
+  <section class="empleados-toolbar">
+
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+
+      <input
+        type="search"
+        [(ngModel)]="textoBusqueda"
+        (input)="filtrarEmpleados()"
+        placeholder="Buscar por nombre o especialidad..."
+        aria-label="Buscar empleados"
+      />
+
+      <span class="search-decoration">
+        <i class="fas fa-filter"></i>
+      </span>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="abrirModal()"
+    >
+      <i class="fas fa-user-plus"></i>
+      <span>Registrar empleado</span>
+    </button>
+
+  </section>
+
+  <!-- DIRECTORIO DE EMPLEADOS -->
+  <section class="recent-table-container">
+
+    <div class="table-heading">
+      <div class="table-heading-info">
+        <span class="table-heading-icon">
+          <i class="fas fa-address-card"></i>
+        </span>
+
+        <div>
+          <h2>Directorio del equipo</h2>
+          <p>Consulta las especialidades y el estado de cada colaborador.</p>
+        </div>
+      </div>
+
+      <span class="table-status">
+        <span class="status-dot"></span>
+        Personal
+      </span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="empleados-table">
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Colaborador</th>
+            <th>Especialidad</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th class="actions-heading">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- CARGANDO -->
+          <tr *ngIf="cargando">
+            <td colspan="6">
+              <div class="table-feedback">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Cargando información del equipo...</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- SIN RESULTADOS -->
+          <tr *ngIf="!cargando && empleadosFiltrados.length === 0">
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <i class="fas fa-user-friends"></i>
+                </div>
+
+                <h3>No se encontraron colaboradores</h3>
+
+                <p>
+                  No hay empleados que coincidan con la búsqueda.
+                  Puedes registrar un nuevo integrante del equipo.
+                </p>
+
+                <button
+                  type="button"
+                  class="empty-action"
+                  (click)="abrirModal()"
+                >
+                  <i class="fas fa-user-plus"></i>
+                  Registrar empleado
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- LISTADO -->
+          @for (empleado of empleadosFiltrados; track empleado.id_especialista) {
+            <tr>
+
+              <td data-label="ID">
+                <span class="employee-id">
+                  #{{ empleado.id_especialista }}
+                </span>
+              </td>
+
+              <td data-label="Colaborador">
+                <div class="employee-cell">
+                  <span class="employee-avatar">
+                    <i class="fas fa-user-tie"></i>
+                  </span>
+
+                  <span class="employee-name">
+                    {{ empleado.nombre }}
+                  </span>
+                </div>
+              </td>
+
+              <td data-label="Especialidad">
+                <span class="badge-specialty">
+                  <i class="fas fa-cut"></i>
+                  {{ empleado.especialidad }}
+                </span>
+              </td>
+
+              <td data-label="Teléfono">
+                <div class="phone-cell">
+                  <i class="fas fa-phone-alt"></i>
+                  <span>
+                    {{ empleado.telefono || 'No registrado' }}
+                  </span>
+                </div>
+              </td>
+
+              <td data-label="Estado">
+
+                <span
+                  class="employee-status confirmed"
+                  *ngIf="empleado.estado == 1 || empleado.estado == 'ACTIVO'"
+                >
+                  <span class="status-indicator"></span>
+                  ACTIVO
+                </span>
+
+                <span
+                  class="employee-status pending"
+                  *ngIf="empleado.estado == 0 || empleado.estado == 'INACTIVO'"
+                >
+                  <span class="status-indicator"></span>
+                  INACTIVO
+                </span>
+
+              </td>
+
+              <td data-label="Acciones">
+                <div class="action-buttons">
+
+                  <button
+                    type="button"
+                    class="action-btn schedule"
+                    title="Gestionar horarios"
+                    aria-label="Gestionar horarios"
+                    (click)="abrirModalHorarios(empleado)"
+                  >
+                    <i class="fas fa-calendar-alt"></i>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="action-btn delete"
+                    title="Eliminar empleado"
+                    aria-label="Eliminar empleado"
+                    (click)="eliminarEmpleado(
+                      empleado.id_especialista,
+                      empleado.nombre
+                    )"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span>
+        <i class="fas fa-shield-alt"></i>
+        Administración del equipo
+      </span>
+
+      <span class="footer-brand">
+        NOVA <strong>BEAUTY SALON</strong>
+      </span>
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       MODAL: REGISTRAR EMPLEADO
+  =================================== -->
+
+  <div
+    class="modal-overlay"
+    *ngIf="isModalOpen"
+    (click)="cerrarModal()"
+  >
+
+    <section
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-empleado-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="modal-header">
+
+        <div class="modal-heading">
+          <span class="modal-icon">
+            <i class="fas fa-user-plus"></i>
+          </span>
+
+          <div>
+            <span class="modal-kicker">NOVA BEAUTY SALON</span>
+            <h2 id="modal-empleado-title">Registrar empleado</h2>
+            <p>Incorpora un nuevo colaborador al equipo.</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="cerrarModal()"
+          title="Cerrar formulario"
+          aria-label="Cerrar formulario"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+      </div>
+
+      <form
+        class="empleado-form"
+        (submit)="guardarEmpleado($event)"
+      >
+
+        <div class="form-section-label">
+          <i class="fas fa-address-card"></i>
+          Información del colaborador
+        </div>
+
+        <div class="form-group">
+          <label for="empleado-nombre">Nombre completo</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-user"></i>
+
+            <input
+              id="empleado-nombre"
+              type="text"
+              [(ngModel)]="nuevoEmpleado.nombre"
+              name="nombre"
+              required
+              autocomplete="name"
+              placeholder="Ej. Juan David Sánchez"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="empleado-especialidad">Especialidad principal</label>
+
+            <div class="form-input-wrapper select-wrapper">
+              <i class="fas fa-cut"></i>
+
+              <select
+                id="empleado-especialidad"
+                [(ngModel)]="nuevoEmpleado.especialidad"
+                name="especialidad"
+                required
+              >
+                <option value="" disabled>
+                  Selecciona una especialidad
+                </option>
+
+                <option value="Cabello">Cabello y tintes</option>
+                <option value="Manicura">Manicura y uñas</option>
+                <option value="Cejas">Mirada y cejas</option>
+              </select>
+
+              <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="empleado-telefono">Teléfono / móvil</label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-phone-alt"></i>
+
+              <input
+                id="empleado-telefono"
+                type="tel"
+                [(ngModel)]="nuevoEmpleado.telefono"
+                name="telefono"
+                required
+                autocomplete="tel"
+                placeholder="Ej. 999888777"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-note">
+          <i class="fas fa-info-circle"></i>
+          <span>
+            Verifica la especialidad y los datos de contacto antes de guardar.
+          </span>
+        </div>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cerrarModal()"
+          >
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn-save">
+            <i class="fas fa-check"></i>
+            Guardar empleado
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+
+  <!-- ==================================
+       MODAL: GESTIONAR HORARIOS
+  =================================== -->
+
+  <div
+    class="modal-overlay"
+    *ngIf="isModalHorariosOpen"
+    (click)="cerrarModalHorarios()"
+  >
+
+    <section
+      class="modal-content modal-horarios"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-horarios-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="modal-header">
+
+        <div class="modal-heading">
+          <span class="modal-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </span>
+
+          <div>
+            <span class="modal-kicker">AGENDA PROFESIONAL</span>
+            <h2 id="modal-horarios-title">
+              Horarios del especialista
+            </h2>
+
+            <p>
+              {{ especialistaSeleccionado?.nombre }}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="cerrarModalHorarios()"
+          title="Cerrar agenda"
+          aria-label="Cerrar agenda"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+      </div>
+
+      <div class="horarios-content">
+
+        <!-- FORMULARIO PARA NUEVO TURNO -->
+        <form
+          class="horario-form"
+          (submit)="guardarHorario($event)"
+        >
+
+          <div class="form-section-label">
+            <i class="fas fa-plus-circle"></i>
+            Añadir turno disponible
+          </div>
+
+          <div class="form-group">
+            <label for="horario-fecha">Fecha del turno</label>
+
+            <div class="form-input-wrapper">
+              <i class="far fa-calendar-alt"></i>
+
+              <input
+                id="horario-fecha"
+                type="date"
+                [(ngModel)]="nuevoHorario.fecha"
+                name="fecha"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+
+            <div class="form-group">
+              <label for="horario-inicio">Hora de inicio</label>
+
+              <div class="form-input-wrapper">
+                <i class="far fa-clock"></i>
+
+                <input
+                  id="horario-inicio"
+                  type="time"
+                  [(ngModel)]="nuevoHorario.hora_inicio"
+                  name="hora_inicio"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="horario-fin">Hora de fin</label>
+
+              <div class="form-input-wrapper">
+                <i class="far fa-clock"></i>
+
+                <input
+                  id="horario-fin"
+                  type="time"
+                  [(ngModel)]="nuevoHorario.hora_fin"
+                  name="hora_fin"
+                  required
+                />
+              </div>
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn-save btn-add-shift">
+            <i class="fas fa-plus"></i>
+            Añadir turno
+          </button>
+
+        </form>
+
+        <!-- LISTADO DE TURNOS -->
+        <div class="horarios-list-section">
+
+          <div class="horarios-list-heading">
+            <div>
+              <h3>Turnos asignados</h3>
+              <p>Agenda de este colaborador.</p>
+            </div>
+
+            <span class="calendar-heading-icon">
+              <i class="fas fa-calendar-check"></i>
+            </span>
+          </div>
+
+          <div class="horarios-list">
+
+            <div
+              *ngIf="horariosActuales.length === 0"
+              class="horarios-empty"
+            >
+              <i class="far fa-calendar-times"></i>
+              <strong>Sin turnos asignados</strong>
+              <p>Agrega un turno usando el formulario superior.</p>
+            </div>
+
+            <div
+              *ngFor="let turno of horariosActuales"
+              class="turno-item"
+            >
+
+              <div class="turno-icon">
+                <i class="far fa-calendar-alt"></i>
+              </div>
+
+              <div class="turno-info">
+                <strong>
+                  {{ turno.fecha | date:'dd/MM/yyyy' }}
+                </strong>
+
+                <span class="turno-horas">
+                  <i class="far fa-clock"></i>
+                  {{ turno.hora_inicio }} – {{ turno.hora_fin }}
+                </span>
+              </div>
+
+              <span
+                class="turno-status"
+                [ngClass]="{
+                  'turno-disponible': turno.estado === 'disponible',
+                  'turno-ocupado': turno.estado !== 'disponible'
+                }"
+              >
+                <span class="status-indicator"></span>
+                {{ turno.estado }}
+              </span>
+
+              <button
+                type="button"
+                class="action-btn delete"
+                (click)="eliminarHorario(turno.id_horario)"
+                title="Eliminar turno"
+                aria-label="Eliminar turno"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>

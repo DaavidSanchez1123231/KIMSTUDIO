@@ -1,0 +1,993 @@
+/* =========================================================
+   NOVA BEAUTY SALON — MÓDULO DE GALERÍA
+   Diseño oscuro, elegante y cian
+   ========================================================= */
+
+.galeria-page {
+  --galeria-cian: var(--brand-color, #10efff);
+  --galeria-bg: var(--bg-card, #111519);
+  --galeria-muted: var(--text-muted, #a0aab3);
+  --galeria-border: rgba(16, 239, 255, 0.14);
+  --galeria-danger: #ff5570;
+
+  width: 100%;
+  min-width: 0;
+  color: #f5f7fa;
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}
+
+.galeria-page *,
+.galeria-page *::before,
+.galeria-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.galeria-intro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  padding: 30px 34px;
+  margin-bottom: 26px;
+  background:
+    radial-gradient(
+      circle at 88% 15%,
+      rgba(16, 239, 255, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(135deg, #131a20 0%, #0c1014 100%);
+  border: 1px solid var(--galeria-border);
+  border-radius: 20px;
+}
+
+.galeria-intro::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22px;
+  bottom: 22px;
+  width: 4px;
+  background: var(--galeria-cian);
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 0 18px rgba(16, 239, 255, 0.4);
+}
+
+.galeria-intro-text {
+  position: relative;
+  z-index: 1;
+}
+
+.galeria-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+  color: var(--galeria-cian);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.galeria-intro h1 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.galeria-intro h1 span {
+  color: var(--galeria-cian);
+}
+
+.galeria-intro p {
+  max-width: 590px;
+  margin: 0;
+  color: var(--galeria-muted);
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+
+.galeria-intro-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  color: var(--galeria-cian);
+  background: rgba(16, 239, 255, 0.06);
+  border: 1px solid rgba(16, 239, 255, 0.19);
+  border-radius: 24px;
+  font-size: 2.3rem;
+  transform: rotate(4deg);
+}
+
+/* =========================================================
+   FILTROS Y ACCIONES
+   ========================================================= */
+
+.galeria-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 21px 23px;
+  margin-bottom: 28px;
+  background: rgba(17, 21, 25, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+}
+
+.galeria-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(100%, 360px);
+}
+
+.galeria-filter > label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #dce3e9;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.galeria-filter > label i {
+  color: var(--galeria-cian);
+}
+
+.filter-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.form-select-custom {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 42px 12px 15px;
+  appearance: none;
+  color: #f5f7fa;
+  background: #0b1014;
+  border: 1px solid rgba(16, 239, 255, 0.2);
+  border-radius: 10px;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.form-select-custom:focus {
+  border-color: var(--galeria-cian);
+  box-shadow: 0 0 0 3px rgba(16, 239, 255, 0.08);
+}
+
+.form-select-custom option,
+.galeria-page .galeria-form select option {
+  color: #ffffff;
+  background: #101519;
+}
+
+.select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  color: var(--galeria-cian);
+  font-size: 0.72rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+/* Botón principal */
+
+.galeria-page .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 45px;
+  padding: 12px 21px;
+  color: #061014;
+  background: var(--galeria-cian);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.galeria-page .btn-primary:hover {
+  background: #ffffff;
+  box-shadow: 0 0 22px rgba(16, 239, 255, 0.19);
+  transform: translateY(-2px);
+}
+
+.galeria-page .btn-primary:active {
+  transform: translateY(0);
+}
+
+.galeria-page .btn-primary:focus-visible,
+.galeria-page button:focus-visible,
+.galeria-page select:focus-visible,
+.galeria-page input:focus-visible {
+  outline: 2px solid var(--galeria-cian);
+  outline-offset: 3px;
+}
+
+.galeria-upload-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   CONTENIDO Y ESTADOS VACÍOS
+   ========================================================= */
+
+.galeria-content {
+  width: 100%;
+  min-width: 0;
+}
+
+.galeria-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 35px 24px;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      rgba(16, 239, 255, 0.045),
+      transparent 55%
+    ),
+    rgba(17, 21, 25, 0.72);
+  border: 1px dashed rgba(16, 239, 255, 0.19);
+  border-radius: 18px;
+}
+
+.galeria-loader,
+.galeria-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 19px;
+  color: var(--galeria-cian);
+  background: rgba(16, 239, 255, 0.07);
+  border: 1px solid rgba(16, 239, 255, 0.18);
+  border-radius: 20px;
+  font-size: 1.65rem;
+}
+
+.galeria-loader i {
+  animation: galeria-spin 1s linear infinite;
+}
+
+@keyframes galeria-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.galeria-state h3 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.galeria-state p {
+  max-width: 420px;
+  margin: 0;
+  color: var(--galeria-muted);
+  font-size: 0.83rem;
+  line-height: 1.7;
+}
+
+.empty-upload-btn {
+  margin-top: 22px;
+}
+
+/* =========================================================
+   CUADRÍCULA DE TRABAJOS
+   ========================================================= */
+
+.galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  align-items: stretch;
+  gap: 25px;
+}
+
+.galeria-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(155deg, #151b20 0%, #0e1216 100%);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 17px;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.galeria-card:hover {
+  border-color: rgba(16, 239, 255, 0.42);
+  box-shadow: 0 15px 36px rgba(0, 0, 0, 0.24);
+  transform: translateY(-5px);
+}
+
+/* =========================================================
+   COMPARACIÓN ANTES / DESPUÉS
+   ========================================================= */
+
+.comparison-box {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 245px;
+  overflow: hidden;
+  background: #080b0d;
+}
+
+.img-side {
+  position: relative;
+  width: 50%;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.img-side img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s ease, filter 0.4s ease;
+}
+
+.galeria-card:hover .img-side img {
+  transform: scale(1.055);
+}
+
+.img-side-after {
+  border-left: 2px solid var(--galeria-cian);
+}
+
+.img-side::after {
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+  content: '';
+  pointer-events: none;
+}
+
+.badge-side {
+  position: absolute;
+  z-index: 1;
+  bottom: 13px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  color: #ffffff;
+  background: rgba(8, 11, 13, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.badge-antes i {
+  color: #c8d0d7;
+}
+
+.badge-despues {
+  right: 12px;
+  left: auto;
+  color: var(--galeria-cian);
+  border-color: rgba(16, 239, 255, 0.25);
+}
+
+.comparison-divider {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  color: #081014;
+  background: var(--galeria-cian);
+  border: 3px solid #101519;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  transform: translate(-50%, -50%);
+}
+
+/* =========================================================
+   INFORMACIÓN DE LAS TARJETAS
+   ========================================================= */
+
+.galeria-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 21px;
+}
+
+.galeria-card-category {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--galeria-cian);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.galeria-card-category i {
+  font-size: 0.72rem;
+}
+
+.galeria-info h3 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.galeria-description {
+  flex: 1;
+  margin: 0 0 20px;
+  color: var(--galeria-muted);
+  font-size: 0.81rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.galeria-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.portfolio-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #b8c4cc;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  background: #40dfa0;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(64, 223, 160, 0.3);
+}
+
+.action-btn.delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  color: var(--galeria-danger);
+  background: rgba(255, 85, 112, 0.065);
+  border: 1px solid rgba(255, 85, 112, 0.16);
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.action-btn.delete:hover {
+  color: #ffffff;
+  background: rgba(255, 85, 112, 0.2);
+  border-color: rgba(255, 85, 112, 0.45);
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.galeria-page .modal-overlay {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 24px;
+  background: rgba(2, 5, 8, 0.82);
+  backdrop-filter: blur(10px);
+  animation: galeria-overlay-in 0.22s ease;
+}
+
+@keyframes galeria-overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.galeria-page .modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 30px;
+  color: #ffffff;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(16, 239, 255, 0.07),
+      transparent 32%
+    ),
+    #11171c;
+  border: 1px solid rgba(16, 239, 255, 0.23);
+  border-radius: 20px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+  animation: galeria-modal-in 0.3s ease;
+}
+
+@keyframes galeria-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.galeria-page .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.modal-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 49px;
+  height: 49px;
+  color: var(--galeria-cian);
+  background: rgba(16, 239, 255, 0.08);
+  border: 1px solid rgba(16, 239, 255, 0.2);
+  border-radius: 13px;
+  font-size: 1.25rem;
+}
+
+.modal-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--galeria-cian);
+  font-size: 0.63rem;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+}
+
+.galeria-page .modal-header h2 {
+  margin: 0;
+  color: #ffffff;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+  line-height: 1.4;
+}
+
+.galeria-page .close-modal {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  color: #aeb8c1;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.galeria-page .close-modal:hover {
+  color: #ffffff;
+  background: rgba(255, 85, 112, 0.15);
+  border-color: rgba(255, 85, 112, 0.3);
+}
+
+.modal-description {
+  margin: 18px 0 25px;
+  color: var(--galeria-muted);
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+
+/* =========================================================
+   FORMULARIO DEL MODAL
+   ========================================================= */
+
+.galeria-form {
+  width: 100%;
+}
+
+.galeria-form .form-group {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+  margin-bottom: 20px;
+}
+
+.galeria-form .form-group label {
+  color: #dce4ea;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.galeria-form .form-group label i {
+  margin-right: 6px;
+  color: var(--galeria-cian);
+}
+
+.galeria-form .form-group input,
+.galeria-form .form-group select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 45px;
+  padding: 12px 13px;
+  color: #f5f7fa;
+  background: #0b1014;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 9px;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.77rem;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.galeria-form .form-group input::placeholder {
+  color: #68737d;
+  opacity: 1;
+}
+
+.galeria-form .form-group input:focus,
+.galeria-form .form-group select:focus {
+  border-color: var(--galeria-cian);
+  box-shadow: 0 0 0 3px rgba(16, 239, 255, 0.07);
+}
+
+.galeria-form .form-group select {
+  cursor: pointer;
+}
+
+.galeria-form .form-row {
+  display: flex;
+  gap: 17px;
+}
+
+.images-section-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 15px 0 17px;
+  margin-top: 1px;
+  margin-bottom: 17px;
+  color: #e7edf2;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.79rem;
+  font-weight: 800;
+}
+
+.images-section-title i {
+  color: var(--galeria-cian);
+}
+
+.image-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.image-input-wrapper > i {
+  position: absolute;
+  left: 13px;
+  z-index: 1;
+  color: var(--galeria-cian);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.galeria-form .image-input-wrapper input {
+  padding-left: 37px;
+}
+
+.input-help {
+  color: #7f8a94;
+  font-size: 0.67rem;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 22px;
+  margin-top: 5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.galeria-page .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 11px 19px;
+  color: #d6dfe6;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.galeria-page .btn-secondary:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.galeria-page .modal-submit-btn {
+  min-height: 44px;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLETAS
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .galeria-intro {
+    padding: 26px;
+  }
+
+  .galeria-intro-icon {
+    width: 72px;
+    height: 72px;
+    font-size: 1.9rem;
+  }
+
+  .galeria-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+    gap: 19px;
+  }
+
+  .comparison-box {
+    height: 225px;
+  }
+
+  .galeria-info {
+    padding: 18px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — MÓVILES
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .galeria-intro {
+    padding: 23px 20px;
+    border-radius: 15px;
+  }
+
+  .galeria-intro::before {
+    top: 18px;
+    bottom: 18px;
+  }
+
+  .galeria-intro h1 {
+    font-size: 1.55rem;
+  }
+
+  .galeria-intro p {
+    font-size: 0.79rem;
+  }
+
+  .galeria-intro-icon {
+    display: none;
+  }
+
+  .galeria-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+    padding: 17px;
+    border-radius: 13px;
+  }
+
+  .galeria-filter {
+    width: 100%;
+  }
+
+  .galeria-upload-btn {
+    width: 100%;
+  }
+
+  .galeria-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .comparison-box {
+    height: clamp(205px, 64vw, 290px);
+  }
+
+  .galeria-info {
+    padding: 18px;
+  }
+
+  .galeria-page .modal-overlay {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .galeria-page .modal-content {
+    max-height: calc(100vh - 24px);
+    padding: 21px 17px;
+    border-radius: 15px;
+  }
+
+  .galeria-form .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .galeria-form .form-group {
+    margin-bottom: 17px;
+  }
+
+  .modal-title-group {
+    gap: 10px;
+  }
+
+  .modal-icon {
+    width: 41px;
+    height: 41px;
+    font-size: 1rem;
+  }
+
+  .galeria-page .close-modal {
+    width: 35px;
+    height: 35px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .galeria-page .btn-secondary,
+  .galeria-page .modal-submit-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .galeria-intro h1 {
+    font-size: 1.35rem;
+  }
+
+  .galeria-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .action-btn.delete {
+    width: 100%;
+  }
+
+  .badge-side {
+    bottom: 8px;
+    left: 7px;
+    gap: 4px;
+    padding: 6px 7px;
+    font-size: 0.58rem;
+  }
+
+  .badge-despues {
+    right: 7px;
+    left: auto;
+  }
+
+  .galeria-page .modal-content {
+    padding: 17px 13px;
+  }
+}
+
+/* =========================================================
+   ACCESIBILIDAD — MOVIMIENTO REDUCIDO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .galeria-page *,
+  .galeria-page *::before,
+  .galeria-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

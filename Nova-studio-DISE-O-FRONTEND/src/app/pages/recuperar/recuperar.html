@@ -1,0 +1,114 @@
+<div id="particles-js"></div>
+
+<main class="forgot-wrapper">
+
+  <section class="forgot-card">
+
+    <!-- LOGOTIPO NOVA BEAUTY SALON -->
+    <header class="brand-header">
+
+      <div class="brand-emblem">
+        <i class="fas fa-spa" aria-hidden="true"></i>
+      </div>
+
+      <div class="brand-copy">
+        <h1>NOVA</h1>
+
+        <div class="brand-subtitle">
+          <span></span>
+          <p>BEAUTY SALON</p>
+          <span></span>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- ICONO DE RECUPERACIÓN -->
+    <div class="recovery-icon">
+      <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+    </div>
+
+    <!-- TÍTULO -->
+    <h2>Recuperar contraseña</h2>
+
+    <p class="subtitle">
+      ¿Olvidaste tu contraseña?
+      <br />
+      Ingresa tu correo y te enviaremos un enlace para restablecerla.
+    </p>
+
+    <!-- FORMULARIO -->
+    <form (submit)="enviarEnlace($event)">
+
+      <div class="input-group">
+        <i class="fas fa-envelope" aria-hidden="true"></i>
+
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="Correo electrónico"
+          autocomplete="email"
+          aria-label="Correo electrónico"
+          required
+        />
+      </div>
+
+      <!-- AVISO DE PRIVACIDAD -->
+      <p class="consent-note">
+        Usaremos tu correo únicamente para gestionar la recuperación
+        de tu contraseña. Consulta nuestra
+        <a
+          href="/politica-privacidad"
+          target="_blank"
+          rel="noopener"
+        >Política de Privacidad</a>.
+      </p>
+
+      <!-- MENSAJE DE RESPUESTA -->
+      <p
+        id="msg"
+        *ngIf="mensaje"
+        [ngStyle]="{'color': mensajeColor}"
+        role="status"
+        aria-live="polite"
+      >
+        {{ mensaje }}
+      </p>
+
+      <!-- BOTÓN PARA ENVIAR EL ENLACE -->
+      <button
+        type="submit"
+        class="btn-send"
+        [disabled]="cargando"
+      >
+        <span>
+          {{ cargando ? 'PROCESANDO...' : 'ENVIAR ENLACE' }}
+        </span>
+
+        <i
+          *ngIf="!cargando"
+          class="fas fa-arrow-right"
+          aria-hidden="true"
+        ></i>
+      </button>
+
+      <!-- REGRESAR AL LOGIN -->
+      <div class="extra-links">
+        <a routerLink="/login">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i>
+          <span>Volver al inicio de sesión</span>
+        </a>
+      </div>
+
+    </form>
+
+    <!-- PIE DE TARJETA -->
+    <div class="recovery-footer">
+      <i class="fas fa-shield-alt" aria-hidden="true"></i>
+      <span>Tu información está protegida</span>
+    </div>
+
+  </section>
+
+</main>

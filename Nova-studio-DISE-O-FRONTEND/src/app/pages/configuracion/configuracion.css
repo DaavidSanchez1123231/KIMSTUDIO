@@ -1,0 +1,616 @@
+/* =========================================================
+   NOVA BEAUTY SALON — CONFIGURACIÓN
+   Tema oscuro, cian y seguridad en rojo
+   ========================================================= */
+
+.config-page {
+  --config-cyan: var(--brand-color, #10efff);
+  --config-card: var(--bg-card, #111519);
+  --config-muted: var(--text-muted, #a0aab3);
+  --config-border: rgba(16, 239, 255, 0.15);
+  --config-red: #ff5570;
+
+  width: 100%;
+  min-width: 0;
+  color: #f5f7fa;
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}
+
+.config-page *,
+.config-page *::before,
+.config-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.config-intro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  padding: 30px 34px;
+  margin-bottom: 28px;
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(16, 239, 255, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(135deg, #151b21 0%, #0d1115 100%);
+  border: 1px solid var(--config-border);
+  border-radius: 20px;
+}
+
+.config-intro::before {
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  left: 0;
+  width: 4px;
+  background: var(--config-cyan);
+  border-radius: 0 5px 5px 0;
+  box-shadow: 0 0 18px rgba(16, 239, 255, 0.4);
+  content: '';
+}
+
+.config-intro-text {
+  position: relative;
+  z-index: 1;
+}
+
+.config-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+  color: var(--config-cyan);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.config-intro h1 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.config-intro h1 span {
+  color: var(--config-cyan);
+}
+
+.config-intro p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--config-muted);
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.config-intro-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 82px;
+  height: 82px;
+  color: var(--config-cyan);
+  background: rgba(16, 239, 255, 0.06);
+  border: 1px solid rgba(16, 239, 255, 0.2);
+  border-radius: 22px;
+  font-size: 2.1rem;
+  transform: rotate(4deg);
+}
+
+/* =========================================================
+   CONTENEDOR Y TARJETAS
+   ========================================================= */
+
+.config-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+  min-width: 0;
+}
+
+.config-card {
+  min-width: 0;
+  padding: 29px;
+  background: linear-gradient(
+    145deg,
+    rgba(21, 27, 32, 0.98),
+    rgba(13, 17, 21, 0.98)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.config-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 25px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.config-heading-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  color: var(--config-cyan);
+  background: rgba(16, 239, 255, 0.07);
+  border: 1px solid rgba(16, 239, 255, 0.18);
+  border-radius: 14px;
+  font-size: 1.25rem;
+}
+
+.config-heading-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.config-heading-text h2 {
+  margin: 0 0 7px;
+  color: #ffffff;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.config-heading-text p {
+  margin: 0;
+  color: var(--config-muted);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
+/* =========================================================
+   SUBTÍTULOS DE SECCIÓN
+   ========================================================= */
+
+.config-section-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 20px;
+  color: #e3eaf0;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.config-section-label i {
+  color: var(--config-cyan);
+}
+
+.config-social-label {
+  padding-top: 20px;
+  margin-top: 5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* =========================================================
+   FORMULARIOS
+   ========================================================= */
+
+.config-form {
+  width: 100%;
+  min-width: 0;
+}
+
+.config-form .form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.config-form .form-group {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+  margin-bottom: 21px;
+}
+
+.config-form .form-group label {
+  display: block;
+  color: #dce4ea;
+  font-size: 0.77rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.config-form .form-group label i {
+  margin-right: 6px;
+  color: var(--config-cyan);
+}
+
+.config-form .form-group input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 12px 14px;
+  color: #f5f7fa;
+  background: #0b1014;
+  border: 1px solid rgba(16, 239, 255, 0.16);
+  border-radius: 9px;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.config-form .form-group input::placeholder {
+  color: #68747e;
+  opacity: 1;
+}
+
+.config-form .form-group input:focus {
+  background: #0e1418;
+  border-color: var(--config-cyan);
+  box-shadow: 0 0 0 3px rgba(16, 239, 255, 0.07);
+}
+
+.config-form .form-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Campo de correo */
+
+.config-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.config-input-wrapper .input-leading-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  color: var(--config-cyan);
+  font-size: 0.85rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.config-form .config-input-wrapper input {
+  padding-left: 40px;
+}
+
+.input-help {
+  display: block;
+  color: #84909a;
+  font-size: 0.68rem;
+  line-height: 1.65;
+}
+
+/* Usuario de solo lectura */
+
+.config-form .form-group input.input-readonly {
+  color: #87919a;
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.08);
+  cursor: not-allowed;
+}
+
+/* Iconos de redes sociales */
+
+.config-form .form-group label .social-instagram {
+  color: #e89ad6;
+}
+
+.config-form .form-group label .social-facebook {
+  color: #75a9ff;
+}
+
+/* =========================================================
+   PIE DE FORMULARIO Y BOTONES
+   ========================================================= */
+
+.config-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 22px;
+  margin-top: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.config-save-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: #87939d;
+  font-size: 0.7rem;
+  line-height: 1.7;
+}
+
+.config-save-hint i {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--config-cyan);
+}
+
+.config-page .btn-primary-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 12px 19px;
+  color: #071014;
+  background: var(--config-cyan);
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.config-page .btn-primary-sm:hover {
+  background: #ffffff;
+  box-shadow: 0 0 18px rgba(16, 239, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.config-page button:focus-visible,
+.config-page input:focus-visible {
+  outline: 2px solid var(--config-cyan);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   SEGURIDAD DE LA CUENTA
+   ========================================================= */
+
+.config-page .config-security-card {
+  border-top: 2px solid var(--config-red);
+}
+
+.config-page .security-icon {
+  color: var(--config-red);
+  background: rgba(255, 85, 112, 0.07);
+  border-color: rgba(255, 85, 112, 0.2);
+}
+
+.security-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  color: #ff8b9e;
+  background: rgba(255, 85, 112, 0.07);
+  border: 1px solid rgba(255, 85, 112, 0.17);
+  border-radius: 8px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.security-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 16px;
+  margin-bottom: 24px;
+  background: rgba(255, 85, 112, 0.045);
+  border: 1px solid rgba(255, 85, 112, 0.13);
+  border-radius: 10px;
+}
+
+.security-notice > i {
+  margin-top: 2px;
+  color: var(--config-red);
+  font-size: 0.95rem;
+}
+
+.security-notice p {
+  margin: 0;
+  color: #c0c8d0;
+  font-size: 0.75rem;
+  line-height: 1.8;
+}
+
+.config-page .btn-primary-sm.btn-danger {
+  color: #ffffff;
+  background: #e74862;
+}
+
+.config-page .btn-primary-sm.btn-danger:hover {
+  color: #ffffff;
+  background: #ff5570;
+  box-shadow: 0 0 18px rgba(255, 85, 112, 0.22);
+}
+
+.config-page .security-form-footer .config-save-hint i {
+  color: var(--config-red);
+}
+
+/* =========================================================
+   MENSAJES DE VALIDACIÓN Y DEL SERVIDOR
+   ========================================================= */
+
+.config-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  margin: 0 0 17px;
+  border-radius: 9px;
+  font-size: 0.76rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.config-alert i {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.config-alert-error {
+  color: #ff8296;
+  background: rgba(255, 85, 112, 0.08);
+  border: 1px solid rgba(255, 85, 112, 0.2);
+}
+
+.config-alert-server {
+  color: #9eeef4;
+  background: rgba(16, 239, 255, 0.05);
+  border: 1px solid rgba(16, 239, 255, 0.17);
+}
+
+/* =========================================================
+   RESPONSIVE — TABLETAS
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .config-card {
+    padding: 24px;
+  }
+
+  .config-heading-text h2 {
+    font-size: 1.1rem;
+  }
+
+  .security-badge {
+    align-self: flex-start;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — MÓVILES
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .config-intro {
+    padding: 24px 21px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+  }
+
+  .config-intro::before {
+    top: 18px;
+    bottom: 18px;
+  }
+
+  .config-intro h1 {
+    font-size: 1.55rem;
+  }
+
+  .config-intro p {
+    font-size: 0.78rem;
+  }
+
+  .config-intro-icon {
+    display: none;
+  }
+
+  .config-container {
+    gap: 19px;
+  }
+
+  .config-card {
+    padding: 20px 17px;
+    border-radius: 14px;
+  }
+
+  .config-card-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 19px;
+  }
+
+  .config-heading-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    font-size: 1.05rem;
+  }
+
+  .config-heading-text {
+    flex-basis: calc(100% - 60px);
+  }
+
+  .config-heading-text h2 {
+    font-size: 1rem;
+  }
+
+  .config-heading-text p {
+    font-size: 0.75rem;
+  }
+
+  .security-badge {
+    margin-left: 56px;
+  }
+
+  .config-form .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .config-form .form-group {
+    margin-bottom: 18px;
+  }
+
+  .config-form-footer {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .config-page .btn-primary-sm {
+    width: 100%;
+  }
+
+  .security-notice {
+    padding: 13px;
+  }
+
+  .config-section-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* =========================================================
+   ACCESIBILIDAD
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .config-page *,
+  .config-page *::before,
+  .config-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

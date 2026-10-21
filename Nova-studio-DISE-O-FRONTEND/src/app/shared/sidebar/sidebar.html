@@ -1,0 +1,174 @@
+<aside class="sidebar" [class.collapsed]="sidebarColapsado">
+
+  <!-- BOTÓN PARA CONTRAER / EXPANDIR -->
+  <button
+    type="button"
+    class="sidebar-toggle"
+    (click)="toggleSidebar()"
+    [attr.aria-expanded]="!sidebarColapsado"
+    [attr.aria-label]="sidebarColapsado ? 'Expandir menú' : 'Contraer menú'"
+    [title]="sidebarColapsado ? 'Expandir menú' : 'Contraer menú'"
+  >
+    <i
+      [class]="sidebarColapsado
+        ? 'fas fa-chevron-right'
+        : 'fas fa-chevron-left'"
+    ></i>
+  </button>
+
+  <!-- MARCA -->
+  <a routerLink="/dashboard" class="sidebar-brand" title="NOVA Beauty Salon">
+    <span class="brand-symbol">N</span>
+
+    <span class="brand-copy">
+      <strong>NOVA</strong>
+      <small>BEAUTY SALON</small>
+    </span>
+  </a>
+
+  <div class="sidebar-divider"></div>
+
+  <!-- TÍTULO DEL MENÚ -->
+  <div class="sidebar-section-label">
+    <span>MENÚ PRINCIPAL</span>
+  </div>
+
+  <!-- OPCIONES DE NAVEGACIÓN -->
+  <ul class="sidebar-menu">
+
+    <li routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+      <a routerLink="/dashboard" title="Dashboard">
+        <span class="menu-icon">
+          <i class="fas fa-chart-line"></i>
+        </span>
+        <span class="link-text">Dashboard</span>
+      </a>
+    </li>
+
+    <li *ngIf="esRecepcion()" routerLinkActive="active">
+      <a routerLink="/citas" title="Citas">
+        <span class="menu-icon">
+          <i class="fas fa-calendar-alt"></i>
+        </span>
+        <span class="link-text">Citas</span>
+      </a>
+    </li>
+
+    <li *ngIf="esRecepcion()" routerLinkActive="active">
+      <a routerLink="/clientes" title="Clientes">
+        <span class="menu-icon">
+          <i class="fas fa-users"></i>
+        </span>
+        <span class="link-text">Clientes</span>
+      </a>
+    </li>
+
+    <li *ngIf="esRecepcion()" routerLinkActive="active">
+      <a routerLink="/servicios" title="Servicios">
+        <span class="menu-icon">
+          <i class="fas fa-cut"></i>
+        </span>
+        <span class="link-text">Servicios</span>
+      </a>
+    </li>
+
+    <li *ngIf="esCaja()" routerLinkActive="active">
+      <a routerLink="/productos" title="Productos">
+        <span class="menu-icon">
+          <i class="fas fa-boxes"></i>
+        </span>
+        <span class="link-text">Productos</span>
+      </a>
+    </li>
+
+    <li *ngIf="esCaja()" routerLinkActive="active">
+      <a routerLink="/ventas" title="Ventas">
+        <span class="menu-icon">
+          <i class="fas fa-cash-register"></i>
+        </span>
+        <span class="link-text">Ventas</span>
+      </a>
+    </li>
+
+    <li *ngIf="esAdmin()" routerLinkActive="active">
+      <a routerLink="/empleados" title="Empleados">
+        <span class="menu-icon">
+          <i class="fas fa-user-tie"></i>
+        </span>
+        <span class="link-text">Empleados</span>
+      </a>
+    </li>
+
+    <li *ngIf="esAdmin()" routerLinkActive="active">
+      <a routerLink="/promociones" title="Promociones">
+        <span class="menu-icon">
+          <i class="fas fa-tags"></i>
+        </span>
+        <span class="link-text">Promociones</span>
+      </a>
+    </li>
+
+    <li *ngIf="esAdmin()" routerLinkActive="active">
+      <a routerLink="/reportes" title="Reportes">
+        <span class="menu-icon">
+          <i class="fas fa-file-invoice-dollar"></i>
+        </span>
+        <span class="link-text">Reportes</span>
+      </a>
+    </li>
+
+    <li *ngIf="esAdmin()" routerLinkActive="active">
+      <a routerLink="/galeria" title="Galería">
+        <span class="menu-icon">
+          <i class="fas fa-images"></i>
+        </span>
+        <span class="link-text">Galería</span>
+      </a>
+    </li>
+
+    <li *ngIf="esAdmin()" routerLinkActive="active">
+      <a routerLink="/configuracion" title="Configuración">
+        <span class="menu-icon">
+          <i class="fas fa-cog"></i>
+        </span>
+        <span class="link-text">Configuración</span>
+      </a>
+    </li>
+
+  </ul>
+
+  <!-- PIE DEL SIDEBAR: USUARIO Y CIERRE DE SESIÓN -->
+  <div class="sidebar-footer">
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-user">
+      <div class="user-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+
+      <div class="user-meta">
+        <strong>{{ nombreUsuario | uppercase }}</strong>
+        <small>{{ rolUsuario }}</small>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn-logout"
+      (click)="cerrarSesion()"
+      title="Cerrar sesión"
+    >
+      <i class="fas fa-sign-out-alt"></i>
+      <span class="link-text">Cerrar sesión</span>
+    </button>
+
+    <div class="sidebar-version">
+      <span class="version-dot"></span>
+      <span class="link-text">NOVA · Panel de gestión</span>
+    </div>
+
+  </div>
+
+</aside>

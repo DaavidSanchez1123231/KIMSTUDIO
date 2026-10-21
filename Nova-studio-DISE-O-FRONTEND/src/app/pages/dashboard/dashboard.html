@@ -1,0 +1,255 @@
+<main class="dashboard-page">
+
+  <!-- ENCABEZADO DEL DASHBOARD -->
+  <section class="dashboard-intro">
+
+    <div class="intro-copy">
+      <span class="dashboard-kicker">
+        <i class="fas fa-chart-line"></i>
+        CENTRO DE CONTROL
+      </span>
+
+      <h2>
+        Resumen <span>general</span>
+      </h2>
+
+      <p>
+        Gestiona y supervisa la actividad de NOVA Beauty Salon
+        desde un solo lugar.
+      </p>
+    </div>
+
+    <div class="intro-decoration" aria-hidden="true">
+      <div class="decoration-ring">
+        <i class="fas fa-gem"></i>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- MÉTRICAS -->
+  <section class="metrics-section">
+
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">INDICADORES</span>
+        <h3>Métricas del sistema</h3>
+      </div>
+
+      <span class="section-icon">
+        <i class="fas fa-chart-bar"></i>
+      </span>
+    </div>
+
+    <div class="dashboard-cards">
+
+      <!-- CARGANDO MÉTRICAS -->
+      <div
+        class="metric-state loading-state"
+        *ngIf="cargandoMetricas"
+      >
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Calculando métricas del servidor...</span>
+      </div>
+
+      <!-- SIN MÉTRICAS -->
+      <div
+        class="metric-state empty-metrics"
+        *ngIf="!cargandoMetricas && metricas.length === 0"
+      >
+        <i class="fas fa-chart-pie"></i>
+        <span>No hay métricas disponibles.</span>
+      </div>
+
+      <!-- TARJETAS DINÁMICAS -->
+      @for (metrica of metricas; track metrica.etiqueta) {
+        <article class="metric-card">
+
+          <div class="metric-card-top">
+            <span class="metric-icon">
+              <i class="{{ metrica.icono }}"></i>
+            </span>
+
+            <span class="metric-label">
+              INDICADOR
+            </span>
+          </div>
+
+          <div class="metric-card-info">
+            <h3>{{ metrica.valor }}</h3>
+            <p>{{ metrica.etiqueta }}</p>
+          </div>
+
+          <div class="metric-card-bottom">
+            <span>Panel administrativo</span>
+
+            <i class="fas fa-arrow-up-right-from-square"></i>
+          </div>
+
+          <div class="metric-glow"></div>
+
+        </article>
+      }
+
+    </div>
+
+  </section>
+
+  <!-- CITAS RECIENTES -->
+  <section class="recent-section">
+
+    <div class="recent-heading">
+
+      <div class="recent-heading-copy">
+        <span class="section-eyebrow">
+          ACTIVIDAD DEL SALÓN
+        </span>
+
+        <h3>Citas recientes</h3>
+
+        <p>
+          Consulta las últimas citas registradas en el sistema.
+        </p>
+      </div>
+
+      <div class="recent-heading-icon">
+        <i class="fas fa-calendar-check"></i>
+      </div>
+
+    </div>
+
+    <!-- TABLA -->
+    <div class="recent-table-container">
+
+      <div class="table-header">
+        <div>
+          <i class="fas fa-list-ul"></i>
+          <span>Registro de citas</span>
+        </div>
+
+        <span class="table-status">
+          <span class="table-status-dot"></span>
+          Actividad reciente
+        </span>
+      </div>
+
+      <div class="table-scroll">
+
+        <table class="appointments-table">
+
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Servicio</th>
+              <th>Fecha y hora</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <!-- CARGANDO CITAS -->
+            <tr *ngIf="cargandoCitas">
+              <td colspan="4">
+                <div class="table-message">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <span>Cargando citas recientes...</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- SIN CITAS -->
+            <tr *ngIf="!cargandoCitas && citas.length === 0">
+              <td colspan="4">
+                <div class="table-empty">
+                  <div class="empty-icon">
+                    <i class="fas fa-calendar-day"></i>
+                  </div>
+
+                  <strong>No hay citas recientes</strong>
+
+                  <p>
+                    Cuando se registren citas, aparecerán en esta tabla.
+                  </p>
+                </div>
+              </td>
+            </tr>
+
+            <!-- FILAS DINÁMICAS -->
+            @for (cita of citas; track cita.id_cita) {
+              <tr>
+
+                <td data-label="Cliente">
+                  <div class="client-cell">
+
+                    <span class="client-avatar">
+                      <i class="fas fa-user"></i>
+                    </span>
+
+                    <span class="client-name">
+                      {{ cita.cliente?.nombre || cita.nombre_cliente }}
+                    </span>
+
+                  </div>
+                </td>
+
+                <td data-label="Servicio">
+                  <div class="service-cell">
+                    <i class="fas fa-scissors"></i>
+
+                    <span>
+                      {{ cita.servicio?.nombre || 'General' }}
+                    </span>
+                  </div>
+                </td>
+
+                <td data-label="Fecha y hora">
+                  <div class="date-cell">
+                    <i class="far fa-clock"></i>
+
+                    <span>
+                      {{ cita.fecha | date:'dd/MM/yyyy HH:mm' }}
+                    </span>
+                  </div>
+                </td>
+
+                <td data-label="Estado">
+                  <span
+                    class="status-badge"
+                    [ngClass]="{
+                      'confirmed': cita.estado === 'Confirmada',
+                      'pending': !cita.estado || cita.estado === 'Pendiente',
+                      'cancelled': cita.estado === 'Cancelada',
+                      'completed': cita.estado === 'Completada'
+                    }"
+                  >
+                    <span class="status-dot"></span>
+                    {{ cita.estado || 'Pendiente' }}
+                  </span>
+                </td>
+
+              </tr>
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div class="table-footer">
+        <span>
+          <i class="fas fa-shield-alt"></i>
+          Información del sistema
+        </span>
+
+        <span class="footer-brand">
+          NOVA <span>BEAUTY SALON</span>
+        </span>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>

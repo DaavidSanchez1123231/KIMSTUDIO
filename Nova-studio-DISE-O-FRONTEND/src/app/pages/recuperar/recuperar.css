@@ -1,0 +1,694 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* ======================================
+   CONFIGURACIÓN GENERAL
+====================================== */
+
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  background: #020708;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ======================================
+   FONDO NOVA BEAUTY SALON
+====================================== */
+
+.forgot-wrapper {
+  position: relative;
+  isolation: isolate;
+
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+
+  padding: 35px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #020708;
+  background-image: url('/assets/nova-login-bg.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Capa oscura y luminosa */
+
+.forgot-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 8, 10, 0.15),
+      rgba(0, 8, 10, 0.28)
+    ),
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(0, 225, 245, 0.07),
+      transparent 55%
+    );
+}
+
+/* Partículas decorativas */
+
+#particles-js {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ======================================
+   TARJETA DE RECUPERACIÓN
+====================================== */
+
+.forgot-card {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  max-width: 590px;
+
+  margin: auto;
+  padding: 42px 48px 30px;
+
+  text-align: center;
+
+  background: rgba(0, 10, 12, 0.87);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(0, 239, 255, 0.80);
+  border-radius: 32px;
+
+  box-shadow:
+    0 0 18px rgba(0, 239, 255, 0.16),
+    0 0 40px rgba(0, 239, 255, 0.09),
+    inset 0 0 30px rgba(0, 239, 255, 0.035);
+
+  animation: recovery-appear 0.75s ease both;
+
+  transition:
+    box-shadow 0.4s ease,
+    border-color 0.4s ease,
+    transform 0.4s ease;
+}
+
+/* Reflejo de cristal */
+
+.forgot-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+  border-radius: inherit;
+
+  pointer-events: none;
+
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(0, 239, 255, 0.10),
+    transparent 60%
+  );
+}
+
+.forgot-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.forgot-card:hover {
+  border-color: #45f7ff;
+
+  box-shadow:
+    0 0 22px rgba(0, 239, 255, 0.22),
+    0 0 48px rgba(0, 239, 255, 0.12),
+    inset 0 0 30px rgba(0, 239, 255, 0.04);
+}
+
+/* ======================================
+   LOGOTIPO NOVA
+====================================== */
+
+.brand-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+
+  margin: 0 auto 22px;
+}
+
+.brand-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 60px;
+  height: 68px;
+  flex-shrink: 0;
+
+  color: #20efff;
+  font-size: 47px;
+
+  filter: drop-shadow(
+    0 0 12px rgba(0, 239, 255, 0.38)
+  );
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-copy h1 {
+  margin: 0;
+
+  color: #25f2ff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 7vw, 4.7rem);
+  font-weight: 600;
+  line-height: 1;
+
+  letter-spacing: 5px;
+
+  text-shadow:
+    0 0 10px rgba(0, 239, 255, 0.42),
+    0 0 30px rgba(0, 239, 255, 0.17);
+}
+
+.brand-subtitle {
+  width: 100%;
+  margin-top: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.brand-subtitle p {
+  margin: 0;
+
+  color: #fff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 500;
+
+  letter-spacing: 5px;
+  white-space: nowrap;
+}
+
+.brand-subtitle span {
+  display: block;
+
+  width: 24px;
+  height: 1px;
+  flex-shrink: 0;
+
+  background: #d9ffff;
+
+  box-shadow: 0 0 6px rgba(0, 239, 255, 0.5);
+}
+
+/* ======================================
+   ICONO DE RECUPERACIÓN
+====================================== */
+
+.recovery-icon {
+  width: 68px;
+  height: 68px;
+
+  margin: 0 auto 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(0, 239, 255, 0.48);
+  border-radius: 50%;
+
+  background: rgba(0, 239, 255, 0.065);
+
+  color: #25f2ff;
+  font-size: 28px;
+
+  box-shadow:
+    0 0 18px rgba(0, 239, 255, 0.10),
+    inset 0 0 15px rgba(0, 239, 255, 0.045);
+}
+
+/* ======================================
+   TITULO Y SUBTITULO
+====================================== */
+
+.forgot-card h2 {
+  margin: 0 0 13px;
+
+  color: #25f2ff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 5vw, 2.3rem);
+  font-weight: 600;
+  line-height: 1.3;
+
+  text-shadow: 0 0 14px rgba(0, 239, 255, 0.13);
+}
+
+.subtitle {
+  max-width: 420px;
+
+  margin: 0 auto 30px;
+
+  color: #b9d2d8;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+/* ======================================
+   CAMPO DE CORREO
+====================================== */
+
+.input-group {
+  position: relative;
+  width: 100%;
+
+  margin-bottom: 20px;
+}
+
+.input-group i {
+  position: absolute;
+
+  left: 23px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #00efff;
+  font-size: 21px;
+
+  pointer-events: none;
+
+  filter: drop-shadow(
+    0 0 5px rgba(0, 239, 255, 0.22)
+  );
+
+  transition: color 0.3s ease;
+}
+
+.input-group input {
+  display: block;
+
+  width: 100%;
+  height: 65px;
+
+  padding: 0 20px 0 65px;
+
+  border: 1px solid rgba(0, 239, 255, 0.65);
+  border-radius: 23px;
+
+  outline: none;
+
+  background: rgba(0, 18, 23, 0.65);
+  color: #fff;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+
+.input-group input::placeholder {
+  color: #95adb6;
+  opacity: 1;
+}
+
+.input-group input:focus {
+  border-color: #5bfaff;
+
+  background: rgba(0, 28, 32, 0.80);
+
+  box-shadow:
+    0 0 13px rgba(0, 239, 255, 0.18),
+    inset 0 0 10px rgba(0, 239, 255, 0.035);
+}
+
+.input-group:focus-within i {
+  color: #72fbff;
+}
+
+/* ======================================
+   AVISO DE PRIVACIDAD
+====================================== */
+
+.consent-note {
+  margin: 18px 0 20px;
+
+  padding: 0 2px;
+
+  color: #a9c0c8;
+
+  font-size: 11px;
+  line-height: 1.9;
+
+  text-align: left;
+}
+
+.consent-note a {
+  color: #26efff;
+
+  text-decoration: underline;
+  text-decoration-color: rgba(38, 239, 255, 0.45);
+  text-underline-offset: 3px;
+
+  transition: color 0.3s ease;
+}
+
+.consent-note a:hover {
+  color: #fff;
+}
+
+/* ======================================
+   MENSAJES DE RESPUESTA
+====================================== */
+
+#msg {
+  margin: 15px 0;
+
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.7;
+
+  overflow-wrap: anywhere;
+}
+
+/* ======================================
+   BOTÓN ENVIAR ENLACE
+====================================== */
+
+.btn-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  width: 100%;
+  min-height: 65px;
+
+  padding: 17px 24px;
+
+  border: 1px solid rgba(144, 255, 255, 0.9);
+  border-radius: 23px;
+
+  background: linear-gradient(
+    110deg,
+    #49f5ff 0%,
+    #08d9ed 50%,
+    #00c8e7 100%
+  );
+
+  color: #001014;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 15px rgba(0, 239, 255, 0.30),
+    0 0 30px rgba(0, 239, 255, 0.11),
+    inset 0 1px 4px rgba(255, 255, 255, 0.60);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+}
+
+.btn-send i {
+  font-size: 18px;
+
+  transition: transform 0.3s ease;
+}
+
+.btn-send:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 0 22px rgba(0, 239, 255, 0.45),
+    0 0 42px rgba(0, 239, 255, 0.17);
+}
+
+.btn-send:hover:not(:disabled) i {
+  transform: translateX(5px);
+}
+
+.btn-send:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.btn-send:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  filter: grayscale(0.15);
+}
+
+/* ======================================
+   ENLACE PARA VOLVER AL LOGIN
+====================================== */
+
+.extra-links {
+  margin-top: 26px;
+  padding-top: 20px;
+
+  border-top: 1px solid rgba(0, 239, 255, 0.23);
+}
+
+.extra-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 8px;
+
+  color: #21efff;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  transition:
+    color 0.3s ease,
+    text-shadow 0.3s ease;
+}
+
+.extra-links a i {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.extra-links a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(0, 239, 255, 0.55);
+}
+
+.extra-links a:hover i {
+  transform: translateX(-4px);
+}
+
+/* ======================================
+   PIE DE TARJETA
+====================================== */
+
+.recovery-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  margin-top: 17px;
+
+  color: #789ba3;
+
+  font-size: 10px;
+  letter-spacing: 0.3px;
+}
+
+.recovery-footer i {
+  color: #20dce9;
+  font-size: 12px;
+}
+
+/* ======================================
+   ANIMACIÓN
+====================================== */
+
+@keyframes recovery-appear {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================================
+   TABLET
+====================================== */
+
+@media (max-width: 700px) {
+  .forgot-wrapper {
+    padding: 28px 18px;
+  }
+
+  .forgot-card {
+    max-width: 530px;
+    padding: 35px 32px 27px;
+    border-radius: 28px;
+  }
+}
+
+/* ======================================
+   CELULARES
+====================================== */
+
+@media (max-width: 480px) {
+  .forgot-wrapper {
+    padding: 22px 14px;
+    background-position: 58% center;
+  }
+
+  .forgot-card {
+    padding: 29px 21px 23px;
+    border-radius: 24px;
+  }
+
+  .brand-header {
+    gap: 7px;
+    margin-bottom: 20px;
+  }
+
+  .brand-emblem {
+    width: 40px;
+    height: 52px;
+    font-size: 33px;
+  }
+
+  .brand-copy h1 {
+    font-size: clamp(2.5rem, 12vw, 3.4rem);
+    letter-spacing: 2px;
+  }
+
+  .brand-subtitle {
+    gap: 6px;
+    margin-top: 7px;
+  }
+
+  .brand-subtitle p {
+    font-size: 10px;
+    letter-spacing: 3px;
+  }
+
+  .brand-subtitle span {
+    width: 15px;
+  }
+
+  .recovery-icon {
+    width: 58px;
+    height: 58px;
+    font-size: 23px;
+    margin-bottom: 15px;
+  }
+
+  .forgot-card h2 {
+    font-size: 1.7rem;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+
+  .input-group input {
+    height: 57px;
+    padding-left: 54px;
+    border-radius: 18px;
+    font-size: 13px;
+  }
+
+  .input-group i {
+    left: 19px;
+    font-size: 19px;
+  }
+
+  .consent-note {
+    font-size: 10px;
+  }
+
+  .btn-send {
+    min-height: 57px;
+    border-radius: 18px;
+    font-size: 13px;
+  }
+
+  .extra-links {
+    margin-top: 21px;
+    padding-top: 15px;
+  }
+
+  .extra-links a {
+    font-size: 12px;
+  }
+}
+
+/* ======================================
+   ACCESIBILIDAD
+====================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .forgot-card,
+  .forgot-card::before,
+  .input-group input,
+  .btn-send,
+  .extra-links a {
+    animation: none !important;
+    transition: none !important;
+  }
+}

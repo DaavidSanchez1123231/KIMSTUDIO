@@ -1,0 +1,287 @@
+/* You can add global styles to this file, and also import other style files */
+/* =========================================================
+   VARIABLES Y BASE DEL DASHBOARD NOVA Beauty Salon
+   ========================================================= */
+:root {
+    --brand-color: #68b2a8; /* Turquesa NOVA */
+    --bg-dark: #0a0a0a;
+    --bg-card: rgba(20, 20, 20, 0.9);
+    --text-main: #ffffff;
+    --text-muted: #888888;
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+/* Ajuste vital para Angular: El contenedor principal toma el rol del body flex */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* =========================
+   SIDEBAR (Menú Lateral)
+========================= */
+.sidebar {
+    width: 250px;
+    background: #000;
+    border-right: 1px solid rgba(104, 178, 168, 0.2);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+    height: 100vh; /* Fija el alto al 100% de la pantalla */
+    position: sticky;
+    top: 0;
+}
+
+.sidebar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--brand-color);
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    flex: 1;
+}
+
+.sidebar-menu li {
+    padding: 15px 25px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-menu li a {
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+    transition: 0.3s;
+    width: 100%; /* Asegura que el clic funcione en todo el ancho */
+}
+
+.sidebar-menu li:hover, 
+.sidebar-menu li.active {
+    background: rgba(104, 178, 168, 0.1);
+    border-left: 3px solid var(--brand-color);
+}
+
+.sidebar-menu li:hover a, 
+.sidebar-menu li.active a {
+    color: var(--brand-color);
+}
+
+/* =========================
+   CONTENIDO PRINCIPAL
+========================= */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background: radial-gradient(circle at top right, rgba(104,178,168,0.05), transparent 50%);
+    min-width: 0; /* Evita que el contenido desborde en flexbox */
+}
+
+/* =========================
+   BARRA SUPERIOR (Topbar)
+========================= */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    background: var(--bg-card);
+    padding: 15px 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(104, 178, 168, 0.1);
+}
+
+.topbar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-name {
+    color: var(--brand-color);
+    font-weight: bold;
+}
+
+.btn-logout {
+    background: transparent;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background: #ff4d4d;
+    color: white;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+/* =========================
+   TARJETAS DE MÉTRICAS
+========================= */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.card {
+    background: var(--bg-card);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(104, 178, 168, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(104, 178, 168, 0.2);
+    border-color: var(--brand-color);
+}
+
+.card-info h3 {
+    font-size: 2rem;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.card-info p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: var(--brand-color);
+    opacity: 0.8;
+}
+
+/* =========================
+   TABLA DE CITAS
+========================= */
+.recent-table-container {
+    background: var(--bg-card);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(104, 178, 168, 0.2);
+    overflow-x: auto;
+}
+
+.recent-table-container h3 {
+    margin-bottom: 20px;
+    color: var(--brand-color);
+    font-family: 'Playfair Display', serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+th {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Etiquetas de Estado */
+.status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status.pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+.status.confirmed { background: rgba(104, 178, 168, 0.2); color: var(--brand-color); }
+
+/* =========================
+   DISEÑO RESPONSIVO (Mobile)
+========================= */
+@media (max-width: 768px) {
+    .app-container { flex-direction: column; }
+    
+    .sidebar { 
+        width: 100%; 
+        height: auto; 
+        border-right: none; 
+        border-bottom: 1px solid rgba(104, 178, 168, 0.2); 
+        padding: 10px 0;
+        position: relative;
+    }
+    
+    .sidebar-brand { margin-bottom: 15px; }
+
+    .sidebar-menu { 
+        display: flex; 
+        overflow-x: auto; 
+        padding-bottom: 5px;
+    }
+    
+    .sidebar-menu li { 
+        border-left: none; 
+        border-bottom: 3px solid transparent; 
+        white-space: nowrap;
+    }
+    
+    .sidebar-menu li:hover, 
+    .sidebar-menu li.active { 
+        border-left: none; 
+        background: transparent;
+        border-bottom: 3px solid var(--brand-color); 
+    }
+
+    .topbar { flex-direction: column; gap: 15px; align-items: flex-start; }
+}   
+/* ===== Consentimientos y enlaces legales (NOVA Beauty Salon) ===== */
+.consent{display:flex;flex-direction:column;gap:8px;margin:6px 0 14px;text-align:left}
+.consent-item{display:flex;gap:8px;align-items:flex-start;font-size:.78rem;line-height:1.4;color:#ccc;cursor:pointer}
+.consent-item input{width:auto;margin-top:2px;flex:none;accent-color:#68b2a8}
+.consent a,.consent-note a,.legal-links a{color:#68b2a8}
+.consent-note{font-size:.75rem;color:#999;margin:4px 0 12px;text-align:center}
+.legal-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin:10px 0;font-size:.8rem}

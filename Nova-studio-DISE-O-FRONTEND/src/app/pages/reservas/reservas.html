@@ -1,0 +1,425 @@
+<div id="particles-js"></div>
+
+<div class="reservations-page">
+
+  <!-- ==================================
+       NAVEGACIÓN PRINCIPAL
+  =================================== -->
+  <nav class="reservations-navbar">
+
+    <a routerLink="/" class="logo">
+      <i class="fas fa-spa" aria-hidden="true"></i>
+
+      <span>
+        NOVA
+        <small>BEAUTY SALON</small>
+      </span>
+    </a>
+
+    <div class="nav-links">
+
+      <a routerLink="/">Inicio</a>
+      <a routerLink="/nuestros-servicios">Servicios</a>
+
+      <a routerLink="/reservas" class="active">
+        Reservar
+      </a>
+
+      <a routerLink="/promociones-publico">Promociones</a>
+      <a routerLink="/nosotros">Nosotros</a>
+      <a routerLink="/contacto">Contacto</a>
+
+      <a
+        *ngIf="!usuarioLogeado"
+        routerLink="/login"
+        class="cta-nav"
+      >
+        <i class="fas fa-user" aria-hidden="true"></i>
+        Iniciar sesión
+      </a>
+
+    </div>
+
+    <!-- USUARIO CON SESIÓN INICIADA -->
+    <div class="user-panel" *ngIf="usuarioLogeado">
+
+      <span id="usuario-logeado">
+        <i class="fas fa-user-circle" aria-hidden="true"></i>
+
+        <span class="user-details">
+          {{ usuarioLogeado }}
+          <small>{{ rolLogeado }}</small>
+        </span>
+      </span>
+
+      <button
+        type="button"
+        id="logout-btn"
+        (click)="cerrarSesion()"
+      >
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+        Salir
+      </button>
+
+    </div>
+
+  </nav>
+
+  <!-- ==================================
+       SECCIÓN DE RESERVAS
+  =================================== -->
+  <main class="reserva-section">
+
+    <div class="reservation-layout">
+
+      <!-- PRESENTACIÓN -->
+      <section class="reservation-intro">
+
+        <span class="intro-eyebrow">
+          <span></span>
+          TU MOMENTO ESPECIAL
+          <span></span>
+        </span>
+
+        <h1>
+          Reserva tu
+          <span>cita.</span>
+        </h1>
+
+        <p class="intro-description">
+          Regálate una experiencia de belleza única.
+          Elige tu servicio favorito, selecciona a tu especialista
+          y encuentra el horario perfecto para ti.
+        </p>
+
+        <div class="reservation-benefits">
+
+          <div class="benefit-item">
+            <span class="benefit-icon">
+              <i class="fas fa-spa" aria-hidden="true"></i>
+            </span>
+
+            <span>
+              <strong>Servicios premium</strong>
+              <small>Cuidados pensados para ti</small>
+            </span>
+          </div>
+
+          <div class="benefit-item">
+            <span class="benefit-icon">
+              <i class="fas fa-user-check" aria-hidden="true"></i>
+            </span>
+
+            <span>
+              <strong>Especialistas</strong>
+              <small>Elige a tu profesional favorito</small>
+            </span>
+          </div>
+
+          <div class="benefit-item">
+            <span class="benefit-icon">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+            </span>
+
+            <span>
+              <strong>Horarios disponibles</strong>
+              <small>Selecciona el que mejor te convenga</small>
+            </span>
+          </div>
+
+        </div>
+
+        <div class="intro-decoration" aria-hidden="true">
+          <i class="fas fa-spa"></i>
+          <span>NOVA</span>
+          <small>BEAUTY SALON</small>
+        </div>
+
+      </section>
+
+      <!-- FORMULARIO DE RESERVA -->
+      <section class="reserva-card glow-effect">
+
+        <header class="reservation-card-header">
+
+          <span class="card-eyebrow">
+            AGENDA TU EXPERIENCIA
+          </span>
+
+          <h2>Tu próxima cita</h2>
+
+          <p class="subtitle">
+            Completa los datos para organizar tu visita.
+          </p>
+
+        </header>
+
+        <form (submit)="procesarReserva($event)">
+
+          <!-- USUARIO -->
+          <p class="reservando-como" *ngIf="usuarioLogeado">
+            <i class="fas fa-user-circle" aria-hidden="true"></i>
+            Reservando como
+            <strong>{{ usuarioLogeado }}</strong>
+          </p>
+
+          <!-- SERVICIO -->
+          <div class="input-field">
+
+            <label for="servicio">
+              Servicio
+            </label>
+
+            <div class="input-group">
+              <i class="fas fa-spa" aria-hidden="true"></i>
+
+              <select
+                id="servicio"
+                name="servicio"
+                [(ngModel)]="reserva.idServicio"
+                required
+              >
+                <option [ngValue]="null">
+                  Selecciona un servicio
+                </option>
+
+                <option
+                  *ngFor="let s of listaServicios"
+                  [ngValue]="s.id_servicio"
+                >
+                  {{ s.nombre }}
+                </option>
+
+              </select>
+
+              <i class="fas fa-chevron-down select-arrow" aria-hidden="true"></i>
+            </div>
+
+          </div>
+
+          <!-- ESPECIALISTA -->
+          <div class="input-field">
+
+            <label for="especialista">
+              Especialista
+            </label>
+
+            <div class="input-group">
+              <i class="fas fa-user-tie" aria-hidden="true"></i>
+
+              <select
+                id="especialista"
+                name="especialista"
+                [ngModel]="reserva.idEspecialista"
+                (ngModelChange)="reserva.idEspecialista = $event; cargarHorarios()"
+                required
+              >
+                <option [ngValue]="null">
+                  Selecciona un especialista
+                </option>
+
+                <option
+                  *ngFor="let e of listaEspecialistas"
+                  [ngValue]="e.id_especialista"
+                >
+                  {{ e.nombre }} · {{ e.especialidad }}
+                </option>
+
+              </select>
+
+              <i class="fas fa-chevron-down select-arrow" aria-hidden="true"></i>
+            </div>
+
+          </div>
+
+          <!-- FECHA -->
+          <div class="input-field">
+
+            <label for="fecha">
+              Fecha de tu cita
+            </label>
+
+            <div class="input-group">
+              <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+
+              <input
+                id="fecha"
+                type="date"
+                name="fecha"
+                [min]="hoy"
+                [ngModel]="reserva.fecha"
+                (ngModelChange)="reserva.fecha = $event; cargarHorarios()"
+                required
+              />
+            </div>
+
+          </div>
+
+          <!-- HORARIOS DISPONIBLES -->
+          <div
+            class="horarios-box"
+            *ngIf="reserva.idEspecialista && reserva.fecha"
+          >
+
+            <div class="horarios-header">
+
+              <span class="horarios-icon">
+                <i class="fas fa-clock" aria-hidden="true"></i>
+              </span>
+
+              <div>
+                <h3>Horarios disponibles</h3>
+
+                <p>
+                  Selecciona la hora que prefieras.
+                </p>
+              </div>
+
+            </div>
+
+            <!-- BUSCANDO HORARIOS -->
+            <div *ngIf="cargandoHorarios" class="horarios-status">
+
+              <i class="fas fa-circle-notch fa-spin"></i>
+
+              Buscando horarios disponibles...
+
+            </div>
+
+            <!-- SIN HORARIOS -->
+            <div
+              *ngIf="!cargandoHorarios && horariosCargados && horarios.length === 0"
+              class="horarios-status no-horarios"
+            >
+              <i class="fas fa-calendar-times" aria-hidden="true"></i>
+
+              <p>
+                No hay horarios libres ese día.
+                Prueba otra fecha u otro especialista.
+              </p>
+            </div>
+
+            <!-- LISTA DE HORAS -->
+            <div
+              class="horarios-grid"
+              *ngIf="!cargandoHorarios && horarios.length > 0"
+            >
+
+              <button
+                type="button"
+                class="slot"
+                *ngFor="let h of horarios"
+                [class.activo]="h.id_horario === reserva.idHorario"
+                [attr.aria-pressed]="h.id_horario === reserva.idHorario"
+                (click)="reserva.idHorario = h.id_horario"
+              >
+                <i
+                  class="fas fa-clock"
+                  aria-hidden="true"
+                ></i>
+
+                {{ h.hora_inicio | slice:0:5 }}
+              </button>
+
+            </div>
+
+            <p
+              *ngIf="!cargandoHorarios && !horariosCargados"
+              class="horarios-status"
+            >
+              Selecciona un horario disponible.
+            </p>
+
+          </div>
+
+          <!-- CONSENTIMIENTO DE POLÍTICAS -->
+          <div class="consent">
+
+            <label class="consent-item">
+
+              <input
+                type="checkbox"
+                name="aceptaPoliticas"
+                [(ngModel)]="aceptaPoliticas"
+                required
+              />
+
+              <span>
+                He leído y acepto las
+                <a
+                  href="/politica-privacidad"
+                  target="_blank"
+                  rel="noopener"
+                  (click)="$event.stopPropagation()"
+                >políticas de privacidad</a>
+                y las condiciones de reserva y cancelación.
+              </span>
+
+            </label>
+
+          </div>
+
+          <!-- BOTÓN RESERVAR -->
+          <button
+            type="submit"
+            class="btn-reserva"
+            [disabled]="cargando || !reserva.idServicio || !reserva.idHorario"
+          >
+            <span>
+              {{ cargando ? 'RESERVANDO...' : 'CONFIRMAR RESERVA' }}
+            </span>
+
+            <i
+              *ngIf="!cargando"
+              class="fas fa-arrow-right"
+              aria-hidden="true"
+            ></i>
+          </button>
+
+          <p class="secure-note">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            Tu información se utiliza para gestionar tu reserva.
+          </p>
+
+        </form>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- ==================================
+       PIE DE PÁGINA
+  =================================== -->
+  <footer class="reservations-footer">
+
+    <a routerLink="/" class="footer-logo">
+      <i class="fas fa-spa" aria-hidden="true"></i>
+
+      <span>
+        NOVA
+        <small>BEAUTY SALON</small>
+      </span>
+    </a>
+
+    <p>
+      Belleza, bienestar y estilo en un solo lugar.
+    </p>
+
+    <nav class="legal-links" aria-label="Enlaces legales">
+
+      <a href="/politica-privacidad">Privacidad</a>
+      <a href="/terminos-condiciones">Términos y condiciones</a>
+      <a href="/politica-cookies">Cookies</a>
+      <a href="/politica-reembolsos">Reembolsos</a>
+
+    </nav>
+
+    <small class="copyright">
+      © 2026 NOVA Beauty Salon · Todos los derechos reservados
+    </small>
+
+  </footer>
+
+</div>

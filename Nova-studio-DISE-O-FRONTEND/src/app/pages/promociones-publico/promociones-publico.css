@@ -1,0 +1,1572 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* ======================================
+   CONFIGURACIÓN GENERAL
+====================================== */
+
+:host {
+  display: block;
+  min-height: 100vh;
+  color: #f4fcff;
+  background: #020708;
+  font-family: 'Montserrat', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.promos-page {
+  position: relative;
+  isolation: isolate;
+
+  min-height: 100vh;
+  overflow: clip;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 30%,
+      rgba(0, 239, 255, 0.045),
+      transparent 50%
+    ),
+    #020708;
+}
+
+/* ======================================
+   PARTÍCULAS
+====================================== */
+
+#particles-js {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(0, 239, 255, 0.045),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(0, 239, 255, 0.04),
+      transparent 25%
+    );
+}
+
+/* ======================================
+   NAVEGACIÓN
+====================================== */
+
+.promos-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+
+  width: 100%;
+  min-height: 86px;
+
+  padding: 16px 5%;
+
+  background: rgba(2, 9, 11, 0.95);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border-bottom: 1px solid rgba(0, 239, 255, 0.20);
+
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* Logotipo */
+
+.logo,
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+
+  flex-shrink: 0;
+
+  color: #25f2ff;
+  text-decoration: none;
+
+  font-family: 'Playfair Display', serif;
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  text-shadow: 0 0 14px rgba(0, 239, 255, 0.16);
+}
+
+.logo > i,
+.footer-logo > i {
+  font-size: 32px;
+
+  filter: drop-shadow(
+    0 0 8px rgba(0, 239, 255, 0.30)
+  );
+}
+
+.logo > span,
+.footer-logo > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.logo small,
+.footer-logo small {
+  color: #c6dce0;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 4px;
+}
+
+/* Enlaces */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.nav-links > a {
+  position: relative;
+
+  padding: 9px 0;
+
+  color: #b8c9ce;
+  text-decoration: none;
+
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  transition: color 0.3s ease;
+}
+
+.nav-links > a::after {
+  content: "";
+  position: absolute;
+
+  left: 0;
+  bottom: 2px;
+
+  width: 0;
+  height: 2px;
+
+  background: #22efff;
+  box-shadow: 0 0 8px rgba(0, 239, 255, 0.4);
+
+  transition: width 0.3s ease;
+}
+
+.nav-links > a:hover,
+.nav-links > a.active {
+  color: #2bf1ff;
+}
+
+.nav-links > a:hover::after,
+.nav-links > a.active::after {
+  width: 100%;
+}
+
+/* Panel de usuario */
+
+.user-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  flex-shrink: 0;
+
+  color: #fff;
+}
+
+#usuario-logeado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #25efff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+#usuario-logeado i {
+  font-size: 22px;
+}
+
+#logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 10px 13px;
+
+  border: 1px solid rgba(255, 95, 112, 0.4);
+  border-radius: 25px;
+
+  color: #ff8995;
+  background: rgba(255, 95, 112, 0.07);
+
+  font-size: 11px;
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+#logout-btn:hover {
+  color: #fff;
+  background: #d93650;
+}
+
+/* ======================================
+   PORTADA DE PROMOCIONES
+====================================== */
+
+.promo-hero {
+  position: relative;
+  isolation: isolate;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 395px;
+
+  padding: 78px 24px 87px;
+
+  overflow: hidden;
+  text-align: center;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 60%,
+      rgba(0, 239, 255, 0.12),
+      transparent 42%
+    ),
+    linear-gradient(
+      135deg,
+      #03090b,
+      #071719 52%,
+      #020708
+    );
+
+  border-bottom: 1px solid rgba(0, 239, 255, 0.18);
+}
+
+/* Órbitas decorativas */
+
+.promo-orbit {
+  position: absolute;
+  z-index: -1;
+
+  border: 1px solid rgba(0, 239, 255, 0.12);
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.promo-orbit-one {
+  top: -210px;
+  left: -85px;
+
+  width: 370px;
+  height: 370px;
+
+  box-shadow:
+    0 0 0 28px rgba(0, 239, 255, 0.012),
+    0 0 0 55px rgba(0, 239, 255, 0.009);
+}
+
+.promo-orbit-two {
+  right: -140px;
+  bottom: -260px;
+
+  width: 450px;
+  height: 450px;
+
+  box-shadow:
+    0 0 0 35px rgba(0, 239, 255, 0.012),
+    0 0 0 70px rgba(0, 239, 255, 0.008);
+}
+
+.promo-hero-content {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  max-width: 850px;
+}
+
+/* Etiquetas superiores */
+
+.eyebrow,
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  color: #25efff;
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  line-height: 1.8;
+}
+
+.eyebrow > span {
+  display: block;
+
+  width: 27px;
+  height: 1px;
+
+  background: #25efff;
+
+  box-shadow: 0 0 8px rgba(0, 239, 255, 0.45);
+}
+
+/* Título */
+
+.promo-hero h1 {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin: 23px 0 19px;
+
+  color: #f1fcff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 7vw, 5.3rem);
+  font-weight: 500;
+  line-height: 1.12;
+}
+
+.promo-hero h1 span {
+  color: #24efff;
+
+  text-shadow:
+    0 0 16px rgba(0, 239, 255, 0.24),
+    0 0 38px rgba(0, 239, 255, 0.08);
+}
+
+.hero-description {
+  max-width: 620px;
+
+  margin: 0 auto;
+
+  color: #a2bac2;
+
+  font-size: 13px;
+  line-height: 2;
+}
+
+/* Botón de la portada */
+
+.hero-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+
+  margin-top: 28px;
+  padding: 14px 23px;
+
+  border: 1px solid rgba(0, 239, 255, 0.55);
+  border-radius: 30px;
+
+  color: #29efff;
+  background: rgba(0, 239, 255, 0.045);
+
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: 0.3s ease;
+}
+
+.hero-button:hover {
+  transform: translateY(-3px);
+
+  color: #001014;
+  background: #25efff;
+
+  box-shadow: 0 0 20px rgba(0, 239, 255, 0.22);
+}
+
+.hero-decoration-label {
+  position: absolute;
+
+  right: 0;
+  bottom: -51px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: rgba(131, 205, 214, 0.45);
+
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.hero-decoration-label i {
+  color: rgba(0, 239, 255, 0.6);
+  font-size: 15px;
+}
+
+/* ======================================
+   SECCIÓN DE OFERTAS
+====================================== */
+
+.promo-section {
+  position: relative;
+  z-index: 1;
+
+  padding: 82px 7% 95px;
+
+  scroll-margin-top: 100px;
+}
+
+/* Encabezado de la sección */
+
+.section-heading {
+  max-width: 780px;
+
+  margin: 0 auto 49px;
+
+  text-align: center;
+}
+
+.section-title {
+  margin: 12px 0 15px;
+
+  color: #effcff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4.5vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.section-title span {
+  color: #27efff;
+
+  text-shadow: 0 0 16px rgba(0, 239, 255, 0.14);
+}
+
+.section-description {
+  max-width: 620px;
+
+  margin: 0 auto;
+
+  color: #91aab3;
+
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+/* Divisor decorativo */
+
+.title-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+
+  margin-top: 25px;
+
+  color: #2cefff;
+  font-size: 15px;
+}
+
+.title-divider span {
+  width: 45px;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 239, 255, 0.65)
+  );
+}
+
+.title-divider span:last-child {
+  transform: rotate(180deg);
+}
+
+/* ======================================
+   ESTADOS DE CARGA Y VACÍO
+====================================== */
+
+.promo-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+
+  max-width: 650px;
+  min-height: 230px;
+
+  margin: 0 auto;
+  padding: 35px 25px;
+
+  border: 1px solid rgba(0, 239, 255, 0.20);
+  border-radius: 23px;
+
+  background: rgba(0, 239, 255, 0.025);
+
+  text-align: center;
+}
+
+.promo-message > i {
+  color: #25efff;
+  font-size: 31px;
+
+  filter: drop-shadow(0 0 10px rgba(0, 239, 255, 0.2));
+}
+
+.promo-message h3 {
+  color: #e7faff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: 23px;
+  font-weight: 500;
+}
+
+.promo-message p {
+  max-width: 480px;
+
+  color: #91aab3;
+
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.empty-message > i {
+  font-size: 39px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 10px;
+  padding: 12px 20px;
+
+  border: 1px solid rgba(0, 239, 255, 0.4);
+  border-radius: 25px;
+
+  color: #28efff;
+  background: rgba(0, 239, 255, 0.04);
+
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: 0.3s ease;
+}
+
+.btn-secondary:hover {
+  color: #001014;
+  background: #28efff;
+}
+
+/* ======================================
+   CUADRÍCULA DE PROMOCIONES
+====================================== */
+
+.promos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 25px;
+
+  width: 100%;
+  max-width: 1300px;
+
+  margin: 0 auto;
+}
+
+/* ======================================
+   TARJETA PROMOCIONAL
+====================================== */
+
+.promo-card {
+  position: relative;
+  isolation: isolate;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  min-width: 0;
+  padding: 27px 25px 23px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(0, 239, 255, 0.20);
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 239, 255, 0.035),
+      transparent 45%
+    ),
+    rgba(5, 17, 19, 0.92);
+
+  box-shadow:
+    0 13px 33px rgba(0, 0, 0, 0.22),
+    inset 0 0 25px rgba(0, 239, 255, 0.012);
+
+  text-align: center;
+
+  transition:
+    transform 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+/* Brillo de fondo */
+
+.promo-card::before {
+  content: "";
+  position: absolute;
+
+  top: -100px;
+  left: 50%;
+
+  width: 260px;
+  height: 260px;
+
+  transform: translateX(-50%);
+
+  z-index: -1;
+  pointer-events: none;
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(0, 239, 255, 0.105),
+    transparent 70%
+  );
+}
+
+.promo-card:hover {
+  transform: translateY(-7px);
+
+  border-color: rgba(0, 239, 255, 0.72);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.30),
+    0 0 25px rgba(0, 239, 255, 0.10);
+}
+
+/* ======================================
+   PARTE SUPERIOR DE LA TARJETA
+====================================== */
+
+.promo-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  margin-bottom: 24px;
+}
+
+.promo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+
+  border: 1px solid rgba(0, 239, 255, 0.35);
+  border-radius: 15px;
+
+  color: #28efff;
+  background: rgba(0, 239, 255, 0.06);
+
+  font-size: 20px;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.promo-card:hover .promo-icon {
+  color: #001014;
+  background: #25efff;
+
+  box-shadow: 0 0 18px rgba(0, 239, 255, 0.18);
+}
+
+.promo-label {
+  color: #86adb5;
+
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  line-height: 1.8;
+
+  text-align: right;
+}
+
+/* ======================================
+   ETIQUETA DE DESCUENTO
+====================================== */
+
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  align-self: center;
+
+  max-width: 100%;
+  margin-bottom: 22px;
+  padding: 11px 22px;
+
+  border: 1px solid rgba(109, 255, 255, 0.78);
+  border-radius: 30px;
+
+  color: #001014;
+
+  background: linear-gradient(
+    110deg,
+    #49f5ff,
+    #08d9ed
+  );
+
+  box-shadow:
+    0 0 18px rgba(0, 239, 255, 0.19),
+    inset 0 1px 3px rgba(255, 255, 255, 0.6);
+
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.discount-badge i {
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+/* ======================================
+   INFORMACIÓN DE LA OFERTA
+====================================== */
+
+.promo-info {
+  flex: 1;
+}
+
+.promo-card h3 {
+  margin: 0 0 13px;
+
+  color: #f0fcff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+
+  transition: color 0.3s ease;
+}
+
+.promo-card:hover h3 {
+  color: #35efff;
+}
+
+.promo-description {
+  margin: 0 0 23px;
+
+  color: #a0b7be;
+
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.9;
+
+  overflow-wrap: anywhere;
+}
+
+/* ======================================
+   FECHAS DE VIGENCIA
+====================================== */
+
+.promo-date {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  margin-top: auto;
+  padding: 15px;
+
+  border: 1px solid rgba(0, 239, 255, 0.15);
+  border-radius: 14px;
+
+  background: rgba(0, 239, 255, 0.025);
+
+  text-align: left;
+}
+
+.promo-date > i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  border: 1px solid rgba(0, 239, 255, 0.25);
+  border-radius: 11px;
+
+  color: #2befff;
+  background: rgba(0, 239, 255, 0.055);
+
+  font-size: 15px;
+}
+
+.promo-date > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+.promo-date span {
+  color: #7899a2;
+
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.promo-date strong {
+  color: #c9eff3;
+
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.7;
+
+  overflow-wrap: anywhere;
+}
+
+/* ======================================
+   CÓDIGO PROMOCIONAL
+====================================== */
+
+.code-panel {
+  margin-top: 19px;
+  padding: 16px 13px;
+
+  border: 1px dashed rgba(0, 239, 255, 0.40);
+  border-radius: 14px;
+
+  background: rgba(0, 239, 255, 0.035);
+}
+
+.code-label {
+  display: block;
+
+  margin-bottom: 11px;
+
+  color: #80aab3;
+
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+}
+
+.code-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  max-width: 100%;
+  padding: 9px 15px;
+
+  border: 1px solid rgba(0, 239, 255, 0.19);
+  border-radius: 10px;
+
+  color: #2df0ff;
+  background: rgba(0, 239, 255, 0.055);
+
+  overflow-wrap: anywhere;
+}
+
+.code-tag i {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.code-tag strong {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.code-panel > p {
+  margin-top: 10px;
+
+  color: #75949d;
+
+  font-size: 9px;
+  line-height: 1.8;
+}
+
+/* ======================================
+   BOTÓN RESERVAR
+====================================== */
+
+.btn-reserva {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 51px;
+
+  margin-top: 20px;
+  padding: 13px 17px;
+
+  border: 1px solid rgba(144, 255, 255, 0.85);
+  border-radius: 14px;
+
+  color: #001014;
+
+  background: linear-gradient(
+    110deg,
+    #49f5ff,
+    #08d9ed
+  );
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+
+  text-decoration: none;
+
+  box-shadow: 0 0 15px rgba(0, 239, 255, 0.13);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+}
+
+.btn-reserva i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.btn-reserva:hover {
+  transform: translateY(-2px);
+
+  filter: brightness(1.08);
+
+  box-shadow: 0 0 22px rgba(0, 239, 255, 0.30);
+}
+
+.btn-reserva:hover i {
+  transform: translateX(4px);
+}
+
+/* ======================================
+   PIE DE TARJETA
+====================================== */
+
+.promo-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  margin-top: 20px;
+  padding-top: 15px;
+
+  border-top: 1px solid rgba(0, 239, 255, 0.10);
+
+  color: #648c95;
+
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+}
+
+.promo-card-bottom i {
+  color: #20dce9;
+  font-size: 14px;
+}
+
+/* ======================================
+   LLAMADA A RESERVAR
+====================================== */
+
+.promo-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 23px;
+
+  max-width: 1100px;
+
+  margin: 65px auto 0;
+  padding: 26px 29px;
+
+  border: 1px solid rgba(0, 239, 255, 0.23);
+  border-radius: 22px;
+
+  background:
+    radial-gradient(
+      ellipse at 0% 50%,
+      rgba(0, 239, 255, 0.075),
+      transparent 45%
+    ),
+    rgba(0, 18, 21, 0.7);
+}
+
+.promo-cta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 55px;
+  height: 55px;
+  flex-shrink: 0;
+
+  border: 1px solid rgba(0, 239, 255, 0.35);
+  border-radius: 15px;
+
+  color: #28efff;
+  background: rgba(0, 239, 255, 0.055);
+
+  font-size: 21px;
+}
+
+.promo-cta-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.promo-cta-text h3 {
+  margin-bottom: 8px;
+
+  color: #f0fcff;
+
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.promo-cta-text p {
+  color: #94adb5;
+
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* Botón CTA */
+
+.cta-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+
+  padding: 14px 21px;
+
+  border: 1px solid #70f8ff;
+  border-radius: 30px;
+
+  color: #001014;
+
+  background: linear-gradient(
+    110deg,
+    #49f5ff,
+    #08d9ed
+  );
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.cta-solid:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 24px rgba(0, 239, 255, 0.25);
+}
+
+/* ======================================
+   FOOTER
+====================================== */
+
+.promos-footer {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 42px 6% 24px;
+
+  border-top: 1px solid rgba(0, 239, 255, 0.17);
+
+  background: #010506;
+
+  text-align: center;
+}
+
+.footer-logo {
+  font-size: 22px;
+}
+
+.footer-logo > i {
+  font-size: 29px;
+}
+
+.footer-description {
+  margin: 14px 0 22px;
+
+  color: #819ca5;
+
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* Redes sociales */
+
+.footer-socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+
+  margin-bottom: 26px;
+}
+
+.footer-socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(0, 239, 255, 0.28);
+  border-radius: 50%;
+
+  color: #26efff;
+  background: rgba(0, 239, 255, 0.045);
+
+  font-size: 16px;
+  text-decoration: none;
+
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease,
+    background 0.3s ease;
+}
+
+.footer-socials a:hover {
+  transform: translateY(-3px);
+
+  color: #001014;
+  background: #26efff;
+}
+
+/* Enlaces legales */
+
+.legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 13px 25px;
+
+  width: 100%;
+
+  padding: 21px 0;
+
+  border-top: 1px solid rgba(0, 239, 255, 0.10);
+  border-bottom: 1px solid rgba(0, 239, 255, 0.10);
+}
+
+.legal-links a {
+  color: #8aa4ad;
+  text-decoration: none;
+
+  font-size: 10px;
+
+  transition: color 0.3s ease;
+}
+
+.legal-links a:hover {
+  color: #2bf0ff;
+}
+
+.copyright {
+  margin-top: 21px;
+
+  color: #607a83;
+
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+/* ======================================
+   TABLET
+====================================== */
+
+@media (max-width: 1150px) {
+  .promos-navbar {
+    flex-wrap: wrap;
+    gap: 16px;
+
+    padding: 15px 4%;
+  }
+
+  .nav-links {
+    gap: 14px;
+  }
+
+  .nav-links > a {
+    font-size: 10px;
+  }
+
+  .promos-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+}
+
+/* ======================================
+   PANTALLAS MEDIANAS
+====================================== */
+
+@media (max-width: 850px) {
+  .promos-navbar {
+    min-height: 78px;
+  }
+
+  .nav-links {
+    order: 3;
+
+    width: 100%;
+
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 21px;
+
+    padding-top: 12px;
+
+    border-top: 1px solid rgba(0, 239, 255, 0.09);
+  }
+
+  .user-panel {
+    margin-left: auto;
+  }
+
+  .promo-section {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .promo-card {
+    padding: 24px 21px 21px;
+  }
+}
+
+/* ======================================
+   CELULARES
+====================================== */
+
+@media (max-width: 600px) {
+  .promos-navbar {
+    padding: 14px 17px;
+    gap: 13px;
+  }
+
+  .logo {
+    font-size: 19px;
+  }
+
+  .logo > i {
+    font-size: 28px;
+  }
+
+  .logo small {
+    font-size: 8px;
+    letter-spacing: 3px;
+  }
+
+  .nav-links {
+    justify-content: flex-start;
+    gap: 8px;
+
+    padding-top: 12px;
+  }
+
+  .nav-links > a {
+    padding: 8px 10px;
+
+    border: 1px solid rgba(0, 239, 255, 0.09);
+    border-radius: 20px;
+
+    font-size: 10px;
+  }
+
+  .user-panel {
+    width: 100%;
+    justify-content: space-between;
+
+    order: 4;
+
+    padding-top: 10px;
+
+    border-top: 1px solid rgba(0, 239, 255, 0.10);
+  }
+
+  .promo-hero {
+    min-height: 335px;
+    padding: 61px 20px 72px;
+  }
+
+  .eyebrow,
+  .section-eyebrow {
+    gap: 8px;
+
+    font-size: 8px;
+    letter-spacing: 1.7px;
+  }
+
+  .eyebrow > span {
+    width: 17px;
+  }
+
+  .promo-hero h1 {
+    margin: 20px 0 16px;
+
+    font-size: clamp(2.7rem, 11vw, 4rem);
+  }
+
+  .hero-description {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+
+  .hero-button {
+    margin-top: 23px;
+    padding: 12px 19px;
+
+    font-size: 10px;
+  }
+
+  .hero-decoration-label {
+    right: 0;
+    bottom: -41px;
+
+    font-size: 7px;
+  }
+
+  .promo-section {
+    padding: 59px 16px 65px;
+  }
+
+  .section-heading {
+    margin-bottom: 34px;
+  }
+
+  .section-title {
+    font-size: clamp(1.9rem, 8vw, 2.5rem);
+  }
+
+  .section-description {
+    font-size: 11px;
+    line-height: 1.9;
+  }
+
+  .title-divider {
+    margin-top: 20px;
+  }
+
+  .promos-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+
+    max-width: 430px;
+    margin: 0 auto;
+  }
+
+  .promo-card {
+    padding: 24px 20px 20px;
+    border-radius: 21px;
+  }
+
+  .promo-card-top {
+    margin-bottom: 20px;
+  }
+
+  .promo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+
+    font-size: 18px;
+  }
+
+  .discount-badge {
+    padding: 10px 18px;
+    margin-bottom: 20px;
+
+    font-size: 13px;
+  }
+
+  .promo-card h3 {
+    font-size: 22px;
+  }
+
+  .promo-description {
+    font-size: 11px;
+  }
+
+  .promo-date {
+    padding: 13px;
+  }
+
+  .promo-cta {
+    flex-wrap: wrap;
+    gap: 17px;
+
+    margin-top: 43px;
+    padding: 22px 18px;
+
+    border-radius: 19px;
+  }
+
+  .promo-cta-icon {
+    width: 47px;
+    height: 47px;
+
+    font-size: 18px;
+  }
+
+  .promo-cta-text {
+    flex-basis: calc(100% - 67px);
+  }
+
+  .promo-cta-text h3 {
+    font-size: 17px;
+  }
+
+  .promo-cta-text p {
+    font-size: 10px;
+  }
+
+  .promo-cta .cta-solid {
+    width: 100%;
+  }
+
+  .promos-footer {
+    padding: 35px 18px 22px;
+  }
+
+  .footer-description {
+    font-size: 10px;
+  }
+
+  .legal-links {
+    gap: 13px 16px;
+  }
+
+  .legal-links a {
+    font-size: 9px;
+  }
+
+  .copyright {
+    font-size: 9px;
+  }
+}
+
+/* ======================================
+   CELULARES PEQUEÑOS
+====================================== */
+
+@media (max-width: 360px) {
+  .promo-card {
+    padding: 21px 16px 18px;
+  }
+
+  .promo-card h3 {
+    font-size: 20px;
+  }
+
+  .code-tag strong {
+    font-size: 12px;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* ======================================
+   ACCESIBILIDAD
+====================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .promos-page *,
+  .promos-page *::before,
+  .promos-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

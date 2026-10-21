@@ -1,0 +1,475 @@
+<main class="servicios-page">
+
+  <!-- ENCABEZADO -->
+  <section class="servicios-intro">
+    <div class="servicios-intro-copy">
+      <span class="servicios-kicker">
+        <i class="fas fa-cut"></i>
+        CATÁLOGO PROFESIONAL
+      </span>
+
+      <h1>Nuestros <span>servicios</span></h1>
+
+      <p>
+        Administra los tratamientos de belleza, sus precios,
+        duración e imágenes desde el panel de NOVA Beauty Salon.
+      </p>
+    </div>
+
+    <div class="servicios-intro-icon" aria-hidden="true">
+      <i class="fas fa-spa"></i>
+    </div>
+  </section>
+
+  <!-- FILTROS Y ACCIONES -->
+  <section class="servicios-toolbar">
+
+    <div class="filtros-container">
+      <div class="filtros-label">
+        <i class="fas fa-sliders-h"></i>
+        Filtrar por categoría
+      </div>
+
+      <div class="filtros-categoria">
+        <button
+          type="button"
+          [class.active]="filtroActual === 'todos'"
+          [attr.aria-pressed]="filtroActual === 'todos'"
+          (click)="filtroActual = 'todos'"
+        >
+          <i class="fas fa-th-large"></i>
+          Todos
+        </button>
+
+        <button
+          type="button"
+          [class.active]="filtroActual === 'cabello'"
+          [attr.aria-pressed]="filtroActual === 'cabello'"
+          (click)="filtroActual = 'cabello'"
+        >
+          <i class="fas fa-cut"></i>
+          Cabello y tintes
+        </button>
+
+        <button
+          type="button"
+          [class.active]="filtroActual === 'cejas'"
+          [attr.aria-pressed]="filtroActual === 'cejas'"
+          (click)="filtroActual = 'cejas'"
+        >
+          <i class="fas fa-eye"></i>
+          Mirada y cejas
+        </button>
+
+        <button
+          type="button"
+          [class.active]="filtroActual === 'uñas'"
+          [attr.aria-pressed]="filtroActual === 'uñas'"
+          (click)="filtroActual = 'uñas'"
+        >
+          <i class="fas fa-hand-sparkles"></i>
+          Manicura y uñas
+        </button>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="abrirModal()"
+    >
+      <i class="fas fa-plus"></i>
+      <span>Nuevo servicio</span>
+    </button>
+
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section class="recent-table-container">
+
+    <div class="table-heading">
+      <div class="table-heading-info">
+        <span class="table-heading-icon">
+          <i class="fas fa-list-alt"></i>
+        </span>
+
+        <div>
+          <h2>Catálogo de servicios</h2>
+          <p>Precios, tratamientos y detalles de cada servicio.</p>
+        </div>
+      </div>
+
+      <span class="table-status">
+        <span class="status-dot"></span>
+        Catálogo
+      </span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="servicios-table">
+
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre del servicio</th>
+            <th>Precio</th>
+            <th>Duración</th>
+            <th>Descripción</th>
+            <th class="actions-heading">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- CARGANDO -->
+          <tr *ngIf="cargando">
+            <td colspan="6">
+              <div class="table-feedback">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Cargando catálogo de servicios...</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- SIN RESULTADOS -->
+          <tr *ngIf="!cargando && serviciosFiltrados.length === 0">
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <i class="fas fa-spa"></i>
+                </div>
+
+                <h3>No hay servicios disponibles</h3>
+
+                <p>
+                  No se encontraron servicios en esta categoría.
+                  Puedes seleccionar otra categoría o registrar uno nuevo.
+                </p>
+
+                <button
+                  type="button"
+                  class="empty-action"
+                  (click)="abrirModal()"
+                >
+                  <i class="fas fa-plus"></i>
+                  Registrar servicio
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- SERVICIOS -->
+          <tr
+            *ngFor="let servicio of serviciosFiltrados"
+          >
+
+            <!-- IMAGEN -->
+            <td data-label="Imagen">
+              <div class="service-image">
+
+                <img
+                  *ngIf="servicio.imagen_url; else iconoDefault"
+                  [src]="servicio.imagen_url"
+                  [alt]="'Imagen de ' + servicio.nombre"
+                  loading="lazy"
+                />
+
+                <ng-template #iconoDefault>
+                  <div class="service-image-placeholder">
+                    <i class="fas fa-cut"></i>
+                  </div>
+                </ng-template>
+
+              </div>
+            </td>
+
+            <!-- NOMBRE -->
+            <td data-label="Servicio">
+              <div class="service-name">
+                <strong>{{ servicio.nombre }}</strong>
+                <span>Servicio de belleza</span>
+              </div>
+            </td>
+
+            <!-- PRECIO -->
+            <td data-label="Precio">
+              <span class="service-price">
+                <small>S/</small>
+                {{ servicio.precio | number:'1.2-2' }}
+              </span>
+            </td>
+
+            <!-- DURACIÓN -->
+            <td data-label="Duración">
+              <span class="duration-badge">
+                <i class="far fa-clock"></i>
+                {{ servicio.duracion_minutos || 60 }} min
+              </span>
+            </td>
+
+            <!-- DESCRIPCIÓN -->
+            <td data-label="Descripción">
+              <span
+                class="service-description"
+                [title]="servicio.desc || 'Sin descripción'"
+              >
+                {{ servicio.desc || 'Sin descripción' }}
+              </span>
+            </td>
+
+            <!-- ACCIONES -->
+            <td data-label="Acciones">
+              <div class="action-buttons">
+
+                <button
+                  type="button"
+                  (click)="eliminarServicio(
+                    servicio.id_servicio,
+                    servicio.nombre
+                  )"
+                  class="action-btn delete"
+                  title="Eliminar servicio"
+                  aria-label="Eliminar servicio"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span>
+        <i class="fas fa-shield-alt"></i>
+        Administración del catálogo
+      </span>
+
+      <span class="footer-brand">
+        NOVA <strong>BEAUTY SALON</strong>
+      </span>
+    </div>
+
+  </section>
+
+  <!-- MODAL: REGISTRAR SERVICIO -->
+  <div
+    class="modal-overlay"
+    *ngIf="isModalOpen"
+    (click)="cerrarModal()"
+  >
+
+    <section
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-servicio-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- ENCABEZADO DEL MODAL -->
+      <div class="modal-header">
+
+        <div class="modal-heading">
+          <span class="modal-icon">
+            <i class="fas fa-spa"></i>
+          </span>
+
+          <div>
+            <span class="modal-kicker">NOVA BEAUTY SALON</span>
+            <h2 id="modal-servicio-title">Nuevo servicio</h2>
+            <p>Completa los detalles del tratamiento.</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="cerrarModal()"
+          aria-label="Cerrar formulario"
+          title="Cerrar"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+      </div>
+
+      <!-- FORMULARIO -->
+      <form
+        class="servicio-form"
+        (submit)="guardarServicio($event)"
+      >
+
+        <div class="form-section-label">
+          <i class="fas fa-info-circle"></i>
+          Información del servicio
+        </div>
+
+        <!-- NOMBRE -->
+        <div class="form-group">
+          <label for="servicio-nombre">Nombre del servicio</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-cut"></i>
+
+            <input
+              id="servicio-nombre"
+              type="text"
+              [(ngModel)]="nuevoServicio.nombre"
+              name="nombre"
+              required
+              placeholder="Ej. Balayage Miel"
+            />
+          </div>
+        </div>
+
+        <!-- CATEGORÍA Y PRECIO -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="servicio-categoria">Categoría</label>
+
+            <div class="form-input-wrapper select-wrapper">
+              <i class="fas fa-layer-group"></i>
+
+              <select
+                id="servicio-categoria"
+                [(ngModel)]="nuevoServicio.categoriaId"
+                name="categoria"
+                required
+              >
+                <option value="" disabled>
+                  Selecciona una categoría
+                </option>
+
+                <option value="cabello">
+                  Cabello y tintes
+                </option>
+
+                <option value="cejas">
+                  Mirada y cejas
+                </option>
+
+                <option value="uñas">
+                  Manicura y uñas
+                </option>
+              </select>
+
+              <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="servicio-precio">Precio (S/)</label>
+
+            <div class="form-input-wrapper">
+              <i class="fas fa-wallet"></i>
+
+              <input
+                id="servicio-precio"
+                type="number"
+                min="0"
+                step="0.01"
+                [(ngModel)]="nuevoServicio.precio"
+                name="precio"
+                required
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="form-group">
+          <label for="servicio-desc">Descripción y detalles</label>
+
+          <div class="form-input-wrapper textarea-wrapper">
+            <textarea
+              id="servicio-desc"
+              [(ngModel)]="nuevoServicio.desc"
+              name="desc"
+              rows="3"
+              placeholder="Describe los detalles del tratamiento..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- IMAGEN -->
+        <div class="form-group">
+          <label for="servicio-imagen">URL de la imagen</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-image"></i>
+
+            <input
+              id="servicio-imagen"
+              type="url"
+              [(ngModel)]="nuevoServicio.imagen_url"
+              name="imagen_url"
+              placeholder="https://ejemplo.com/foto.jpg"
+            />
+          </div>
+
+          <span class="field-hint">
+            Campo opcional. Introduce una dirección de imagen válida.
+          </span>
+        </div>
+
+        <!-- VISTA PREVIA -->
+        <div
+          class="image-preview"
+          *ngIf="nuevoServicio.imagen_url"
+        >
+          <img
+            [src]="nuevoServicio.imagen_url"
+            alt="Vista previa del servicio"
+          />
+
+          <div class="preview-info">
+            <i class="fas fa-check-circle"></i>
+            <span>Vista previa de la imagen</span>
+          </div>
+        </div>
+
+        <!-- AVISO -->
+        <div class="form-note">
+          <i class="fas fa-info-circle"></i>
+
+          <span>
+            Revisa el nombre, la categoría y el precio antes de guardar.
+          </span>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cerrarModal()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn-save"
+          >
+            <i class="fas fa-save"></i>
+            Guardar servicio
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+
+</main>

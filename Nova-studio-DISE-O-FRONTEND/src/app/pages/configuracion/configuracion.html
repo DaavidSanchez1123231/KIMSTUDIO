@@ -1,0 +1,344 @@
+<div class="config-page">
+
+  <!-- ENCABEZADO -->
+  <section class="config-intro">
+    <div class="config-intro-text">
+      <span class="config-eyebrow">
+        <i class="fas fa-sliders-h"></i>
+        PANEL DE ADMINISTRACIÓN
+      </span>
+
+      <h1>Configuración <span>del salón</span></h1>
+
+      <p>
+        Administra la información pública de NOVA Beauty Salon
+        y protege las credenciales de tu cuenta.
+      </p>
+    </div>
+
+    <div class="config-intro-icon">
+      <i class="fas fa-gears"></i>
+    </div>
+  </section>
+
+  <div class="config-container">
+
+    <!-- =====================================================
+         INFORMACIÓN DE LA EMPRESA
+         ===================================================== -->
+
+    <section class="config-card">
+
+      <div class="config-card-header">
+        <div class="config-heading-icon">
+          <i class="fas fa-store"></i>
+        </div>
+
+        <div class="config-heading-text">
+          <h2>Información del salón</h2>
+          <p>
+            Estos datos se mostrarán en la página pública de NOVA Beauty Salon.
+          </p>
+        </div>
+      </div>
+
+      <div class="config-section-label">
+        <i class="fas fa-address-card"></i>
+        Datos de contacto
+      </div>
+
+      <form
+        class="config-form"
+        (submit)="guardarDatosEmpresa($event)"
+      >
+
+        <!-- NOMBRE Y TELÉFONO -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="empresaNombre">
+              <i class="fas fa-signature"></i>
+              Nombre del salón
+            </label>
+
+            <input
+              id="empresaNombre"
+              type="text"
+              [(ngModel)]="empresa.nombre"
+              name="nombre"
+              placeholder="NOVA Beauty Salon"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="empresaTelefono">
+              <i class="fab fa-whatsapp"></i>
+              Teléfono de contacto / WhatsApp
+            </label>
+
+            <input
+              id="empresaTelefono"
+              type="tel"
+              [(ngModel)]="empresa.telefono"
+              name="telefono"
+              placeholder="Ej. +51 999 999 999"
+              required
+            >
+          </div>
+
+        </div>
+
+        <!-- CORREO ELECTRÓNICO -->
+        <div class="form-group">
+          <label for="empresaCorreo">
+            <i class="fas fa-envelope"></i>
+            Correo electrónico de contacto
+          </label>
+
+          <div class="config-input-wrapper">
+            <i class="fas fa-at input-leading-icon"></i>
+
+            <input
+              id="empresaCorreo"
+              type="email"
+              [(ngModel)]="empresa.correo"
+              name="correo"
+              placeholder="contacto@novabeautysalon.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+          <small class="input-help">
+            Este correo aparecerá en la sección Contáctanos de la página pública.
+          </small>
+        </div>
+
+        <!-- DIRECCIÓN -->
+        <div class="form-group">
+          <label for="empresaDireccion">
+            <i class="fas fa-map-marker-alt"></i>
+            Dirección del local
+          </label>
+
+          <input
+            id="empresaDireccion"
+            type="text"
+            [(ngModel)]="empresa.direccion"
+            name="direccion"
+            placeholder="Dirección del salón"
+            required
+          >
+        </div>
+
+        <!-- REDES SOCIALES -->
+        <div class="config-section-label config-social-label">
+          <i class="fas fa-share-alt"></i>
+          Redes sociales
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="empresaInstagram">
+              <i class="fab fa-instagram social-instagram"></i>
+              Enlace de Instagram
+            </label>
+
+            <input
+              id="empresaInstagram"
+              type="url"
+              [(ngModel)]="empresa.instagram"
+              name="instagram"
+              placeholder="https://www.instagram.com/tu_cuenta"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="empresaFacebook">
+              <i class="fab fa-facebook social-facebook"></i>
+              Enlace de Facebook
+            </label>
+
+            <input
+              id="empresaFacebook"
+              type="url"
+              [(ngModel)]="empresa.facebook"
+              name="facebook"
+              placeholder="https://www.facebook.com/tu_pagina"
+            >
+          </div>
+
+        </div>
+
+        <!-- BOTÓN GUARDAR -->
+        <div class="config-form-footer">
+
+          <div class="config-save-hint">
+            <i class="fas fa-circle-info"></i>
+
+            <span>
+              Verifica los datos antes de guardar los cambios.
+            </span>
+          </div>
+
+          <button type="submit" class="btn-primary-sm">
+            <i class="fas fa-save"></i>
+            Actualizar información
+          </button>
+
+        </div>
+
+      </form>
+    </section>
+
+    <!-- =====================================================
+         SEGURIDAD DE LA CUENTA
+         ===================================================== -->
+
+    <section class="config-card config-security-card">
+
+      <div class="config-card-header">
+
+        <div class="config-heading-icon security-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+
+        <div class="config-heading-text">
+          <h2>Seguridad de la cuenta</h2>
+
+          <p>
+            Actualiza la contraseña utilizada para acceder al panel administrativo.
+          </p>
+        </div>
+
+        <span class="security-badge">
+          <i class="fas fa-lock"></i>
+          Cuenta protegida
+        </span>
+
+      </div>
+
+      <div class="security-notice">
+        <i class="fas fa-triangle-exclamation"></i>
+
+        <p>
+          Elige una contraseña segura y confirma que ambas contraseñas
+          coincidan antes de actualizarla.
+        </p>
+      </div>
+
+      <form
+        class="config-form"
+        (submit)="cambiarContrasena($event)"
+      >
+
+        <!-- USUARIO ACTUAL -->
+        <div class="form-group">
+          <label for="usuarioActual">
+            <i class="fas fa-user-lock"></i>
+            Nombre de usuario actual
+          </label>
+
+          <input
+            id="usuarioActual"
+            type="text"
+            [value]="usuario"
+            readonly
+            class="input-readonly"
+          >
+
+          <small class="input-help">
+            Este dato es de solo lectura.
+          </small>
+        </div>
+
+        <!-- CONTRASEÑAS -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="nuevaClave">
+              <i class="fas fa-key"></i>
+              Nueva contraseña
+            </label>
+
+            <input
+              id="nuevaClave"
+              type="password"
+              [(ngModel)]="nuevaClave"
+              name="nuevaClave"
+              placeholder="Escribe la nueva contraseña"
+              autocomplete="new-password"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="confirmarClave">
+              <i class="fas fa-check-double"></i>
+              Confirmar contraseña
+            </label>
+
+            <input
+              id="confirmarClave"
+              type="password"
+              [(ngModel)]="confirmarClave"
+              name="confirmarClave"
+              placeholder="Repite la nueva contraseña"
+              autocomplete="new-password"
+              required
+            >
+          </div>
+
+        </div>
+
+        <!-- MENSAJE DE ERROR -->
+        <div
+          *ngIf="mostrarError"
+          class="config-alert config-alert-error"
+          role="alert"
+        >
+          <i class="fas fa-circle-exclamation"></i>
+
+          <span>
+            {{ mensajeServidor || 'No se pudo actualizar la contraseña.' }}
+          </span>
+        </div>
+
+        <!-- MENSAJE DEL SERVIDOR -->
+        <div
+          *ngIf="mensajeServidor && !mostrarError"
+          class="config-alert config-alert-server"
+          role="status"
+        >
+          <i class="fas fa-info-circle"></i>
+          <span>{{ mensajeServidor }}</span>
+        </div>
+
+        <!-- BOTÓN CAMBIAR CONTRASEÑA -->
+        <div class="config-form-footer security-form-footer">
+
+          <div class="config-save-hint">
+            <i class="fas fa-shield-halved"></i>
+
+            <span>
+              No compartas tu contraseña con otras personas.
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-primary-sm btn-danger"
+          >
+            <i class="fas fa-lock"></i>
+            Actualizar contraseña
+          </button>
+
+        </div>
+
+      </form>
+    </section>
+
+  </div>
+</div>

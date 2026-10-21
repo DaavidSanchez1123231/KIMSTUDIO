@@ -1,0 +1,1476 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Cinzel:wght@500;600;700&display=swap');
+
+/* ==================================
+   CONFIGURACIÓN GENERAL
+================================== */
+
+:host {
+  --emp-cyan: #38d1d1;
+  --emp-cyan-light: #83ffff;
+  --emp-text: #edf7f7;
+  --emp-muted: #8da0a0;
+  --emp-border: rgba(56, 209, 209, 0.17);
+
+  display: block;
+  width: 100%;
+  min-width: 0;
+  color: var(--emp-text);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.empleados-page,
+.empleados-page * {
+  box-sizing: border-box;
+}
+
+.empleados-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 30px;
+
+  background:
+    radial-gradient(
+      ellipse at 0% 0%,
+      rgba(56, 209, 209, 0.045),
+      transparent 40%
+    ),
+    #090d0e;
+}
+
+/* ==================================
+   ENCABEZADO
+================================== */
+
+.empleados-page .empleados-intro {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+
+  min-height: 155px;
+  margin-bottom: 28px;
+  padding: 28px 32px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--emp-border);
+  border-radius: 19px;
+
+  background:
+    linear-gradient(
+      115deg,
+      rgba(56, 209, 209, 0.075),
+      rgba(255, 255, 255, 0.012) 70%
+    );
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.empleados-page .empleados-intro::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+
+  background: var(--emp-cyan);
+  box-shadow: 0 0 20px rgba(56, 209, 209, 0.45);
+}
+
+.empleados-page .empleados-intro-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.empleados-page .empleados-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--emp-cyan);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.empleados-page .empleados-intro h1 {
+  margin: 12px 0 9px;
+
+  color: #f3ffff;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.empleados-page .empleados-intro h1 span {
+  color: var(--emp-cyan);
+}
+
+.empleados-page .empleados-intro p {
+  max-width: 650px;
+  margin: 0;
+
+  color: var(--emp-muted);
+  font-size: 0.83rem;
+  line-height: 1.8;
+}
+
+.empleados-page .empleados-intro-icon {
+  display: flex;
+  flex: 0 0 80px;
+  align-items: center;
+  justify-content: center;
+
+  width: 80px;
+  height: 80px;
+
+  border: 1px solid rgba(56, 209, 209, 0.26);
+  border-radius: 22px;
+
+  background: rgba(56, 209, 209, 0.065);
+  color: var(--emp-cyan-light);
+  font-size: 2rem;
+
+  box-shadow: inset 0 0 20px rgba(56, 209, 209, 0.035);
+}
+
+/* ==================================
+   BÚSQUEDA Y BOTÓN
+================================== */
+
+.empleados-page .empleados-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+
+  margin-bottom: 24px;
+}
+
+.empleados-page .search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  max-width: 470px;
+  min-width: 0;
+}
+
+.empleados-page .search-icon {
+  position: absolute;
+  left: 16px;
+  z-index: 1;
+
+  color: var(--emp-cyan);
+  font-size: 0.97rem;
+  pointer-events: none;
+}
+
+.empleados-page .search-box input {
+  width: 100%;
+  min-height: 49px;
+  padding: 12px 44px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.035);
+  color: #f1ffff;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.empleados-page .search-box input::placeholder {
+  color: #788b8b;
+}
+
+.empleados-page .search-box input:focus {
+  border-color: rgba(56, 209, 209, 0.62);
+  background: rgba(56, 209, 209, 0.035);
+  box-shadow: 0 0 0 3px rgba(56, 209, 209, 0.065);
+}
+
+.empleados-page .search-decoration {
+  position: absolute;
+  right: 15px;
+  color: #6f9292;
+  pointer-events: none;
+}
+
+.empleados-page .btn-primary {
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 49px;
+  padding: 12px 21px;
+
+  border: 1px solid var(--emp-cyan);
+  border-radius: 12px;
+
+  background: linear-gradient(110deg, #28baba, #63dfdf);
+  color: #041111;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.empleados-page .btn-primary:hover {
+  transform: translateY(-2px);
+  background: #dcffff;
+  box-shadow: 0 8px 25px rgba(56, 209, 209, 0.17);
+}
+
+/* ==================================
+   TABLA DEL PERSONAL
+================================== */
+
+.empleados-page .recent-table-container {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 17px;
+
+  background: rgba(255, 255, 255, 0.018);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.empleados-page .table-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+
+  padding: 21px 23px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.empleados-page .table-heading-info {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.empleados-page .table-heading-icon {
+  display: flex;
+  flex: 0 0 43px;
+  align-items: center;
+  justify-content: center;
+
+  width: 43px;
+  height: 43px;
+
+  border: 1px solid rgba(56, 209, 209, 0.2);
+  border-radius: 12px;
+
+  background: rgba(56, 209, 209, 0.06);
+  color: var(--emp-cyan);
+  font-size: 1rem;
+}
+
+.empleados-page .table-heading h2 {
+  margin: 0 0 6px;
+  color: #effafa;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.empleados-page .table-heading p {
+  margin: 0;
+  color: var(--emp-muted);
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.empleados-page .table-status {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 11px;
+
+  border: 1px solid rgba(56, 209, 209, 0.13);
+  border-radius: 30px;
+
+  color: #8fa8a8;
+  font-size: 0.65rem;
+  white-space: nowrap;
+}
+
+.empleados-page .status-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+
+  background: var(--emp-cyan);
+  box-shadow: 0 0 9px rgba(56, 209, 209, 0.55);
+}
+
+.empleados-page .table-scroll {
+  width: 100%;
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(56, 209, 209, 0.25) transparent;
+}
+
+.empleados-page .table-scroll::-webkit-scrollbar {
+  height: 5px;
+}
+
+.empleados-page .table-scroll::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(56, 209, 209, 0.25);
+}
+
+.empleados-page .empleados-table {
+  width: 100%;
+  min-width: 850px;
+
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  font-family: 'Montserrat', sans-serif;
+}
+
+.empleados-page .empleados-table thead {
+  background: rgba(56, 209, 209, 0.035);
+}
+
+.empleados-page .empleados-table th {
+  padding: 17px 19px;
+
+  border-bottom: 1px solid rgba(56, 209, 209, 0.12);
+
+  color: #8fa6a6;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.55px;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.empleados-page .empleados-table td {
+  padding: 16px 19px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+
+  color: #d8e5e5;
+  font-size: 0.75rem;
+  vertical-align: middle;
+}
+
+.empleados-page .empleados-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.empleados-page .empleados-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.empleados-page .empleados-table tbody tr:hover {
+  background: rgba(56, 209, 209, 0.025);
+}
+
+.empleados-page .actions-heading {
+  text-align: center;
+}
+
+/* IDENTIFICADOR */
+
+.empleados-page .employee-id {
+  display: inline-block;
+  padding: 6px 9px;
+
+  border: 1px solid rgba(56, 209, 209, 0.13);
+  border-radius: 7px;
+
+  background: rgba(56, 209, 209, 0.04);
+  color: #87cece;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* NOMBRE Y AVATAR */
+
+.empleados-page .employee-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 170px;
+}
+
+.empleados-page .employee-avatar {
+  display: flex;
+  flex: 0 0 37px;
+  align-items: center;
+  justify-content: center;
+
+  width: 37px;
+  height: 37px;
+
+  border: 1px solid rgba(56, 209, 209, 0.2);
+  border-radius: 11px;
+
+  background: rgba(56, 209, 209, 0.06);
+  color: var(--emp-cyan);
+
+  font-size: 0.85rem;
+}
+
+.empleados-page .employee-name {
+  color: #ecf5f5;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* ESPECIALIDAD */
+
+.empleados-page .badge-specialty {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 7px 10px;
+
+  border: 1px solid rgba(56, 209, 209, 0.2);
+  border-radius: 9px;
+
+  background: rgba(56, 209, 209, 0.055);
+  color: var(--emp-cyan-light);
+
+  font-size: 0.67rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.empleados-page .badge-specialty i {
+  color: var(--emp-cyan);
+}
+
+/* TELÉFONO */
+
+.empleados-page .phone-cell {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 125px;
+  line-height: 1.6;
+}
+
+.empleados-page .phone-cell i {
+  flex-shrink: 0;
+  color: #7eb6b6;
+  font-size: 0.82rem;
+}
+
+/* ==================================
+   ESTADO DEL EMPLEADO
+================================== */
+
+.empleados-page .employee-status {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.empleados-page .status-indicator {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.empleados-page .employee-status.confirmed {
+  border-color: rgba(56, 209, 209, 0.22);
+  background: rgba(56, 209, 209, 0.06);
+  color: #72e3da;
+}
+
+.empleados-page .employee-status.pending {
+  border-color: rgba(255, 193, 92, 0.2);
+  background: rgba(255, 193, 92, 0.055);
+  color: #ffc96f;
+}
+
+/* ==================================
+   ACCIONES
+================================== */
+
+.empleados-page .action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.empleados-page .action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 35px;
+  height: 35px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.025);
+  color: #96aaaa;
+
+  font-size: 0.82rem;
+  cursor: pointer;
+
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s ease;
+}
+
+.empleados-page .action-btn:hover {
+  transform: translateY(-2px);
+}
+
+.empleados-page .action-btn.schedule:hover {
+  border-color: rgba(56, 209, 209, 0.4);
+  background: rgba(56, 209, 209, 0.09);
+  color: var(--emp-cyan-light);
+}
+
+.empleados-page .action-btn.delete {
+  border-color: rgba(255, 105, 117, 0.17);
+  background: rgba(255, 105, 117, 0.035);
+  color: #e88991;
+}
+
+.empleados-page .action-btn.delete:hover {
+  border-color: rgba(255, 105, 117, 0.43);
+  background: rgba(255, 105, 117, 0.11);
+  color: #ff9aa2;
+}
+
+/* ==================================
+   CARGA Y ESTADO VACÍO
+================================== */
+
+.empleados-page .table-feedback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+
+  min-height: 115px;
+  color: var(--emp-muted);
+  font-size: 0.81rem;
+}
+
+.empleados-page .table-feedback i {
+  color: var(--emp-cyan);
+  font-size: 1.15rem;
+}
+
+.empleados-page .empty-state {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 290px;
+  padding: 35px 20px;
+  text-align: center;
+}
+
+.empleados-page .empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 63px;
+  height: 63px;
+  margin-bottom: 17px;
+
+  border: 1px solid rgba(56, 209, 209, 0.22);
+  border-radius: 19px;
+
+  background: rgba(56, 209, 209, 0.055);
+  color: var(--emp-cyan);
+  font-size: 1.5rem;
+}
+
+.empleados-page .empty-state h3 {
+  margin: 0 0 9px;
+  color: #edfafa;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.empleados-page .empty-state p {
+  max-width: 390px;
+  margin: 0;
+
+  color: var(--emp-muted);
+  font-size: 0.76rem;
+  line-height: 1.8;
+}
+
+.empleados-page .empty-action {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 20px;
+  padding: 10px 15px;
+
+  border: 1px solid rgba(56, 209, 209, 0.22);
+  border-radius: 9px;
+
+  background: rgba(56, 209, 209, 0.055);
+  color: var(--emp-cyan-light);
+
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.empleados-page .empty-action:hover {
+  border-color: var(--emp-cyan);
+  background: rgba(56, 209, 209, 0.12);
+}
+
+/* ==================================
+   PIE DE TABLA
+================================== */
+
+.empleados-page .table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 15px 22px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+  background: rgba(0, 0, 0, 0.12);
+
+  color: #718585;
+  font-size: 0.64rem;
+}
+
+.empleados-page .table-footer > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empleados-page .table-footer > span:first-child i {
+  color: var(--emp-cyan);
+}
+
+.empleados-page .footer-brand {
+  color: var(--emp-cyan);
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.empleados-page .footer-brand strong {
+  color: #b1c7c7;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.58rem;
+}
+
+/* ==================================
+   MODALES
+================================== */
+
+.empleados-page .modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 22px;
+  overflow-y: auto;
+
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+
+  animation: empleadosFadeIn 0.22s ease;
+}
+
+.empleados-page .modal-content {
+  position: relative;
+
+  width: 100%;
+  max-width: 590px;
+  max-height: calc(100dvh - 44px);
+
+  overflow-y: auto;
+
+  border: 1px solid rgba(56, 209, 209, 0.25);
+  border-radius: 21px;
+
+  background:
+    radial-gradient(
+      ellipse at 0% 0%,
+      rgba(56, 209, 209, 0.075),
+      transparent 42%
+    ),
+    #0b1112;
+
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.55),
+    0 0 35px rgba(56, 209, 209, 0.035);
+
+  animation: empleadosSlideUp 0.28s ease;
+}
+
+.empleados-page .modal-horarios {
+  max-width: 650px;
+}
+
+.empleados-page .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+
+  padding: 25px 27px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.empleados-page .modal-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.empleados-page .modal-icon {
+  display: flex;
+  flex: 0 0 47px;
+  align-items: center;
+  justify-content: center;
+
+  width: 47px;
+  height: 47px;
+
+  border: 1px solid rgba(56, 209, 209, 0.29);
+  border-radius: 14px;
+
+  background: rgba(56, 209, 209, 0.08);
+  color: var(--emp-cyan-light);
+  font-size: 1.15rem;
+}
+
+.empleados-page .modal-kicker {
+  display: block;
+  margin-bottom: 6px;
+
+  color: var(--emp-cyan);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 1.9px;
+}
+
+.empleados-page .modal-header h2 {
+  margin: 0;
+
+  color: #f2ffff;
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.empleados-page .modal-header p {
+  margin: 5px 0 0;
+  color: var(--emp-muted);
+  font-size: 0.72rem;
+  line-height: 1.7;
+}
+
+.empleados-page .close-modal {
+  display: flex;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.025);
+  color: #a8bbbb;
+
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.empleados-page .close-modal:hover {
+  border-color: rgba(255, 104, 117, 0.35);
+  background: rgba(255, 104, 117, 0.08);
+  color: #ff959d;
+  transform: rotate(90deg);
+}
+
+/* ==================================
+   FORMULARIOS
+================================== */
+
+.empleados-page .empleado-form,
+.empleados-page .horario-form {
+  padding: 25px 27px 27px;
+}
+
+.empleados-page .form-section-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  margin-bottom: 19px;
+
+  color: var(--emp-cyan-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.empleados-page .form-section-label i {
+  color: var(--emp-cyan);
+  font-size: 0.92rem;
+}
+
+.empleados-page .form-group {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 19px;
+}
+
+.empleados-page .form-group label {
+  display: block;
+  margin-bottom: 9px;
+
+  color: #d2e0e0;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.empleados-page .form-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.empleados-page .form-input-wrapper > i:first-child {
+  position: absolute;
+  left: 15px;
+  z-index: 1;
+
+  color: #76a9a9;
+  font-size: 0.88rem;
+  pointer-events: none;
+}
+
+.empleados-page .form-input-wrapper input,
+.empleados-page .form-input-wrapper select {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 14px 12px 43px;
+
+  border: 1px solid rgba(255, 255, 255, 0.105);
+  border-radius: 11px;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.035);
+  color: #effafa;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.empleados-page .form-input-wrapper input::placeholder {
+  color: #738585;
+}
+
+.empleados-page .form-input-wrapper input:focus,
+.empleados-page .form-input-wrapper select:focus {
+  border-color: rgba(56, 209, 209, 0.62);
+  background: rgba(56, 209, 209, 0.035);
+  box-shadow: 0 0 0 3px rgba(56, 209, 209, 0.055);
+}
+
+.empleados-page .form-input-wrapper select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+}
+
+.empleados-page .select-wrapper .select-arrow {
+  position: absolute;
+  right: 15px;
+  left: auto;
+
+  color: #789a9a;
+  font-size: 0.7rem;
+  pointer-events: none;
+}
+
+.empleados-page .form-input-wrapper select option {
+  background: #101818;
+  color: #f1ffff;
+}
+
+.empleados-page .form-input-wrapper input[type='date'],
+.empleados-page .form-input-wrapper input[type='time'] {
+  color-scheme: dark;
+}
+
+.empleados-page .form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.empleados-page .form-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  margin-top: 5px;
+  padding: 13px;
+
+  border: 1px solid rgba(56, 209, 209, 0.12);
+  border-radius: 10px;
+
+  background: rgba(56, 209, 209, 0.035);
+  color: #91a7a7;
+
+  font-size: 0.69rem;
+  line-height: 1.7;
+}
+
+.empleados-page .form-note i {
+  margin-top: 2px;
+  color: var(--emp-cyan);
+}
+
+/* BOTONES DE FORMULARIO */
+
+.empleados-page .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  margin-top: 25px;
+}
+
+.empleados-page .btn-cancel,
+.empleados-page .btn-save {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+
+  min-height: 44px;
+  padding: 11px 18px;
+
+  border-radius: 10px;
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.empleados-page .btn-cancel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.035);
+  color: #b1c0c0;
+}
+
+.empleados-page .btn-cancel:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.empleados-page .btn-save {
+  border: 1px solid var(--emp-cyan);
+  background: linear-gradient(110deg, #2ababa, #61e0e0);
+  color: #041111;
+}
+
+.empleados-page .btn-save:hover {
+  background: #e0ffff;
+  box-shadow: 0 5px 20px rgba(56, 209, 209, 0.14);
+  transform: translateY(-2px);
+}
+
+.empleados-page .btn-primary:focus-visible,
+.empleados-page .action-btn:focus-visible,
+.empleados-page .close-modal:focus-visible {
+  outline: 2px solid var(--emp-cyan-light);
+  outline-offset: 3px;
+}
+
+/* ==================================
+   GESTIÓN DE HORARIOS
+================================== */
+
+.empleados-page .horarios-content {
+  padding: 22px 27px 27px;
+}
+
+.empleados-page .horario-form {
+  margin-bottom: 25px;
+  padding: 20px;
+
+  border: 1px solid rgba(56, 209, 209, 0.17);
+  border-radius: 14px;
+
+  background: rgba(56, 209, 209, 0.035);
+}
+
+.empleados-page .horario-form .form-group {
+  margin-bottom: 16px;
+}
+
+.empleados-page .btn-add-shift {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* LISTADO DE TURNOS */
+
+.empleados-page .horarios-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  margin-bottom: 15px;
+}
+
+.empleados-page .horarios-list-heading h3 {
+  margin: 0 0 5px;
+  color: #edfafa;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.empleados-page .horarios-list-heading p {
+  margin: 0;
+  color: var(--emp-muted);
+  font-size: 0.71rem;
+  line-height: 1.6;
+}
+
+.empleados-page .calendar-heading-icon {
+  display: flex;
+  flex: 0 0 39px;
+  align-items: center;
+  justify-content: center;
+
+  width: 39px;
+  height: 39px;
+
+  border: 1px solid rgba(56, 209, 209, 0.2);
+  border-radius: 12px;
+
+  background: rgba(56, 209, 209, 0.055);
+  color: var(--emp-cyan);
+}
+
+.empleados-page .horarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  max-height: 270px;
+  overflow-y: auto;
+  padding: 2px 4px 2px 0;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(56, 209, 209, 0.25) transparent;
+}
+
+.empleados-page .horarios-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.empleados-page .horarios-list::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(56, 209, 209, 0.25);
+}
+
+.empleados-page .turno-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 0;
+  padding: 13px;
+
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-left: 3px solid rgba(56, 209, 209, 0.6);
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.empleados-page .turno-item:hover {
+  border-color: rgba(56, 209, 209, 0.23);
+  background: rgba(56, 209, 209, 0.035);
+}
+
+.empleados-page .turno-icon {
+  display: flex;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid rgba(56, 209, 209, 0.15);
+  border-radius: 10px;
+
+  background: rgba(56, 209, 209, 0.05);
+  color: var(--emp-cyan);
+}
+
+.empleados-page .turno-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.empleados-page .turno-info strong {
+  color: #effafa;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.empleados-page .turno-horas {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  color: var(--emp-muted);
+  font-size: 0.7rem;
+}
+
+.empleados-page .turno-horas i {
+  color: #7eb6b6;
+}
+
+.empleados-page .turno-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 6px 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.empleados-page .turno-disponible {
+  border-color: rgba(56, 209, 209, 0.2);
+  background: rgba(56, 209, 209, 0.055);
+  color: #78e4dc;
+}
+
+.empleados-page .turno-ocupado {
+  border-color: rgba(255, 193, 92, 0.2);
+  background: rgba(255, 193, 92, 0.055);
+  color: #ffc96f;
+}
+
+.empleados-page .horarios-empty {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 28px 15px;
+
+  border: 1px dashed rgba(56, 209, 209, 0.17);
+  border-radius: 12px;
+
+  background: rgba(56, 209, 209, 0.02);
+  text-align: center;
+}
+
+.empleados-page .horarios-empty > i {
+  color: var(--emp-cyan);
+  font-size: 1.45rem;
+}
+
+.empleados-page .horarios-empty strong {
+  color: #edfafa;
+  font-size: 0.81rem;
+}
+
+.empleados-page .horarios-empty p {
+  margin: 0;
+  color: var(--emp-muted);
+  font-size: 0.7rem;
+  line-height: 1.7;
+}
+
+/* ==================================
+   ANIMACIONES
+================================== */
+
+@keyframes empleadosFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes empleadosSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==================================
+   TABLET
+================================== */
+
+@media (max-width: 1050px) {
+  .empleados-page {
+    padding: 23px;
+  }
+
+  .empleados-page .empleados-table th,
+  .empleados-page .empleados-table td {
+    padding: 15px;
+  }
+}
+
+/* ==================================
+   MÓVIL
+================================== */
+
+@media (max-width: 650px) {
+  .empleados-page {
+    padding: 17px 13px 25px;
+  }
+
+  .empleados-page .empleados-intro {
+    min-height: auto;
+    margin-bottom: 22px;
+    padding: 24px 20px;
+  }
+
+  .empleados-page .empleados-intro-icon {
+    display: none;
+  }
+
+  .empleados-page .empleados-intro h1 {
+    font-size: 1.8rem;
+  }
+
+  .empleados-page .empleados-intro p {
+    font-size: 0.76rem;
+  }
+
+  .empleados-page .empleados-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .empleados-page .search-box {
+    max-width: none;
+  }
+
+  .empleados-page .empleados-toolbar > .btn-primary {
+    width: 100%;
+  }
+
+  .empleados-page .table-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 17px;
+  }
+
+  .empleados-page .table-status {
+    align-self: flex-start;
+  }
+
+  .empleados-page .empleados-table {
+    min-width: 850px;
+  }
+
+  .empleados-page .modal-overlay {
+    align-items: center;
+    padding: 12px;
+  }
+
+  .empleados-page .modal-content {
+    max-height: calc(100dvh - 24px);
+    border-radius: 17px;
+  }
+
+  .empleados-page .modal-header {
+    padding: 20px 18px;
+  }
+
+  .empleados-page .modal-heading {
+    gap: 11px;
+  }
+
+  .empleados-page .modal-icon {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .empleados-page .modal-header h2 {
+    font-size: 1rem;
+  }
+
+  .empleados-page .empleado-form {
+    padding: 21px 18px;
+  }
+
+  .empleados-page .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .empleados-page .form-row .form-group {
+    width: 100%;
+    margin-bottom: 19px;
+  }
+
+  .empleados-page .modal-actions {
+    gap: 9px;
+  }
+
+  .empleados-page .btn-cancel,
+  .empleados-page .modal-actions .btn-save {
+    flex: 1;
+    padding: 11px 10px;
+    font-size: 0.7rem;
+  }
+
+  .empleados-page .horarios-content {
+    padding: 17px;
+  }
+
+  .empleados-page .horario-form {
+    padding: 15px;
+  }
+
+  .empleados-page .turno-item {
+    flex-wrap: wrap;
+  }
+
+  .empleados-page .turno-status {
+    margin-left: auto;
+  }
+
+  .empleados-page .turno-item > .action-btn {
+    flex-shrink: 0;
+  }
+
+  .empleados-page .table-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px 17px;
+  }
+}
+
+/* ==================================
+   ACCESIBILIDAD
+================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .empleados-page *,
+  .empleados-page *::before,
+  .empleados-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

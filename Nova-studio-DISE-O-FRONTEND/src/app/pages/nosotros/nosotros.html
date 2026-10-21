@@ -1,0 +1,413 @@
+<div id="particles-js"></div>
+
+<div class="nosotros-page">
+
+  <!-- ==================================
+       NAVEGACIÓN
+  =================================== -->
+  <nav class="nosotros-navbar">
+
+    <a routerLink="/" class="logo">
+      <i class="fas fa-spa" aria-hidden="true"></i>
+
+      <span>
+        NOVA
+        <small>BEAUTY SALON</small>
+      </span>
+    </a>
+
+    <div class="nav-links">
+
+      <a routerLink="/">Inicio</a>
+
+      <a routerLink="/nuestros-servicios">Servicios</a>
+
+      <a routerLink="/reservas">Reservar</a>
+
+      <a routerLink="/promociones-publico">Promociones</a>
+
+      <a routerLink="/nosotros" class="active">Nosotros</a>
+
+      <a routerLink="/contacto">Contacto</a>
+
+      <a
+        *ngIf="!usuarioLogeado"
+        routerLink="/login"
+        class="cta-nav"
+      >
+        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+        Reservar cita
+      </a>
+
+    </div>
+
+    <!-- USUARIO CON SESIÓN INICIADA -->
+    <div class="user-panel" *ngIf="usuarioLogeado">
+
+      <span id="usuario-logeado">
+        <i class="fas fa-user-circle" aria-hidden="true"></i>
+        {{ usuarioLogeado }}
+      </span>
+
+      <button
+        type="button"
+        id="logout-btn"
+        (click)="cerrarSesion()"
+      >
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+        Salir
+      </button>
+
+    </div>
+
+  </nav>
+
+  <!-- ==================================
+       PORTADA SOBRE NOSOTROS
+  =================================== -->
+  <section class="nosotros-hero">
+
+    <div class="hero-orbit hero-orbit-one"></div>
+    <div class="hero-orbit hero-orbit-two"></div>
+
+    <div class="nosotros-hero-content">
+
+      <span class="eyebrow">
+        <span></span>
+        CONOCE NUESTRA ESENCIA
+        <span></span>
+      </span>
+
+      <h1>
+        Más que belleza,
+        <span>una experiencia.</span>
+      </h1>
+
+      <p class="hero-description">
+        En NOVA Beauty Salon transformamos tu imagen con estilo,
+        elegancia y precisión profesional. Creamos experiencias
+        pensadas para resaltar tu esencia y hacerte sentir única.
+      </p>
+
+      <a href="#nuestra-esencia" class="hero-button">
+        Conoce nuestra historia
+        <i class="fas fa-arrow-down" aria-hidden="true"></i>
+      </a>
+
+      <div class="hero-brand">
+        <i class="fas fa-spa" aria-hidden="true"></i>
+        <span>NOVA BEAUTY SALON</span>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       INTRODUCCIÓN
+  =================================== -->
+  <section id="nuestra-esencia" class="essence-section">
+
+    <div class="essence-decoration" aria-hidden="true">
+      <i class="fas fa-spa"></i>
+    </div>
+
+    <div class="essence-content">
+
+      <span class="section-eyebrow">
+        NUESTRA ESENCIA
+      </span>
+
+      <h2 class="section-title">
+        Tu belleza es <span>nuestra inspiración</span>
+      </h2>
+
+      <p>
+        Creemos que la belleza está en los detalles, en la confianza
+        que transmites y en la manera en que expresas quién eres.
+        Por eso cuidamos cada parte de tu experiencia, desde la
+        elección de tu tratamiento hasta el resultado final.
+      </p>
+
+      <p>
+        En NOVA queremos que cada visita sea un momento para ti:
+        un espacio para renovar tu estilo, descubrir nuevas
+        posibilidades y disfrutar de una atención personalizada.
+      </p>
+
+      <div class="essence-signature">
+        <span class="signature-line"></span>
+        <i class="fas fa-gem" aria-hidden="true"></i>
+        <span>Tu estilo, tu esencia, tu momento</span>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       NUESTROS VALORES
+  =================================== -->
+  <section class="nosotros-values">
+
+    <div class="section-heading">
+
+      <span class="section-eyebrow">
+        LO QUE NOS DEFINE
+      </span>
+
+      <h2 class="section-title">
+        La esencia de <span>NOVA</span>
+      </h2>
+
+      <p class="section-description">
+        Tres pilares que inspiran la experiencia que queremos
+        ofrecerte en cada visita.
+      </p>
+
+      <div class="title-divider">
+        <span></span>
+        <i class="fas fa-gem" aria-hidden="true"></i>
+        <span></span>
+      </div>
+
+    </div>
+
+    <div class="values-grid">
+
+      <!-- EXPERIENCIA PREMIUM -->
+      <article class="value-card glow-effect">
+
+        <div class="value-number">01</div>
+
+        <div class="value-icon">
+          <i class="fas fa-crown" aria-hidden="true"></i>
+        </div>
+
+        <span class="value-eyebrow">
+          EXCELENCIA
+        </span>
+
+        <h3>Experiencia Premium</h3>
+
+        <p>
+          Más de 10 años ofreciendo servicios de belleza de alto nivel,
+          con atención al detalle y dedicación en cada tratamiento.
+        </p>
+
+        <div class="value-divider"></div>
+
+        <span class="value-footer">
+          <i class="fas fa-star" aria-hidden="true"></i>
+          Cuidamos cada detalle
+        </span>
+
+      </article>
+
+      <!-- PASIÓN POR LA BELLEZA -->
+      <article class="value-card glow-effect">
+
+        <div class="value-number">02</div>
+
+        <div class="value-icon">
+          <i class="fas fa-heart" aria-hidden="true"></i>
+        </div>
+
+        <span class="value-eyebrow">
+          DEDICACIÓN
+        </span>
+
+        <h3>Pasión por la Belleza</h3>
+
+        <p>
+          Cada persona es única. Nos inspira conocer tus preferencias
+          y ayudarte a encontrar un estilo que refleje tu personalidad.
+        </p>
+
+        <div class="value-divider"></div>
+
+        <span class="value-footer">
+          <i class="fas fa-heart" aria-hidden="true"></i>
+          Tu esencia nos inspira
+        </span>
+
+      </article>
+
+      <!-- CALIDAD PROFESIONAL -->
+      <article class="value-card glow-effect">
+
+        <div class="value-number">03</div>
+
+        <div class="value-icon">
+          <i class="fas fa-gem" aria-hidden="true"></i>
+        </div>
+
+        <span class="value-eyebrow">
+          CALIDAD
+        </span>
+
+        <h3>Calidad Profesional</h3>
+
+        <p>
+          Apostamos por técnicas modernas y productos de calidad
+          profesional para cuidar tu imagen y tu bienestar.
+        </p>
+
+        <div class="value-divider"></div>
+
+        <span class="value-footer">
+          <i class="fas fa-check-circle" aria-hidden="true"></i>
+          Atención con dedicación
+        </span>
+
+      </article>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       NUESTRA FILOSOFÍA
+  =================================== -->
+  <section class="philosophy-section">
+
+    <div class="philosophy-panel">
+
+      <div class="philosophy-icon">
+        <i class="fas fa-spa" aria-hidden="true"></i>
+      </div>
+
+      <div class="philosophy-content">
+
+        <span class="section-eyebrow">
+          NUESTRA FILOSOFÍA
+        </span>
+
+        <h2>
+          La elegancia está en
+          <span>sentirte tú misma.</span>
+        </h2>
+
+        <p>
+          No se trata solamente de cambiar tu apariencia, sino de
+          disfrutar el proceso, sentirte escuchada y salir con una
+          versión de ti que te haga sonreír.
+        </p>
+
+        <a routerLink="/nuestros-servicios" class="philosophy-button">
+          Descubre nuestros servicios
+          <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </a>
+
+      </div>
+
+      <div class="philosophy-decoration" aria-hidden="true">
+        NOVA
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       LLAMADA A LA ACCIÓN
+  =================================== -->
+  <section class="nosotros-cta">
+
+    <span class="section-eyebrow">
+      TU MOMENTO COMIENZA AQUÍ
+    </span>
+
+    <h2>
+      Descubre tu mejor <span>versión.</span>
+    </h2>
+
+    <p>
+      Te esperamos para crear una experiencia de belleza
+      que se adapte a tu estilo y a tu esencia.
+    </p>
+
+    <div class="cta-buttons">
+
+      <a routerLink="/reservas" class="cta-solid">
+        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+        Reservar mi cita
+      </a>
+
+      <a routerLink="/contacto" class="cta-outline">
+        Contáctanos
+        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- ==================================
+       PIE DE PÁGINA
+  =================================== -->
+  <footer class="nosotros-footer">
+
+    <a routerLink="/" class="footer-logo">
+      <i class="fas fa-spa" aria-hidden="true"></i>
+
+      <span>
+        NOVA
+        <small>BEAUTY SALON</small>
+      </span>
+    </a>
+
+    <p class="footer-description">
+      Belleza, bienestar y estilo en un solo lugar.
+    </p>
+
+    <div class="footer-socials">
+
+      <a
+        href="https://www.instagram.com/km_studio_oficial"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram"
+      >
+        <i class="fab fa-instagram"></i>
+      </a>
+
+      <a
+        href="https://www.facebook.com/share/18Ujd4QjSA/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Facebook"
+      >
+        <i class="fab fa-facebook-f"></i>
+      </a>
+
+      <a
+        href="https://www.tiktok.com/@km_studio_oficial"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="TikTok"
+      >
+        <i class="fab fa-tiktok"></i>
+      </a>
+
+    </div>
+
+    <nav class="legal-links" aria-label="Enlaces legales">
+
+      <a href="/politica-privacidad">Privacidad</a>
+
+      <a href="/terminos-condiciones">Términos y condiciones</a>
+
+      <a href="/politica-cookies">Cookies</a>
+
+      <a href="/politica-reembolsos">Reembolsos</a>
+
+    </nav>
+
+    <p class="copyright">
+      © 2026 NOVA Beauty Salon · Todos los derechos reservados
+    </p>
+
+  </footer>
+
+</div>

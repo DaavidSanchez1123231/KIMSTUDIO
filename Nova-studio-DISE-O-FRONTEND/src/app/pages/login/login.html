@@ -1,0 +1,110 @@
+<div id="particles-js"></div>
+
+<main class="login-wrapper">
+
+  <section class="login-card">
+
+    <!-- LOGO Y NOMBRE DEL SALÓN -->
+    <header class="brand-header">
+
+      <div class="brand-emblem">
+        <i class="fas fa-spa"></i>
+      </div>
+
+      <div class="brand-copy">
+        <h1>NOVA</h1>
+
+        <div class="brand-subtitle">
+          <span></span>
+          <p>BEAUTY SALON</p>
+          <span></span>
+        </div>
+      </div>
+
+    </header>
+
+    <p class="subtitle">
+      Inicia sesión para reservar tu cita
+    </p>
+
+    <!-- FORMULARIO DE INICIO DE SESIÓN -->
+    <form (submit)="iniciarSesion($event)">
+
+      <!-- USUARIO -->
+      <div class="input-group">
+        <i class="fas fa-user" aria-hidden="true"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="usuario"
+          name="usuario"
+          placeholder="Usuario / Correo"
+          autocomplete="username"
+          aria-label="Usuario o correo electrónico"
+          required
+        />
+      </div>
+
+      <!-- CONTRASEÑA -->
+      <div class="input-group">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+
+        <input
+          type="password"
+          [(ngModel)]="pass"
+          name="pass"
+          placeholder="Contraseña"
+          autocomplete="current-password"
+          aria-label="Contraseña"
+          required
+        />
+      </div>
+
+      <!-- MENSAJE DE ERROR -->
+      <p *ngIf="mostrarError" id="error-msg">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ errorMensaje }}
+      </p>
+
+      <!-- BOTÓN INGRESAR -->
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="cargando"
+      >
+        <span>
+          {{ cargando ? 'Verificando...' : 'Ingresar' }}
+        </span>
+
+        <i
+          *ngIf="!cargando"
+          class="fas fa-arrow-right"
+          aria-hidden="true"
+        ></i>
+      </button>
+
+      <!-- ENLACES INFERIORES -->
+      <div class="extra-links">
+
+        <a routerLink="/crear-cuenta">
+          <i class="fas fa-user-plus"></i>
+          <span>Crear cuenta</span>
+        </a>
+
+        <a routerLink="/recuperar">
+          <i class="fas fa-lock"></i>
+          <span>¿Olvidaste tu contraseña?</span>
+        </a>
+
+        <a routerLink="/">
+          <i class="fas fa-home"></i>
+          <span>Volver al inicio</span>
+        </a>
+
+      </div>
+
+    </form>
+
+  </section>
+
+</main>

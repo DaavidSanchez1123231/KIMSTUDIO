@@ -1,0 +1,218 @@
+<div id="particles-js"></div>
+
+<main class="register-wrapper">
+
+  <section class="register-card glow-effect">
+
+    <!-- LOGOTIPO NOVA BEAUTY SALON -->
+    <header class="brand-header">
+
+      <div class="brand-emblem">
+        <i class="fas fa-spa" aria-hidden="true"></i>
+      </div>
+
+      <div class="brand-copy">
+        <h1>NOVA</h1>
+
+        <div class="brand-subtitle">
+          <span></span>
+          <p>BEAUTY SALON</p>
+          <span></span>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- ENCABEZADO -->
+    <h2 class="form-title">Crear Cuenta</h2>
+
+    <p class="subtitle">
+      Regístrate para reservar tus citas en NOVA Beauty Salon
+    </p>
+
+    <!-- FORMULARIO DE REGISTRO -->
+    <form (submit)="registrar($event)">
+
+      <!-- NOMBRE COMPLETO -->
+      <div class="input-group">
+        <i class="fas fa-user" aria-hidden="true"></i>
+
+        <input
+          type="text"
+          name="nombre"
+          [(ngModel)]="nombre"
+          placeholder="Nombre completo"
+          autocomplete="name"
+          aria-label="Nombre completo"
+          required
+        />
+      </div>
+
+      <!-- CORREO ELECTRÓNICO -->
+      <div class="input-group">
+        <i class="fas fa-envelope" aria-hidden="true"></i>
+
+        <input
+          type="email"
+          name="correo"
+          [(ngModel)]="correo"
+          placeholder="Correo electrónico"
+          autocomplete="email"
+          aria-label="Correo electrónico"
+          required
+        />
+      </div>
+
+      <!-- TELÉFONO -->
+      <div class="input-group">
+        <i class="fas fa-phone" aria-hidden="true"></i>
+
+        <input
+          type="tel"
+          name="telefono"
+          [(ngModel)]="telefono"
+          placeholder="Teléfono"
+          autocomplete="tel"
+          aria-label="Teléfono"
+        />
+      </div>
+
+      <!-- CONTRASEÑA -->
+      <div class="input-group">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Contraseña"
+          autocomplete="new-password"
+          aria-label="Contraseña"
+          required
+        />
+      </div>
+
+      <!-- CONFIRMAR CONTRASEÑA -->
+      <div class="input-group">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+
+        <input
+          type="password"
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          placeholder="Confirmar contraseña"
+          autocomplete="new-password"
+          aria-label="Confirmar contraseña"
+          required
+        />
+      </div>
+
+      <!-- CONSENTIMIENTOS -->
+      <div class="consent">
+
+        <label class="consent-item">
+          <input
+            type="checkbox"
+            name="aceptaPrivacidad"
+            [(ngModel)]="aceptaPrivacidad"
+          />
+
+          <span>
+            He leído la
+            <a
+              href="/politica-privacidad"
+              target="_blank"
+              rel="noopener"
+            >Política de Privacidad</a>
+            y autorizo el tratamiento de mis datos personales para gestionar
+            mi cuenta y mis citas.
+            <strong>*</strong>
+          </span>
+        </label>
+
+        <label class="consent-item">
+          <input
+            type="checkbox"
+            name="aceptaTerminos"
+            [(ngModel)]="aceptaTerminos"
+          />
+
+          <span>
+            Acepto los
+            <a
+              href="/terminos-condiciones"
+              target="_blank"
+              rel="noopener"
+            >Términos y Condiciones</a>
+            y la
+            <a
+              href="/politica-reembolsos"
+              target="_blank"
+              rel="noopener"
+            >Política de Reembolsos y Cancelaciones</a>.
+            <strong>*</strong>
+          </span>
+        </label>
+
+        <label class="consent-item">
+          <input
+            type="checkbox"
+            name="aceptaMarketing"
+            [(ngModel)]="aceptaMarketing"
+          />
+
+          <span>
+            Quiero recibir promociones y novedades por correo o WhatsApp
+            <em>(opcional)</em>.
+          </span>
+        </label>
+
+      </div>
+
+      <!-- MENSAJE DE ERROR -->
+      <div
+        id="error-msg"
+        *ngIf="mostrarError"
+        role="alert"
+      >
+        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+        {{ mensajeError }}
+      </div>
+
+      <!-- BOTÓN DE REGISTRO -->
+      <button
+        type="submit"
+        class="btn-register"
+        [disabled]="cargando"
+      >
+        <span>
+          {{ cargando ? 'REGISTRANDO...' : 'CREAR MI CUENTA' }}
+        </span>
+
+        <i
+          *ngIf="!cargando"
+          class="fas fa-arrow-right"
+          aria-hidden="true"
+        ></i>
+      </button>
+
+    </form>
+
+    <!-- ENLACES INFERIORES -->
+    <div class="extra-links">
+
+      <a routerLink="/login">
+        <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+        <span>¿Ya tienes cuenta?</span>
+      </a>
+
+      <a routerLink="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Volver al inicio</span>
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
