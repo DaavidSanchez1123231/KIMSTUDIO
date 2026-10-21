@@ -1461,4 +1461,15 @@
     transition: none !important;
     scroll-behavior: auto !important;
   }
+  .service-image-box .service-image-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 105, 117, 0.08);
+  color: #e88991;
+  font-size: 2.4rem;
+}
 }

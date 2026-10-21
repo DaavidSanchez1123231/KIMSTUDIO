@@ -4,7 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
-
+interface FormServicio {
+  nombre: string;
+  categoriaId: string;
+  precio: number | null;
+  desc: string;
+  imagen_url: string;
+  duracion_minutos: number;
+}
 @Component({
   selector: 'app-servicios',
   standalone: true,
@@ -20,14 +27,18 @@ export class ServiciosComponent implements OnInit {
   // Lista que se alimentará de SQL Server
   servicios: any[] = [];
 
-  // Objeto reactivo para el formulario
-  nuevoServicio = {
+  nuevoServicio: FormServicio = {
     nombre: '',
     categoriaId: 'cabello',
     precio: null,
     desc: '',
-    imagen_url: '' // Campo para la URL de la imagen
+    imagen_url: '',
+    duracion_minutos: 60
   };
+
+  editandoId: number | null = null;        
+  imagenError: boolean = false;           
+  fallidas: Record<number, boolean> = {};    
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {} 
 
@@ -50,6 +61,7 @@ export class ServiciosComponent implements OnInit {
     this.http.get<any[]>(`${environment.apiUrl}/servicios`, { headers: this.getHeaders() }).subscribe({
       next: (data) => {
         this.servicios = data;
+        this.fallidas = {};
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -69,51 +81,56 @@ export class ServiciosComponent implements OnInit {
     return this.servicios.filter(servicio => servicio.categoriaId === this.filtroActual);
   }
 
-  // Abre el modal y LIMPIA el formulario por completo (Incluyendo la imagen)
+  
   abrirModal(): void {
+    this.editandoId = null;
+    this.imagenError = false;
+    this.nuevoServicio = { nombre: '', categoriaId: 'cabello', precio: null, desc: '', imagen_url: '', duracion_minutos: 60 };
     this.isModalOpen = true;
-    this.nuevoServicio = { 
-      nombre: '', 
-      categoriaId: 'cabello', 
-      precio: null, 
-      desc: '', 
-      imagen_url: '' 
+  }
+
+  // Abre el modal con los datos del servicio para EDITARLO
+  abrirEdicion(servicio: any): void {
+    this.editandoId = servicio.id_servicio;
+    this.imagenError = false;
+    this.nuevoServicio = {
+      nombre: servicio.nombre ?? '',
+      categoriaId: servicio.categoriaId ?? 'cabello',
+      precio: servicio.precio ?? null,
+      desc: servicio.desc ?? '',
+      imagen_url: servicio.imagen_url ?? '',
+      duracion_minutos: servicio.duracion_minutos || 60
     };
+    this.isModalOpen = true;
   }
 
   cerrarModal(): void {
     this.isModalOpen = false;
+    this.editandoId = null;
   }
 
   // Envía el nuevo servicio a Spring Boot
   guardarServicio(event: Event): void {
     event.preventDefault();
 
-    // Mapeo amigable para las etiquetas visuales (Opcional, según cómo lo uses en BD)
-    const categoriaMap: any = {
-      'cabello': 'Cabello',
-      'cejas': 'Cejas',
-      'uñas': 'Uñas'
-    };
+    const editando = this.editandoId !== null;
+    const url = `${environment.apiUrl}/servicios`;
+    const peticion = editando
+      ? this.http.put(`${url}/${this.editandoId}`, this.nuevoServicio, { headers: this.getHeaders() })
+      : this.http.post(url, this.nuevoServicio, { headers: this.getHeaders() });
 
-    const payload = {
-      ...this.nuevoServicio,
-      categoriaTexto: categoriaMap[this.nuevoServicio.categoriaId]
-    };
-
-    this.http.post(`${environment.apiUrl}/servicios`, payload, { headers: this.getHeaders() }).subscribe({
+    peticion.subscribe({
       next: () => {
-        alert("¡Servicio guardado con éxito en el catálogo!");
+        alert(editando ? '¡Servicio actualizado correctamente!' : '¡Servicio guardado con éxito en el catálogo!');
         this.cerrarModal();
         this.obtenerServicios(); // Recargamos el catálogo de inmediato
       },
       error: (err) => {
         console.error('Error al guardar servicio:', err);
-        alert('Ocurrió un error al registrar el servicio en la base de datos.');
+        alert(err.error?.mensaje || 'Ocurrió un error al guardar el servicio.');
       }
     });
   }
-
   // Elimina (o inactiva) un servicio
   eliminarServicio(id: number, nombre: string): void {
     const confirmar = confirm(`¿Estás seguro de eliminar el servicio "${nombre}"?`);

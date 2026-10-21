@@ -45,7 +45,7 @@ export class ServiciosPublicoComponent implements OnInit, AfterViewInit {
                 return {
                     ...servicio,
                     icono: iconoAsignado,
-                    imagen_url: servicio.imagen_url || 'assets/img/servicios/placeholder.jpg'
+                      imagen_url: servicio.imagen_url || ''
                 };
             });
             this.cargando = false;

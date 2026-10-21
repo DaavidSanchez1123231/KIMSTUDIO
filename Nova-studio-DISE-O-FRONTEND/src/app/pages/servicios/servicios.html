@@ -168,10 +168,12 @@
               <div class="service-image">
 
                 <img
-                  *ngIf="servicio.imagen_url; else iconoDefault"
+                  *ngIf="servicio.imagen_url && !fallidas[servicio.id_servicio]; else iconoDefault"
                   [src]="servicio.imagen_url"
                   [alt]="'Imagen de ' + servicio.nombre"
                   loading="lazy"
+                  referrerpolicy="no-referrer"
+                  (error)="fallidas[servicio.id_servicio] = true"
                 />
 
                 <ng-template #iconoDefault>
@@ -223,15 +225,12 @@
 
                 <button
                   type="button"
-                  (click)="eliminarServicio(
-                    servicio.id_servicio,
-                    servicio.nombre
-                  )"
-                  class="action-btn delete"
-                  title="Eliminar servicio"
-                  aria-label="Eliminar servicio"
+                  (click)="abrirEdicion(servicio)"
+                  class="action-btn edit"
+                  title="Editar servicio"
+                  aria-label="Editar servicio"
                 >
-                  <i class="fas fa-trash-alt"></i>
+                  <i class="fas fa-pen"></i>
                 </button>
 
               </div>
@@ -281,7 +280,7 @@
 
           <div>
             <span class="modal-kicker">NOVA BEAUTY SALON</span>
-            <h2 id="modal-servicio-title">Nuevo servicio</h2>
+            <h2 id="modal-servicio-title">{{ editandoId !== null ? 'Editar servicio' : 'Nuevo servicio' }}</h2>
             <p>Completa los detalles del tratamiento.</p>
           </div>
         </div>
@@ -384,18 +383,24 @@
 
         </div>
 
-        <!-- DESCRIPCIÓN -->
+        
+                <!-- DURACIÓN -->
         <div class="form-group">
-          <label for="servicio-desc">Descripción y detalles</label>
+          <label for="servicio-duracion">Duración (minutos)</label>
 
-          <div class="form-input-wrapper textarea-wrapper">
-            <textarea
-              id="servicio-desc"
-              [(ngModel)]="nuevoServicio.desc"
-              name="desc"
-              rows="3"
-              placeholder="Describe los detalles del tratamiento..."
-            ></textarea>
+          <div class="form-input-wrapper">
+            <i class="far fa-clock"></i>
+
+            <input
+              id="servicio-duracion"
+              type="number"
+              min="5"
+              max="600"
+              step="5"
+              [(ngModel)]="nuevoServicio.duracion_minutos"
+              name="duracion_minutos"
+              required
+            />
           </div>
         </div>
 
@@ -410,6 +415,7 @@
               id="servicio-imagen"
               type="url"
               [(ngModel)]="nuevoServicio.imagen_url"
+              (input)="imagenError = false"
               name="imagen_url"
               placeholder="https://ejemplo.com/foto.jpg"
             />
@@ -428,11 +434,20 @@
           <img
             [src]="nuevoServicio.imagen_url"
             alt="Vista previa del servicio"
+            referrerpolicy="no-referrer"
+            [hidden]="imagenError"
+            (load)="imagenError = false"
+            (error)="imagenError = true"
           />
 
-          <div class="preview-info">
+           <div class="preview-info" *ngIf="!imagenError">
             <i class="fas fa-check-circle"></i>
             <span>Vista previa de la imagen</span>
+          </div>
+
+          <div class="preview-info error" *ngIf="imagenError">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>No se pudo cargar. Usa un enlace directo a la imagen (termina en .jpg, .png o .webp).</span>
           </div>
         </div>
 
@@ -461,7 +476,7 @@
             class="btn-save"
           >
             <i class="fas fa-save"></i>
-            Guardar servicio
+              {{ editandoId !== null ? 'Guardar cambios' : 'Guardar servicio' }}
           </button>
 
         </div>

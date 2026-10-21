@@ -187,10 +187,18 @@
           <div class="service-image-box">
 
             <img
+              *ngIf="servicio.imagen_url && !servicio.imagenFallida; else sinImagen"
               [src]="servicio.imagen_url"
               [alt]="servicio.nombre"
               loading="lazy"
+              referrerpolicy="no-referrer"
+              (error)="servicio.imagenFallida = true"
             />
+             <ng-template #sinImagen>
+              <div class="service-image-placeholder">
+                <i [class]="servicio.icono" aria-hidden="true"></i>
+              </div>
+            </ng-template>
 
             <div class="image-overlay"></div>
 
