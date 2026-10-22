@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 // Nota: Asegúrate de que el nombre del import coincida con el nombre real de tu clase
-import { ClientesComponent } from './clientes.component'; 
+import { ClientesComponent } from './clientes';
 
 describe('ClientesComponent', () => {
   let component: ClientesComponent;

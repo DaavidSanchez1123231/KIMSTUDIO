@@ -1,8 +1,18 @@
+
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+
+interface Trabajo {
+  id_imagen: number;
+  titulo: string;
+  categoria: string;
+  url_imagen: string;
+  url_imagen_despues?: string;
+  fecha_subida?: string;
+}
 
 @Component({
   selector: 'app-galeria',
@@ -12,23 +22,27 @@ import { environment } from '../../../environments/environment';
   styleUrl: './galeria.css'
 })
 export class GaleriaComponent implements OnInit {
-  isModalOpen: boolean = false;
-  cargando: boolean = true;
-  filtroActual: string = 'todos';
 
-  // Almacén de datos del servidor
-  trabajos: any[] = [];
+  isModalOpen = false;
+  cargando = false;
+  guardando = false;
 
-  // Objeto reactivo para el formulario
+  filtroActual = 'todos';
+  mensajeError = '';
+
+  trabajos: Trabajo[] = [];
+
   nuevoTrabajo = {
     titulo: '',
     categoriaId: 'cabello',
-    desc: '',
-    imgAntes: '', // Almacenará la URL o nombre del archivo
+    imgAntes: '',
     imgDespues: ''
   };
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef ) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.obtenerTrabajos();
@@ -36,78 +50,258 @@ export class GaleriaComponent implements OnInit {
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
+
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
     });
   }
 
+  // CORREGIR RUTAS DE LAS IMÁGENES
+  
+
+resolverImagen(ruta: string | null | undefined): string {
+  if (!ruta || !ruta.trim()) {
+    return '';
+  }
+
+  let valor = ruta.trim();
+
+  // Extraer la dirección de un enlace Markdown: [texto](URL)
+  const enlace = valor.match(
+    /^\[[^\]]*\]\((https?:\/\/[^)]+)\)$/i
+  );
+
+  if (enlace) {
+    valor = enlace[1];
+  }
+
+  // Eliminar caracteres de escape que pudieran haberse guardado.
+  valor = valor
+    .replace(/\\&/g, '&')
+    .replace(/\\/g, '/');
+
+  // Conservar URL externas.
+  if (/^https?:\/\//i.test(valor)) {
+    return valor;
+  }
+
+  // Convertir rutas locales a las que sirve Angular.
+  valor = valor
+    .replace(/^\/?public\/img\//i, '/img/')
+    .replace(/^\/?assets\/img\//i, '/img/')
+    .replace(/^\/?img\//i, '/img/');
+
+  return valor.startsWith('/') ? valor : '/' + valor;
+}
+
+
+
+  // IMAGEN ALTERNATIVA CUANDO FALLA LA ORIGINAL
+ 
+
+imagenConError(event: Event): void {
+  const imagen = event.target as HTMLImageElement;
+
+  console.error('Falló la imagen:', {
+    src: imagen.getAttribute('src'),
+    urlSolicitada: imagen.currentSrc
+  });
+
+  // No reemplazarla por la imagen de public.
+  imagen.classList.add('imagen-error');
+}
+
+
+
+  // OBTENER TRABAJOS DESDE SPRING BOOT
   obtenerTrabajos(): void {
-    this.cargando = true;
-    this.http.get<any[]>(`${environment.apiUrl}/galeria`, { headers: this.getHeaders() }).subscribe({
-      next: (data) => {
-        this.trabajos = data;
-        this.cargando = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error al cargar la galería:', err);
-        this.cargando = false;
-      }
-    });
-  }
+  this.cargando = true;
+  this.mensajeError = '';
 
-  // Filtro computado utilizando Angular GETTER (Mantiene la reactividad de tu diseño original)
-  get galeriaFiltrada() {
+  this.http.get<Trabajo[]>(
+    `${environment.apiUrl}/galeria`,
+    { headers: this.getHeaders() }
+  ).subscribe({
+    next: (data) => {
+  console.log('RESPUESTA COMPLETA DEL BACKEND:', data);
+  console.log('TRABAJO RECIBIDO:', JSON.stringify(data, null, 2));
+
+  this.trabajos = data.map((item: any) => ({
+    ...item,
+    url_imagen: item.url_imagen,
+    url_imagen_despues: item.url_imagen_despues
+  }));
+
+  console.log('URL ANTES:', this.trabajos.map(t => t.url_imagen));
+  console.log(
+    'URL DESPUÉS:',
+    this.trabajos.map(t => t.url_imagen_despues)
+  );
+
+  this.cargando = false;
+  this.cdr.detectChanges();
+},
+
+    error: (err) => {
+      console.error('Error al cargar la galería:', err);
+
+      this.mensajeError =
+        'No se pudo cargar la galería. Verifica la conexión con el servidor.';
+
+      this.cargando = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
+
+  // FILTRAR TRABAJOS
+  get galeriaFiltrada(): Trabajo[] {
+
     if (this.filtroActual === 'todos') {
       return this.trabajos;
     }
-    return this.trabajos.filter(trabajo => trabajo.categoriaId === this.filtroActual);
+
+    return this.trabajos.filter(
+      trabajo =>
+        trabajo.categoria?.toLowerCase() ===
+        this.filtroActual.toLowerCase()
+    );
   }
 
-  abrirModal(): void {
-    this.isModalOpen = true;
-    this.nuevoTrabajo = { titulo: '', categoriaId: 'cabello', desc: '', imgAntes: '', imgDespues: '' };
-  }
+  // MOSTRAR NOMBRE DE CATEGORÍA
+  categoriaTexto(categoria: string): string {
 
-  cerrarModal(): void {
-    this.isModalOpen = false;
-  }
+    switch (categoria?.toLowerCase()) {
 
-  guardarTrabajo(event: Event): void {
-    event.preventDefault();
+      case 'cabello':
+        return 'Cabello y tintes';
 
-    const payload = {
-        titulo: this.nuevoTrabajo.titulo,
-        categoria: this.nuevoTrabajo.categoriaId,
-        url_imagen: this.nuevoTrabajo.imgAntes  // usamos la primera imagen
-    };
+      case 'uñas':
+        return 'Manicura y uñas';
 
-    this.http.post(`${environment.apiUrl}/galeria`, payload, { headers: this.getHeaders() }).subscribe({
-        next: () => {
-            alert("¡Trabajo subido correctamente al portafolio!");
-            this.cerrarModal();
-            this.obtenerTrabajos();
-            this.cdr.detectChanges();
-        },
-        error: (err) => {
-            console.error('Error al publicar trabajo:', err);
-            alert('Hubo un error al intentar publicar el trabajo.');
-        }
-    });
-}
+      case 'cejas':
+        return 'Mirada y cejas';
 
-  eliminarTrabajo(id: number, titulo: string): void {
-    const confirmar = confirm(`¿Estás seguro de eliminar "${titulo}" de la galería pública?`);
-    if (confirmar) {
-      this.http.delete(`${environment.apiUrl}/galeria/${id}`, { headers: this.getHeaders() }).subscribe({
-        next: () => {
-          alert("Trabajo eliminado del portafolio.");
-          this.cdr.detectChanges();
-          this.trabajos = this.trabajos.filter(t => t.id_trabajo !== id);
-        },
-        error: (err) => console.error('Error al eliminar trabajo:', err)
-      });
+      default:
+        return categoria || 'General';
     }
   }
+
+  // ABRIR MODAL
+  abrirModal(): void {
+
+    this.nuevoTrabajo = {
+      titulo: '',
+      categoriaId: 'cabello',
+      imgAntes: '',
+      imgDespues: ''
+    };
+
+    this.mensajeError = '';
+    this.isModalOpen = true;
+  }
+
+  // CERRAR MODAL
+  cerrarModal(): void {
+
+    if (this.guardando) {
+      return;
+    }
+
+    this.isModalOpen = false;
+    this.mensajeError = '';
+  }
+
+  // PUBLICAR TRABAJO
+  
+guardarTrabajo(event: Event): void {
+
+  event.preventDefault();
+
+  if (this.guardando) return;
+
+  const titulo = this.nuevoTrabajo.titulo.trim();
+  const imagenAntes = this.nuevoTrabajo.imgAntes.trim();
+  const imagenDespues = this.nuevoTrabajo.imgDespues.trim();
+
+  if (!titulo || !imagenAntes || !imagenDespues) {
+    this.mensajeError =
+      'Completa el título y las fotografías del antes y después.';
+    return;
+  }
+
+  const payload = {
+    titulo,
+    categoria: this.nuevoTrabajo.categoriaId,
+    url_imagen: this.resolverImagen(imagenAntes),
+    url_imagen_despues: this.resolverImagen(imagenDespues)
+  };
+
+  this.guardando = true;
+  this.mensajeError = '';
+
+  this.http.post(
+    `${environment.apiUrl}/galeria`,
+    payload,
+    { headers: this.getHeaders() }
+  ).subscribe({
+
+    next: () => {
+      this.guardando = false;
+      this.isModalOpen = false;
+
+      this.obtenerTrabajos();
+
+      alert('¡Trabajo publicado con sus dos fotografías!');
+    },
+
+    error: (err) => {
+      console.error('Error al publicar:', err);
+
+      this.guardando = false;
+      this.mensajeError = 'No se pudo publicar el trabajo.';
+      this.cdr.detectChanges();
+    }
+  });
+}
+
+
+  // ELIMINAR TRABAJO
+  eliminarTrabajo(id: number, titulo: string): void {
+
+    const confirmar = confirm(
+      `¿Estás seguro de eliminar "${titulo}" de la galería?`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.http.delete(
+      `${environment.apiUrl}/galeria/${id}`,
+      { headers: this.getHeaders() }
+    ).subscribe({
+
+      next: () => {
+
+        this.trabajos = this.trabajos.filter(
+          trabajo => trabajo.id_imagen !== id
+        );
+
+        this.cdr.detectChanges();
+
+        alert('Trabajo eliminado correctamente.');
+      },
+
+      error: (err) => {
+
+        console.error('Error al eliminar trabajo:', err);
+
+        alert('No se pudo eliminar el trabajo.');
+      }
+
+    });
+  }
+
 }

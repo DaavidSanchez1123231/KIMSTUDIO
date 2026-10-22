@@ -1,3 +1,4 @@
+
 package com.kimstudio.backend_api.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,41 +17,109 @@ public class GaleriaController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> listarImagenes() {
-        String sql = "SELECT id_imagen, titulo, categoria, url_imagen, fecha_subida " +
-                     "FROM Galeria WHERE estado = '1' " +
-                     "ORDER BY fecha_subida DESC";
-        return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
-    }
+    // LISTAR TRABAJOS Y SUS DOS IMÁGENES
+    
 
+@GetMapping
+public ResponseEntity<List<Map<String, Object>>> listarImagenes() {
+
+    String sql = """
+        SELECT
+            id_imagen,
+            titulo,
+            categoria,
+            url_imagen,
+            url_imagen_despues,
+            fecha_subida
+        FROM public.galeria
+        WHERE estado = '1'
+        ORDER BY fecha_subida DESC
+        """;
+
+    return ResponseEntity.ok(
+        jdbcTemplate.queryForList(sql)
+    );
+}
+
+
+
+    // GUARDAR TRABAJO CON FOTO ANTES Y DESPUÉS
     @PostMapping
-    public ResponseEntity<Map<String, Object>> agregarImagen(@RequestBody Map<String, Object> body) {
-        try {
-            String titulo    = body.get("titulo") != null ? body.get("titulo").toString() : "Sin título";
-            String categoria = body.get("categoria") != null ? body.get("categoria").toString() : "General";
-            String urlImagen = body.get("url_imagen").toString();
+    public ResponseEntity<Map<String, String>> agregarImagen(
+            @RequestBody Map<String, Object> body) {
 
-            jdbcTemplate.update(
-                "INSERT INTO Galeria (titulo, categoria, url_imagen, estado) VALUES (?, ?, ?, '1')",
-                titulo, categoria, urlImagen
+        String titulo = obtenerTexto(body, "titulo");
+        String categoria = obtenerTexto(body, "categoria");
+        String imagenAntes = obtenerTexto(body, "url_imagen");
+        String imagenDespues =
+            obtenerTexto(body, "url_imagen_despues");
+
+        if (titulo.isEmpty()
+                || categoria.isEmpty()
+                || imagenAntes.isEmpty()
+                || imagenDespues.isEmpty()) {
+
+            return ResponseEntity.badRequest().body(
+                Map.of(
+                    "mensaje",
+                    "Debes completar el título y las dos imágenes."
+                )
             );
-            return ResponseEntity.ok(Map.of("mensaje", "Imagen agregada correctamente."));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("mensaje", "Error: " + e.getMessage()));
         }
+
+        String sql = """
+            INSERT INTO public.galeria
+                (titulo, categoria, url_imagen,
+                 url_imagen_despues, estado)
+            VALUES (?, ?, ?, ?, '1')
+            """;
+
+        jdbcTemplate.update(
+            sql,
+            titulo,
+            categoria,
+            imagenAntes,
+            imagenDespues
+        );
+
+        return ResponseEntity.ok(
+            Map.of("mensaje", "Trabajo publicado correctamente.")
+        );
     }
 
+    // ELIMINAR TRABAJO
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> eliminarImagen(@PathVariable int id) {
-        try {
-            int filas = jdbcTemplate.update(
-                "UPDATE Galeria SET estado = '0' WHERE id_imagen = ?", id
+    public ResponseEntity<Map<String, String>> eliminarImagen(
+            @PathVariable int id) {
+
+        int filas = jdbcTemplate.update(
+            """
+            UPDATE public.galeria
+            SET estado = '0'
+            WHERE id_imagen = ?
+            """,
+            id
+        );
+
+        if (filas == 0) {
+            return ResponseEntity.status(404).body(
+                Map.of("mensaje", "Trabajo no encontrado.")
             );
-            if (filas == 0) return ResponseEntity.status(404).body(Map.of("mensaje", "Imagen no encontrada."));
-            return ResponseEntity.ok(Map.of("mensaje", "Imagen eliminada correctamente."));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("mensaje", "Error: " + e.getMessage()));
         }
+
+        return ResponseEntity.ok(
+            Map.of("mensaje", "Trabajo eliminado correctamente.")
+        );
+    }
+
+    // LEER CAMPOS DEL JSON
+    private String obtenerTexto(
+            Map<String, Object> body, String campo) {
+
+        Object valor = body.get(campo);
+
+        return valor == null
+            ? ""
+            : valor.toString().trim();
     }
 }

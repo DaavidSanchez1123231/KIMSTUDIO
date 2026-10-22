@@ -216,7 +216,6 @@ export class ConfiguracionComponent implements OnInit {
           'Error al actualizar la contraseña:',
           err
         );
-
         this.mostrarError = true;
 
         this.mensajeServidor =

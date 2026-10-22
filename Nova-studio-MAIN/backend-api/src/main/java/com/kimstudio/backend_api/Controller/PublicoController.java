@@ -16,14 +16,28 @@ public class PublicoController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @GetMapping("/galeria")
-    public ResponseEntity<List<Map<String, Object>>> obtenerGaleriaPublica() {
-        // ← lee de la BD real, devuelve campo "categoria" que coincide con el frontend corregido
-        String sql = "SELECT id_imagen, titulo, categoria, url_imagen " +
-                     "FROM Galeria WHERE estado = '1' " +
-                     "ORDER BY fecha_subida DESC";
-        return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
-    }
+   
+@GetMapping("/galeria")
+public ResponseEntity<List<Map<String, Object>>> obtenerGaleriaPublica() {
+
+    String sql = """
+        SELECT
+            id_imagen,
+            titulo,
+            categoria,
+            url_imagen,
+            url_imagen_despues,
+            fecha_subida
+        FROM public.galeria
+        WHERE estado = '1'
+        ORDER BY fecha_subida DESC
+        """;
+
+    return ResponseEntity.ok(
+        jdbcTemplate.queryForList(sql)
+    );
+}
+
 
     @GetMapping("/servicios")
     public ResponseEntity<List<Map<String, Object>>> obtenerServiciosPublicos() {

@@ -4,6 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
+interface Cliente {
+  id_usuario: number;
+  nombre: string;
+  correo: string;
+  telefono: string | null;
+  citasTotales: number;
+}
+
 @Component({
   selector: 'app-clientes',
   standalone: true,
@@ -13,13 +21,24 @@ import { environment } from '../../../environments/environment';
 })
 export class ClientesComponent implements OnInit {
 
-  isModalOpen: boolean = false;
-  cargando: boolean = true;
+  // ESTADOS DEL COMPONENTE
+  isModalOpen = false;
+  cargando = true;
+  guardando = false;
+  editando = false;
 
-  clientes: any[] = [];
-  clientesFiltrados: any[] = [];
-  textoBusqueda: string = '';
+  // ID DEL CLIENTE QUE SE ESTÁ EDITANDO
+  clienteIdEditando: number | null = null;
 
+  // LISTAS DE CLIENTES
+  clientes: Cliente[] = [];
+  clientesFiltrados: Cliente[] = [];
+
+  // BÚSQUEDA Y MENSAJES
+  textoBusqueda = '';
+  mensajeError = '';
+
+  // FORMULARIO
   nuevoCliente = {
     nombre: '',
     correo: '',
@@ -32,14 +51,12 @@ export class ClientesComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  // INICIALIZAR COMPONENTE
   ngOnInit(): void {
     this.obtenerClientes();
   }
 
-  // ==============================
   // CABECERAS HTTP
-  // ==============================
-
   private getHeaders(): HttpHeaders {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -59,31 +76,29 @@ export class ClientesComponent implements OnInit {
     return headers;
   }
 
-  // ==============================
   // OBTENER CLIENTES
-  // ==============================
-
   obtenerClientes(): void {
     this.cargando = true;
+    this.mensajeError = '';
 
-    this.http.get<any[]>(
+    this.http.get<Cliente[]>(
       `${environment.apiUrl}/clientes`,
       { headers: this.getHeaders() }
     ).subscribe({
       next: (data) => {
         const registros = Array.isArray(data) ? data : [];
 
-        // Normalizar el total de citas para la plantilla
-        this.clientes = registros.map((cliente: any) => {
-          const total = Number(cliente.citasTotales ?? 0);
-
-          return {
-            ...cliente,
-            citasTotales: Number.isFinite(total) && total >= 0
-              ? total
-              : 0
-          };
-        });
+        this.clientes = registros.map((cliente) => ({
+          ...cliente,
+          id_usuario: Number(cliente.id_usuario),
+          nombre: cliente.nombre ?? '',
+          correo: cliente.correo ?? '',
+          telefono: cliente.telefono ?? '',
+          citasTotales: Math.max(
+            0,
+            Number(cliente.citasTotales) || 0
+          )
+        }));
 
         this.filtrarClientes();
         this.cargando = false;
@@ -96,17 +111,17 @@ export class ClientesComponent implements OnInit {
 
         this.clientes = [];
         this.clientesFiltrados = [];
-        this.cargando = false;
 
+        this.mensajeError =
+          'No se pudieron cargar los clientes. Comprueba la conexión con el servidor.';
+
+        this.cargando = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  // ==============================
-  // FILTRAR CLIENTES
-  // ==============================
-
+  // BUSCAR Y FILTRAR CLIENTES
   filtrarClientes(): void {
     const busqueda = this.textoBusqueda
       .toLowerCase()
@@ -117,7 +132,7 @@ export class ClientesComponent implements OnInit {
       return;
     }
 
-    this.clientesFiltrados = this.clientes.filter((cliente: any) => {
+    this.clientesFiltrados = this.clientes.filter((cliente) => {
       const nombre = String(cliente.nombre ?? '').toLowerCase();
       const correo = String(cliente.correo ?? '').toLowerCase();
       const telefono = String(cliente.telefono ?? '').toLowerCase();
@@ -130,11 +145,15 @@ export class ClientesComponent implements OnInit {
     });
   }
 
-  // ==============================
-  // ABRIR MODAL
-  // ==============================
-
+  // ABRIR FORMULARIO PARA REGISTRAR
   abrirModal(): void {
+    if (this.guardando) {
+      return;
+    }
+
+    this.editando = false;
+    this.clienteIdEditando = null;
+
     this.nuevoCliente = {
       nombre: '',
       correo: '',
@@ -142,96 +161,201 @@ export class ClientesComponent implements OnInit {
       notas: ''
     };
 
+    this.mensajeError = '';
     this.isModalOpen = true;
   }
 
-  // ==============================
-  // CERRAR MODAL
-  // ==============================
+  // ABRIR FORMULARIO PARA EDITAR
+  editarCliente(cliente: Cliente): void {
+    if (this.guardando) {
+      return;
+    }
 
-  cerrarModal(): void {
-    this.isModalOpen = false;
+    console.log('Editar cliente:', cliente);
+
+    this.editando = true;
+    this.clienteIdEditando = Number(cliente.id_usuario);
+
+    this.nuevoCliente = {
+      nombre: cliente.nombre ?? '',
+      correo: cliente.correo ?? '',
+      telefono: cliente.telefono ?? '',
+      notas: ''
+    };
+
+    this.mensajeError = '';
+    this.isModalOpen = true;
+
+    this.cdr.detectChanges();
   }
 
-  // ==============================
-  // REGISTRAR CLIENTE
-  // ==============================
+  // CERRAR FORMULARIO
+  cerrarModal(): void {
+    if (this.guardando) {
+      return;
+    }
 
+    this.isModalOpen = false;
+    this.mensajeError = '';
+    this.editando = false;
+    this.clienteIdEditando = null;
+
+    this.nuevoCliente = {
+      nombre: '',
+      correo: '',
+      telefono: '',
+      notas: ''
+    };
+  }
+
+  // REGISTRAR O ACTUALIZAR CLIENTE
   guardarCliente(event: Event): void {
     event.preventDefault();
 
-    this.http.post(
-      `${environment.apiUrl}/clientes`,
-      this.nuevoCliente,
-      { headers: this.getHeaders() }
-    ).subscribe({
-      next: () => {
-        window.alert(
-          '¡Cliente registrado exitosamente en la base de datos!'
+    if (this.guardando) {
+      return;
+    }
+
+    const payload = {
+      nombre: this.nuevoCliente.nombre.trim(),
+      correo: this.nuevoCliente.correo.trim(),
+      telefono: this.nuevoCliente.telefono.trim()
+    };
+
+    // VALIDAR CAMPOS OBLIGATORIOS
+    if (
+      !payload.nombre ||
+      !payload.correo ||
+      !payload.telefono
+    ) {
+      this.mensajeError =
+        'Completa el nombre, correo y teléfono.';
+      return;
+    }
+
+    // VALIDAR FORMATO BÁSICO DEL CORREO
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formatoCorreo.test(payload.correo)) {
+      this.mensajeError =
+        'Ingresa un correo electrónico válido.';
+      return;
+    }
+
+    // DETERMINAR SI ES REGISTRO O EDICIÓN
+    const esEdicion =
+      this.editando &&
+      this.clienteIdEditando !== null;
+
+    if (esEdicion && (!this.clienteIdEditando || this.clienteIdEditando <= 0)) {
+      this.mensajeError =
+        'No se ha identificado correctamente al cliente que deseas editar.';
+      return;
+    }
+
+    // PREPARAR PETICIÓN HTTP
+    const peticion = esEdicion
+      ? this.http.put(
+          `${environment.apiUrl}/clientes/${this.clienteIdEditando}`,
+          payload,
+          { headers: this.getHeaders() }
+        )
+      : this.http.post(
+          `${environment.apiUrl}/clientes`,
+          payload,
+          { headers: this.getHeaders() }
         );
 
-        this.cerrarModal();
+    this.guardando = true;
+    this.mensajeError = '';
+
+    peticion.subscribe({
+      next: () => {
+        this.guardando = false;
+        this.isModalOpen = false;
+
+        this.editando = false;
+        this.clienteIdEditando = null;
+
+        this.nuevoCliente = {
+          nombre: '',
+          correo: '',
+          telefono: '',
+          notas: ''
+        };
+
+        this.cdr.detectChanges();
+
+        window.alert(
+          esEdicion
+            ? 'Cliente actualizado correctamente.'
+            : 'Cliente registrado correctamente.'
+        );
+
         this.obtenerClientes();
       },
 
       error: (err) => {
-        console.error('Error al registrar cliente:', err);
+        console.error('Error al guardar cliente:', err);
 
-        const mensajeBackend = err.error?.mensaje;
+        this.guardando = false;
 
-        if (err.status === 400) {
-          window.alert(
-            mensajeBackend ||
-            'Error de validación. Verifica los datos ingresados.'
-          );
+        if (err.status === 401 || err.status === 403) {
+          this.mensajeError =
+            'No tienes permiso para realizar esta operación. Comprueba tu sesión y tus permisos.';
+        } else if (err.status === 404 && esEdicion) {
+          this.mensajeError =
+            'No se encontró el cliente que intentas actualizar. Recarga la lista e inténtalo otra vez.';
         } else {
-          window.alert(
-            mensajeBackend ||
-            'No se pudo completar el registro. Intenta de nuevo.'
-          );
+          this.mensajeError =
+            err.error?.mensaje ||
+            (esEdicion
+              ? 'No se pudo actualizar el cliente.'
+              : 'No se pudo registrar el cliente.');
         }
+
+        this.cdr.detectChanges();
       }
     });
   }
 
-  // ==============================
   // ELIMINAR CLIENTE
-  // ==============================
-
   eliminarCliente(id: number, nombre: string): void {
+    if (this.guardando) {
+      return;
+    }
+
     const confirmar = window.confirm(
-      `¿Estás seguro de eliminar el registro de ${nombre}? ` +
-      'Esta acción no se puede deshacer.'
+      `¿Estás seguro de eliminar el registro de ${nombre}? Esta acción no se puede deshacer.`
     );
 
     if (!confirmar) {
       return;
     }
 
-    this.http.delete<any>(
+    this.http.delete(
       `${environment.apiUrl}/clientes/${id}`,
       { headers: this.getHeaders() }
     ).subscribe({
       next: () => {
-        window.alert('Registro de cliente eliminado.');
-
         this.clientes = this.clientes.filter(
-          (cliente: any) =>
+          (cliente) =>
             Number(cliente.id_usuario) !== Number(id)
         );
 
         this.filtrarClientes();
         this.cdr.detectChanges();
+
+        window.alert('Cliente eliminado correctamente.');
       },
 
       error: (err) => {
         console.error('Error al eliminar cliente:', err);
 
-        const mensaje =
+        window.alert(
           err.error?.mensaje ||
-          'No se pudo eliminar el cliente.';
-
-        window.alert(mensaje);
+          'No se pudo eliminar el cliente.'
+        );
       }
     });
   }

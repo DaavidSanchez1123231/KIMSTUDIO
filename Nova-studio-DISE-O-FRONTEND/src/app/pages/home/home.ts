@@ -63,25 +63,93 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Petición pública al servidor para traer las imágenes subidas por los admins
+  
+  // Corregir y normalizar las URL de las imágenes
+  private resolverUrlImagen(
+    ruta: string | null | undefined
+  ): string {
+    if (!ruta || !ruta.trim()) {
+      return '';
+    }
+
+    let valor = ruta.trim();
+
+    // Extraer URL si fue guardada como enlace Markdown
+    const enlaceMarkdown = valor.match(
+      /^\[[^\]]+\]\((https?:\/\/[^)]+)\)$/i
+    );
+
+    if (enlaceMarkdown) {
+      valor = enlaceMarkdown[1];
+    }
+
+    valor = valor
+      .replace(/\\&/g, '&')
+      .replace(/&amp;/g, '&')
+      .replace(/\\/g, '/');
+
+    if (/^https?:\/\//i.test(valor)) {
+      return valor;
+    }
+
+    valor = valor
+      .replace(/^\/?public\/img\//i, '/img/')
+      .replace(/^\/?assets\/img\//i, '/img/')
+      .replace(/^\/?img\//i, '/img/');
+
+    return valor.startsWith('/') ? valor : '/' + valor;
+  }
+
+  // Cargar los trabajos publicados en Home
   cargarGaleriaPublica(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/publico/galeria`).subscribe({
-        next: (data) => {
-            // ← cambia categoriaId por categoria (nombre real de la columna en BD)
-            this.trabajosCabello = data.filter(t => t.categoria === 'cabello');
-            this.trabajosUnas    = data.filter(t => t.categoria === 'uñas');
-            this.trabajosCejas   = data.filter(t => t.categoria === 'cejas');
-            this.cargandoGaleria = false;
-            this.cdr.detectChanges();
-        },
-        error: () => {
-            this.cargandoGaleria = false;
-            this.trabajosCabello = [];
-            this.trabajosUnas = [];
-            this.trabajosCejas = [];
-        }
+    this.cargandoGaleria = true;
+
+    this.http.get<any[]>(
+      `${environment.apiUrl}/publico/galeria`
+    ).subscribe({
+      next: (data) => {
+        console.log('Galería recibida en Home:', data);
+
+        // Adaptar los campos de PostgreSQL a los que utiliza home.html
+        const trabajos = data.map((item: any) => ({
+          id_trabajo: item.id_imagen,
+          titulo: item.titulo,
+          categoria: item.categoria,
+          imgAntes: this.resolverUrlImagen(item.url_imagen),
+          imgDespues: this.resolverUrlImagen(
+            item.url_imagen_despues
+          )
+        }));
+
+        this.trabajosCabello = trabajos.filter(
+          t => t.categoria?.toLowerCase() === 'cabello'
+        );
+
+        this.trabajosUnas = trabajos.filter(
+          t => t.categoria?.toLowerCase() === 'uñas'
+        );
+
+        this.trabajosCejas = trabajos.filter(
+          t => t.categoria?.toLowerCase() === 'cejas'
+        );
+
+        this.cargandoGaleria = false;
+        this.cdr.detectChanges();
+      },
+
+      error: (err) => {
+        console.error('Error al cargar galería en Home:', err);
+
+        this.cargandoGaleria = false;
+        this.trabajosCabello = [];
+        this.trabajosUnas = [];
+        this.trabajosCejas = [];
+
+        this.cdr.detectChanges();
+      }
     });
-}
+  }
+
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;

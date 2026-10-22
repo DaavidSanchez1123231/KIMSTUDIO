@@ -1,3 +1,4 @@
+
 <div class="galeria-page">
 
   <!-- ENCABEZADO -->
@@ -20,6 +21,7 @@
       <i class="fas fa-wand-magic-sparkles"></i>
     </div>
   </section>
+
 
   <!-- BARRA DE FILTROS Y ACCIONES -->
   <section class="galeria-toolbar">
@@ -57,16 +59,14 @@
 
   </section>
 
+
   <!-- CONTENIDO DE LA GALERÍA -->
   <section class="galeria-content">
 
-    <!-- CARGANDO -->
-    <div
-      *ngIf="cargando"
-      class="galeria-state"
-    >
+    <!-- ESTADO DE CARGA -->
+    <div *ngIf="cargando" class="galeria-state">
       <div class="galeria-loader">
-        <i class="fas fa-spinner"></i>
+        <i class="fas fa-spinner fa-spin"></i>
       </div>
 
       <h3>Cargando portafolio</h3>
@@ -76,9 +76,35 @@
       </p>
     </div>
 
-    <!-- SIN RESULTADOS -->
+
+    <!-- ERROR DE CONEXIÓN -->
     <div
-      *ngIf="!cargando && galeriaFiltrada.length === 0"
+      *ngIf="!cargando && mensajeError && !isModalOpen"
+      class="galeria-state"
+      role="alert"
+    >
+      <div class="galeria-empty-icon">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+
+      <h3>Error de conexión</h3>
+
+      <p>{{ mensajeError }}</p>
+
+      <button
+        type="button"
+        (click)="obtenerTrabajos()"
+        class="btn-primary"
+      >
+        <i class="fas fa-rotate-right"></i>
+        Reintentar
+      </button>
+    </div>
+
+
+    <!-- GALERÍA VACÍA -->
+    <div
+      *ngIf="!cargando && !mensajeError && galeriaFiltrada.length === 0"
       class="galeria-state"
     >
       <div class="galeria-empty-icon">
@@ -101,63 +127,70 @@
       </button>
     </div>
 
-    <!-- TARJETAS -->
+
+    <!-- TARJETAS DE TRABAJOS -->
     <div
       *ngIf="!cargando && galeriaFiltrada.length > 0"
       class="galeria-grid"
     >
 
-      @for (trabajo of galeriaFiltrada; track trabajo.id_trabajo) {
+      @for (trabajo of galeriaFiltrada; track trabajo.id_imagen) {
+
         <article class="galeria-card">
 
           <!-- IMÁGENES ANTES Y DESPUÉS -->
-          <div class="comparison-box">
+         <div class="comparison-box">
 
-            <div class="img-side">
-              <img
-                [src]="trabajo.imgAntes"
-                [alt]="'Antes: ' + trabajo.titulo"
-                loading="lazy"
-              >
+  <!-- FOTO DEL ANTES -->
+  <div class="img-side">
+    <img
+      [src]="resolverImagen(trabajo.url_imagen)"
+      (error)="imagenConError($event)"
+      [alt]="'Antes: ' + trabajo.titulo"
+      loading="lazy"
+    >
 
-              <span class="badge-side badge-antes">
-                <i class="fas fa-clock"></i>
-                Antes
-              </span>
-            </div>
+    <span class="badge-side badge-antes">
+      <i class="fas fa-clock"></i>
+      Antes
+    </span>
+  </div>
 
-            <div class="img-side img-side-after">
-              <img
-                [src]="trabajo.imgDespues"
-                [alt]="'Después: ' + trabajo.titulo"
-                loading="lazy"
-              >
+  <!-- FOTO DEL DESPUÉS -->
+  <div class="img-side img-side-after">
+    <img
+      [src]="resolverImagen(trabajo.url_imagen_despues)"
+      (error)="imagenConError($event)"
+      [alt]="'Después: ' + trabajo.titulo"
+      loading="lazy"
+    >
 
-              <span class="badge-side badge-despues">
-                <i class="fas fa-sparkles"></i>
-                Después
-              </span>
-            </div>
+    <span class="badge-side badge-despues">
+      <i class="fas fa-sparkles"></i>
+      Después
+    </span>
+  </div>
 
-            <div class="comparison-divider">
-              <i class="fas fa-arrows-left-right"></i>
-            </div>
+  <!-- DIVISOR -->
+  <div class="comparison-divider">
+    <i class="fas fa-arrows-left-right"></i>
+  </div>
 
-          </div>
+</div>
+
 
           <!-- INFORMACIÓN DEL TRABAJO -->
           <div class="galeria-info">
 
             <div class="galeria-card-category">
               <i class="fas fa-tag"></i>
-              <span>{{ trabajo.categoriaTexto }}</span>
+
+              <span>
+                {{ categoriaTexto(trabajo.categoria) }}
+              </span>
             </div>
 
             <h3>{{ trabajo.titulo }}</h3>
-
-            <p class="galeria-description">
-              {{ trabajo.desc }}
-            </p>
 
             <!-- ACCIONES -->
             <div class="galeria-footer">
@@ -169,7 +202,7 @@
 
               <button
                 type="button"
-                (click)="eliminarTrabajo(trabajo.id_trabajo, trabajo.titulo)"
+                (click)="eliminarTrabajo(trabajo.id_imagen, trabajo.titulo)"
                 class="action-btn delete"
                 [attr.aria-label]="'Eliminar trabajo ' + trabajo.titulo"
                 title="Eliminar trabajo"
@@ -183,13 +216,15 @@
           </div>
 
         </article>
+
       }
 
     </div>
 
   </section>
 
-  <!-- MODAL PARA PUBLICAR TRABAJO -->
+
+  <!-- MODAL PARA PUBLICAR UN TRABAJO -->
   <div
     class="modal-overlay"
     *ngIf="isModalOpen"
@@ -208,20 +243,29 @@
       <div class="modal-header">
 
         <div class="modal-title-group">
+
           <div class="modal-icon">
             <i class="fas fa-camera-retro"></i>
           </div>
 
           <div>
-            <span class="modal-eyebrow">PORTAFOLIO NOVA</span>
-            <h2 id="galeriaModalTitle">Publicar trabajo</h2>
+            <span class="modal-eyebrow">
+              PORTAFOLIO NOVA
+            </span>
+
+            <h2 id="galeriaModalTitle">
+              Publicar trabajo
+            </h2>
           </div>
+
         </div>
 
+        <!-- BOTÓN CERRAR -->
         <button
           type="button"
           class="close-modal"
           (click)="cerrarModal()"
+          [disabled]="guardando"
           aria-label="Cerrar modal"
         >
           <i class="fas fa-times"></i>
@@ -229,9 +273,11 @@
 
       </div>
 
+
       <p class="modal-description">
-        Completa los datos y agrega las imágenes para mostrar la transformación.
+        Completa los datos y agrega las fotografías del antes y después.
       </p>
+
 
       <!-- FORMULARIO -->
       <form
@@ -241,6 +287,7 @@
 
         <!-- TÍTULO -->
         <div class="form-group">
+
           <label for="trabajoTitulo">
             <i class="fas fa-heading"></i>
             Título del trabajo
@@ -252,60 +299,51 @@
             [(ngModel)]="nuevoTrabajo.titulo"
             name="titulo"
             required
+            maxlength="150"
+            [disabled]="guardando"
             placeholder="Ej. Balayage rubio platinado"
           >
-        </div>
-
-        <!-- CATEGORÍA Y DESCRIPCIÓN -->
-        <div class="form-row">
-
-          <div class="form-group">
-            <label for="trabajoCategoria">
-              <i class="fas fa-layer-group"></i>
-              Categoría
-            </label>
-
-            <select
-              id="trabajoCategoria"
-              [(ngModel)]="nuevoTrabajo.categoriaId"
-              name="categoriaId"
-              required
-            >
-              <option value="cabello">Cabello &amp; Tintes</option>
-              <option value="uñas">Manicura &amp; Uñas</option>
-              <option value="cejas">Mirada &amp; Cejas</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="trabajoDesc">
-              <i class="fas fa-align-left"></i>
-              Descripción corta
-            </label>
-
-            <input
-              id="trabajoDesc"
-              type="text"
-              [(ngModel)]="nuevoTrabajo.desc"
-              name="desc"
-              required
-              placeholder="Ej. Cambio de tono"
-            >
-          </div>
 
         </div>
 
-        <!-- IMÁGENES -->
+
+        <!-- CATEGORÍA -->
+        <div class="form-group">
+
+          <label for="trabajoCategoria">
+            <i class="fas fa-layer-group"></i>
+            Categoría
+          </label>
+
+          <select
+            id="trabajoCategoria"
+            [(ngModel)]="nuevoTrabajo.categoriaId"
+            name="categoriaId"
+            [disabled]="guardando"
+            required
+          >
+            <option value="cabello">Cabello &amp; Tintes</option>
+            <option value="uñas">Manicura &amp; Uñas</option>
+            <option value="cejas">Mirada &amp; Cejas</option>
+          </select>
+
+        </div>
+
+
+        <!-- TÍTULO DE LAS FOTOGRAFÍAS -->
         <div class="images-section-title">
           <i class="fas fa-images"></i>
           <span>Imágenes de la transformación</span>
         </div>
 
+
         <div class="form-row">
 
+          <!-- FOTOGRAFÍA DEL ANTES -->
           <div class="form-group">
+
             <label for="trabajoAntes">
-              Foto del antes
+              Fotografía del antes
             </label>
 
             <div class="image-input-wrapper">
@@ -317,18 +355,23 @@
                 [(ngModel)]="nuevoTrabajo.imgAntes"
                 name="imgAntes"
                 required
-                placeholder="assets/img/antes1.jpg"
+                [disabled]="guardando"
+                placeholder="/img/servicios/balayage_antes.jpg"
               >
             </div>
 
             <small class="input-help">
-              Ingresa la URL o ruta de la imagen.
+              Ingresa la ruta de la imagen o una URL HTTPS.
             </small>
+
           </div>
 
+
+          <!-- FOTOGRAFÍA DEL DESPUÉS -->
           <div class="form-group">
+
             <label for="trabajoDespues">
-              Foto del después
+              Fotografía del después
             </label>
 
             <div class="image-input-wrapper">
@@ -340,24 +383,76 @@
                 [(ngModel)]="nuevoTrabajo.imgDespues"
                 name="imgDespues"
                 required
-                placeholder="assets/img/despues1.jpg"
+                [disabled]="guardando"
+                placeholder="/img/servicios/balayage_despues.jpg"
               >
             </div>
 
             <small class="input-help">
-              Ingresa la URL o ruta de la imagen.
+              Ingresa la ruta de la imagen o una URL HTTPS.
             </small>
+
           </div>
 
         </div>
 
-        <!-- BOTONES -->
+
+        <!-- VISTAS PREVIAS -->
+        <div
+          class="form-row"
+          *ngIf="nuevoTrabajo.imgAntes || nuevoTrabajo.imgDespues"
+        >
+
+          <div
+            class="form-group"
+            *ngIf="nuevoTrabajo.imgAntes"
+          >
+            <label>Vista previa: Antes</label>
+
+            <img
+              [src]="resolverImagen(nuevoTrabajo.imgAntes)"
+              (error)="imagenConError($event)"
+              alt="Vista previa del antes"
+              style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px;"
+            >
+          </div>
+
+
+          <div
+            class="form-group"
+            *ngIf="nuevoTrabajo.imgDespues"
+          >
+            <label>Vista previa: Después</label>
+
+            <img
+              [src]="resolverImagen(nuevoTrabajo.imgDespues)"
+              (error)="imagenConError($event)"
+              alt="Vista previa del después"
+              style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px;"
+            >
+          </div>
+
+        </div>
+
+
+        <!-- MENSAJE DE ERROR -->
+        <p
+          *ngIf="mensajeError"
+          class="galeria-description"
+          role="alert"
+        >
+          {{ mensajeError }}
+        </p>
+
+
+        <!-- BOTONES DEL FORMULARIO -->
         <div class="modal-actions">
 
           <button
             type="button"
             class="btn-secondary"
             (click)="cerrarModal()"
+            [disabled]="guardando"
           >
             Cancelar
           </button>
@@ -365,9 +460,16 @@
           <button
             type="submit"
             class="btn-primary modal-submit-btn"
+            [disabled]="guardando"
           >
-            <i class="fas fa-cloud-arrow-up"></i>
-            Publicar en web
+            <i
+              class="fas"
+              [ngClass]="guardando
+                ? 'fa-spinner fa-spin'
+                : 'fa-cloud-arrow-up'"
+            ></i>
+
+            {{ guardando ? 'Publicando...' : 'Publicar en web' }}
           </button>
 
         </div>

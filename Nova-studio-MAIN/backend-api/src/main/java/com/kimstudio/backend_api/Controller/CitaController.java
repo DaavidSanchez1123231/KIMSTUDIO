@@ -1,11 +1,13 @@
 package com.kimstudio.backend_api.Controller;
 
+import com.kimstudio.backend_api.model.CitaRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import com.kimstudio.backend_api.model.CitaRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -18,86 +20,210 @@ public class CitaController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    // ==========================================
+    // LISTAR CITAS CON SUS CLIENTES Y SERVICIOS
+    // ==========================================
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> listarCitas() {
-        String sql = "SELECT c.id_cita, h.fecha, h.hora_inicio as hora, " +
-                     "u.nombre as cliente, s.nombre as servicio, c.estado " +
-                     "FROM Citas c " +
-                     "JOIN Usuarios u ON c.id_usuario = u.id_usuario " +
-                     "JOIN Horarios h ON c.id_horario = h.id_horario " +
-                     "JOIN Servicios s ON c.id_servicio = s.id_servicio " +
-                     "ORDER BY h.fecha DESC, h.hora_inicio DESC";
 
-        List<Map<String, Object>> citas = jdbcTemplate.queryForList(sql);
+        String sql =
+            "SELECT c.id_cita, " +
+            "h.fecha, " +
+            "TO_CHAR(h.hora_inicio, 'HH24:MI') AS hora, " +
+            "u.nombre AS cliente, " +
+            "s.nombre AS servicio, " +
+            "c.estado " +
+            "FROM Citas c " +
+            "INNER JOIN Usuarios u ON c.id_usuario = u.id_usuario " +
+            "INNER JOIN Horarios h ON c.id_horario = h.id_horario " +
+            "INNER JOIN Servicios s ON c.id_servicio = s.id_servicio " +
+            "ORDER BY h.fecha DESC, h.hora_inicio DESC";
+
+        List<Map<String, Object>> citas =
+            jdbcTemplate.queryForList(sql);
+
         return ResponseEntity.ok(citas);
     }
 
-        @PostMapping
-        public ResponseEntity<?> crearCita(@RequestBody CitaRequest body) {
-        try {
-            // 1. Buscar o crear el horario disponible
-            String fecha = body.getFecha();
-            String hora = body.getHora();
-            Integer idServicio = body.getId_servicio();
-            String nombreCliente = body.getNombre_cliente();
+    // ==========================================
+    // REGISTRAR CITA VINCULADA A CLIENTE Y SERVICIO
+    // ==========================================
+    @PostMapping
+    @Transactional
+    public ResponseEntity<Map<String, Object>> crearCita(
+            @RequestBody CitaRequest body) {
 
-            // 2. Buscar el id_usuario por nombre (búsqueda simple)
-            String sqlUsuario = "SELECT id_usuario FROM Usuarios WHERE nombre ILIKE ? LIMIT 1";
-            List<Map<String, Object>> usuarios = jdbcTemplate.queryForList(sqlUsuario, "%" + nombreCliente + "%");
+        // 1. VALIDAR LOS DATOS RECIBIDOS
+        if (body == null ||
+            body.getId_usuario() == null ||
+            body.getId_servicio() == null ||
+            body.getFecha() == null ||
+            body.getHora() == null ||
+            body.getFecha().isBlank() ||
+            body.getHora().isBlank()) {
 
-            if (usuarios.isEmpty()) {
-                return ResponseEntity.status(404).body(Map.of("mensaje", "Cliente no encontrado en el sistema."));
-            }
-
-            int idUsuario = ((Number) usuarios.get(0).get("id_usuario")).intValue();
-
-            // 3. Verificar si ya existe un horario para esa fecha/hora
-            String sqlHorario = "SELECT id_horario FROM Horarios WHERE fecha = ? AND hora_inicio = ? AND estado = 'DISPONIBLE'";
-            List<Map<String, Object>> horarios = jdbcTemplate.queryForList(sqlHorario, fecha, hora);
-
-            if (horarios.isEmpty()) {
-                return ResponseEntity.status(409).body(Map.of("mensaje", "El horario seleccionado no está disponible."));
-            }
-
-            int idHorario = ((Number) horarios.get(0).get("id_horario")).intValue();
-
-            // 4. Crear la cita
-            String sqlCita = "INSERT INTO Citas (id_usuario, id_servicio, id_horario, estado) VALUES (?, ?, ?, 'Pendiente')";
-            jdbcTemplate.update(sqlCita, idUsuario, idServicio, idHorario);
-
-            // 5. Marcar el horario como ocupado
-            jdbcTemplate.update("UPDATE Horarios SET estado = 'ocupado' WHERE id_horario = ?", idHorario);
-
-            return ResponseEntity.ok(Map.of("mensaje", "Cita agendada correctamente."));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("mensaje", "Error interno: " + e.getMessage()));
+            return ResponseEntity.badRequest().body(
+                Map.of("mensaje",
+                    "Selecciona un cliente, un servicio, una fecha y una hora.")
+            );
         }
+
+        int idUsuario = body.getId_usuario();
+        int idServicio = body.getId_servicio();
+
+        if (idUsuario <= 0 || idServicio <= 0) {
+            return ResponseEntity.badRequest().body(
+                Map.of("mensaje",
+                    "El cliente o el servicio seleccionado no es válido.")
+            );
+        }
+
+        // 2. VERIFICAR QUE EXISTA EL CLIENTE
+        Integer clienteExiste = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM Usuarios " +
+            "WHERE id_usuario = ? AND rol = 'cliente'",
+            Integer.class,
+            idUsuario
+        );
+
+        if (clienteExiste == null || clienteExiste == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of("mensaje",
+                    "El cliente seleccionado no existe o no está registrado como cliente.")
+            );
+        }
+
+        // 3. VERIFICAR QUE EL SERVICIO EXISTA Y ESTÉ ACTIVO
+        Integer servicioExiste = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM Servicios " +
+            "WHERE id_servicio = ? AND estado = TRUE",
+            Integer.class,
+            idServicio
+        );
+
+        if (servicioExiste == null || servicioExiste == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of("mensaje",
+                    "El servicio seleccionado no existe o está inactivo.")
+            );
+        }
+
+        // 4. BUSCAR UN HORARIO DISPONIBLE PARA ESA FECHA Y HORA
+        List<Map<String, Object>> horarios =
+            jdbcTemplate.queryForList(
+                "SELECT id_horario, id_especialista " +
+                "FROM Horarios " +
+                "WHERE fecha = CAST(? AS DATE) " +
+                "AND hora_inicio = CAST(? AS TIME) " +
+                "AND estado = 'DISPONIBLE' " +
+                "ORDER BY id_horario " +
+                "LIMIT 1 FOR UPDATE",
+                body.getFecha(),
+                body.getHora()
+            );
+
+        if (horarios.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of("mensaje",
+                    "No hay un horario disponible para la fecha y hora seleccionadas. Elige otro horario.")
+            );
+        }
+
+        // 5. OBTENER EL HORARIO Y EL ESPECIALISTA ASOCIADO
+        Map<String, Object> horario = horarios.get(0);
+
+        int idHorario = ((Number) horario.get("id_horario")).intValue();
+
+        Object especialistaObjeto = horario.get("id_especialista");
+
+        Integer idEspecialista = especialistaObjeto instanceof Number
+            ? ((Number) especialistaObjeto).intValue()
+            : null;
+
+        // 6. MARCAR EL HORARIO COMO RESERVADO
+        int horariosActualizados = jdbcTemplate.update(
+            "UPDATE Horarios " +
+            "SET estado = 'RESERVADO', fecha_bloqueo = NULL " +
+            "WHERE id_horario = ? AND estado = 'DISPONIBLE'",
+            idHorario
+        );
+
+        if (horariosActualizados == 0) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of("mensaje",
+                    "El horario acaba de ser reservado. Selecciona otro.")
+            );
+        }
+
+        // 7. REGISTRAR LA CITA CON LOS IDENTIFICADORES REALES
+        if (idEspecialista != null) {
+
+            jdbcTemplate.update(
+                "INSERT INTO Citas " +
+                "(id_usuario, id_especialista, id_servicio, id_horario, estado) " +
+                "VALUES (?, ?, ?, ?, 'Pendiente')",
+                idUsuario,
+                idEspecialista,
+                idServicio,
+                idHorario
+            );
+
+        } else {
+
+            jdbcTemplate.update(
+                "INSERT INTO Citas " +
+                "(id_usuario, id_servicio, id_horario, estado) " +
+                "VALUES (?, ?, ?, 'Pendiente')",
+                idUsuario,
+                idServicio,
+                idHorario
+            );
+        }
+
+        return ResponseEntity.ok(
+            Map.of("mensaje",
+                "Cita registrada correctamente con su cliente y servicio.")
+        );
     }
 
+    // ==========================================
+    // ELIMINAR CITA Y LIBERAR EL HORARIO
+    // ==========================================
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> eliminarCita(@PathVariable int id) {
-        try {
-            
-            String sqlHorario = "SELECT id_horario FROM Citas WHERE id_cita = ?";
-            List<Map<String, Object>> resultado = jdbcTemplate.queryForList(sqlHorario, id);
+    @Transactional
+    public ResponseEntity<Map<String, Object>> eliminarCita(
+            @PathVariable int id) {
 
-            if (resultado.isEmpty()) {
-                return ResponseEntity.status(404).body(Map.of("mensaje", "Cita no encontrada."));
-            }
+        List<Map<String, Object>> resultado =
+            jdbcTemplate.queryForList(
+                "SELECT id_horario FROM Citas WHERE id_cita = ?",
+                id
+            );
 
-            int idHorario = ((Number) resultado.get(0).get("id_horario")).intValue();
-
-            // 2. Eliminar la cita
-            jdbcTemplate.update("DELETE FROM Citas WHERE id_cita = ?", id);
-
-            // 3. Liberar el horario
-            jdbcTemplate.update("UPDATE Horarios SET estado = 'DISPONIBLE' WHERE id_horario = ?", idHorario);
-
-            return ResponseEntity.ok(Map.of("mensaje", "Cita eliminada correctamente."));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("mensaje", "Error interno: " + e.getMessage()));
+        if (resultado.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of("mensaje", "No se encontró la cita.")
+            );
         }
+
+        int idHorario =
+            ((Number) resultado.get(0).get("id_horario")).intValue();
+
+        jdbcTemplate.update(
+            "DELETE FROM Citas WHERE id_cita = ?",
+            id
+        );
+
+        jdbcTemplate.update(
+            "UPDATE Horarios " +
+            "SET estado = 'DISPONIBLE', fecha_bloqueo = NULL " +
+            "WHERE id_horario = ?",
+            idHorario
+        );
+
+        return ResponseEntity.ok(
+            Map.of("mensaje",
+                "Cita eliminada y horario liberado correctamente.")
+        );
     }
 }

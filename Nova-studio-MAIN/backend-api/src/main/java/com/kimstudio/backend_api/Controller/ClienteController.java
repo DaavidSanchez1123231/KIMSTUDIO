@@ -57,6 +57,78 @@ public class ClienteController {
             return ResponseEntity.status(500).body(Map.of("mensaje", "Error interno: " + e.getMessage()));
         }
     }
+    
+    // ACTUALIZAR CLIENTE
+   @PutMapping("/{id}")
+public ResponseEntity<Map<String, Object>> actualizarCliente(
+        @PathVariable int id,
+        @RequestBody Map<String, Object> body) {
+
+    try {
+        String nombre = body.get("nombre") == null
+                ? ""
+                : body.get("nombre").toString().trim();
+
+        String correo = body.get("correo") == null
+                ? ""
+                : body.get("correo").toString().trim();
+
+        String telefono = body.get("telefono") == null
+                ? ""
+                : body.get("telefono").toString().trim();
+
+        if (nombre.isBlank() || correo.isBlank() || telefono.isBlank()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("mensaje", "Completa el nombre, correo y teléfono.")
+            );
+        }
+
+        Integer existeCliente = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM Usuarios " +
+            "WHERE id_usuario = ? AND rol = 'cliente'",
+            Integer.class,
+            id
+        );
+
+        if (existeCliente == null || existeCliente == 0) {
+            return ResponseEntity.status(404).body(
+                Map.of("mensaje", "No se encontró el cliente.")
+            );
+        }
+
+        Integer correoDuplicado = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM Usuarios " +
+            "WHERE LOWER(email) = LOWER(?) AND id_usuario <> ?",
+            Integer.class,
+            correo,
+            id
+        );
+
+        if (correoDuplicado != null && correoDuplicado > 0) {
+            return ResponseEntity.badRequest().body(
+                Map.of("mensaje", "El correo ya está registrado por otro usuario.")
+            );
+        }
+
+        jdbcTemplate.update(
+            "UPDATE Usuarios SET nombre = ?, email = ?, telefono = ? " +
+            "WHERE id_usuario = ? AND rol = 'cliente'",
+            nombre,
+            correo,
+            telefono,
+            id
+        );
+
+        return ResponseEntity.ok(
+            Map.of("mensaje", "Cliente actualizado correctamente.")
+        );
+
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body(
+            Map.of("mensaje", "Error al actualizar el cliente.")
+        );
+    }
+}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> eliminarCliente(@PathVariable int id) {
@@ -77,4 +149,15 @@ public class ClienteController {
             return ResponseEntity.status(500).body(Map.of("mensaje", "Error interno: " + e.getMessage()));
         }
     }
+    
+    private String obtenerTexto(
+            Map<String, Object> body, String campo) {
+
+        Object valor = body.get(campo);
+
+        return valor == null
+            ? ""
+            : valor.toString().trim();
+    }
+
 }
