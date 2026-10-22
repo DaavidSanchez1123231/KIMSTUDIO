@@ -205,48 +205,49 @@
 
     </div>
 
-    <div class="video-box glow-effect">
+    
+<div class="video-box glow-effect">
 
-      @if (!videoActivado) {
+  @if (!videoActivado) {
 
-        <button
-          type="button"
-          class="video-thumbnail"
-          (click)="videoActivado = true"
-          aria-label="Reproducir video de transformación"
-        >
+    <button
+      type="button"
+      class="video-thumbnail"
+      (click)="videoActivado = true"
+      aria-label="Reproducir video publicitario"
+    >
 
-          <img
-            src="https://img.youtube.com/vi/sGWBu_pWPXA/hqdefault.jpg"
-            alt="Video de transformación de belleza"
-          />
+      <img
+        src="https://img.youtube.com/vi/KH9-wxEAJ5s/hqdefault.jpg"
+        alt="Video publicitario de NOVA Beauty Salon"
+      />
 
-          <span class="video-overlay"></span>
+      <span class="video-overlay"></span>
 
-          <span class="play-button">
-            <i class="fas fa-play" aria-hidden="true"></i>
-          </span>
+      <span class="play-button">
+        <i class="fas fa-play" aria-hidden="true"></i>
+      </span>
 
-          <span class="video-label">
-            Ver nuestra transformación
-          </span>
+      <span class="video-label">
+        Descubre NOVA Beauty Salon
+      </span>
 
-        </button>
+    </button>
 
-      } @else {
+  } @else {
 
-        <iframe
-          src="https://www.youtube.com/embed/sGWBu_pWPXA?autoplay=1"
-          title="NOVA Beauty Salon - Video de transformación"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
+    <iframe
+      src="https://www.youtube.com/embed/KH9-wxEAJ5s?autoplay=1"
+      title="Video publicitario de NOVA Beauty Salon"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+    ></iframe>
 
-      }
+  }
 
-    </div>
+</div>
 
   </section>
 
