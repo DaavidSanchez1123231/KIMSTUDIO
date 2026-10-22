@@ -14,6 +14,7 @@ interface Producto {
   desc?: string;
   descripcion?: string;
   imagen_url?: string;
+  imagenFallida?: boolean;
   estado?: boolean;
   stockClass?: string;
 }
@@ -30,6 +31,9 @@ export class ProductosComponent implements OnInit {
   isModalOpen = false;
   cargando = true;
   guardando = false;
+  editandoProducto = false;
+
+  idProductoEnEdicion: number | null = null;
 
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
@@ -67,6 +71,10 @@ export class ProductosComponent implements OnInit {
     return headers;
   }
 
+  // ==========================================
+  // LISTAR PRODUCTOS
+  // ==========================================
+
   obtenerProductos(): void {
     this.cargando = true;
 
@@ -75,10 +83,11 @@ export class ProductosComponent implements OnInit {
       { headers: this.getHeaders() }
     ).subscribe({
       next: (data) => {
-        this.productos = data.map(p => ({
+        this.productos = (data || []).map(p => ({
           ...p,
           desc: p.desc ?? p.descripcion ?? '',
-          imagen_url: p.imagen_url ?? '',
+          imagen_url: (p.imagen_url ?? '').trim(),
+          imagenFallida: false,
           stockClass: this.calcularClaseStock(Number(p.stock))
         }));
 
@@ -86,20 +95,29 @@ export class ProductosComponent implements OnInit {
         this.cargando = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error al cargar inventario:', err);
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
         this.cargando = false;
-        alert('No se pudo cargar el inventario. Revisa el backend.');
         this.cdr.detectChanges();
+
+        alert('No se pudieron cargar los productos. Revisa el backend.');
       }
     });
   }
+
+  // ==========================================
+  // CLASIFICAR STOCK
+  // ==========================================
 
   calcularClaseStock(stock: number): string {
     if (stock === 0) return 'alert';
     if (stock <= 5) return 'warning';
     return '';
   }
+
+  // ==========================================
+  // BUSCAR PRODUCTOS
+  // ==========================================
 
   filtrarProductos(): void {
     const busqueda = this.textoBusqueda.toLowerCase().trim();
@@ -111,11 +129,21 @@ export class ProductosComponent implements OnInit {
 
     this.productosFiltrados = this.productos.filter(p =>
       p.nombre?.toLowerCase().includes(busqueda) ||
-      p.categoria?.toLowerCase().includes(busqueda)
+      p.categoria?.toLowerCase().includes(busqueda) ||
+      p.desc?.toLowerCase().includes(busqueda)
     );
   }
 
+  // ==========================================
+  // ABRIR FORMULARIO NUEVO
+  // ==========================================
+
   abrirModal(): void {
+    if (this.guardando) return;
+
+    this.editandoProducto = false;
+    this.idProductoEnEdicion = null;
+
     this.nuevoProducto = {
       nombre: '',
       categoria: 'Cabello',
@@ -128,70 +156,167 @@ export class ProductosComponent implements OnInit {
     this.isModalOpen = true;
   }
 
-  cerrarModal(): void {
-    if (!this.guardando) {
-      this.isModalOpen = false;
-    }
+  // ==========================================
+  // EDITAR PRODUCTO
+  // ==========================================
+
+  editarProducto(producto: Producto): void {
+    if (this.guardando) return;
+
+    this.editandoProducto = true;
+    this.idProductoEnEdicion = producto.id_producto;
+
+    this.nuevoProducto = {
+      nombre: producto.nombre ?? '',
+      categoria: producto.categoria ?? 'Cabello',
+      precio: Number(producto.precio),
+      stock: Number(producto.stock),
+      desc: producto.desc ?? producto.descripcion ?? '',
+      imagen_url: producto.imagen_url ?? ''
+    };
+
+    this.isModalOpen = true;
   }
+
+  // ==========================================
+  // CERRAR FORMULARIO
+  // ==========================================
+
+  cerrarModal(): void {
+    if (this.guardando) return;
+
+    this.isModalOpen = false;
+    this.editandoProducto = false;
+    this.idProductoEnEdicion = null;
+  }
+
+  // ==========================================
+  // REGISTRAR O ACTUALIZAR
+  // ==========================================
 
   guardarProducto(event: Event): void {
     event.preventDefault();
 
     if (this.guardando) return;
 
+    const nombre = this.nuevoProducto.nombre.trim();
+    const categoria = this.nuevoProducto.categoria.trim();
+    const precio = Number(this.nuevoProducto.precio);
+    const stock = Number(this.nuevoProducto.stock);
+
     if (
-      !this.nuevoProducto.nombre.trim() ||
-      !this.nuevoProducto.categoria ||
+      !nombre ||
+      !categoria ||
       this.nuevoProducto.precio === null ||
-      this.nuevoProducto.stock === null
+      this.nuevoProducto.stock === null ||
+      !Number.isFinite(precio) ||
+      !Number.isFinite(stock)
     ) {
-      alert('Completa los campos obligatorios.');
+      alert('Completa todos los campos obligatorios.');
       return;
     }
 
-    if (this.nuevoProducto.precio < 0 || this.nuevoProducto.stock < 0) {
-      alert('El precio y el stock no pueden ser negativos.');
+    if (precio < 0 || stock < 0 || !Number.isInteger(stock)) {
+      alert('El precio debe ser no negativo y el stock un entero no negativo.');
+      return;
+    }
+
+    if (nombre.length > 100 || categoria.length > 50) {
+      alert('El nombre admite hasta 100 caracteres y la categoría hasta 50.');
+      return;
+    }
+
+    if (this.nuevoProducto.desc.trim().length > 255) {
+      alert('La descripción no puede superar los 255 caracteres.');
+      return;
+    }
+
+    if (
+      this.editandoProducto &&
+      this.idProductoEnEdicion === null
+    ) {
+      alert('No se identificó el producto que deseas modificar.');
       return;
     }
 
     const productoEnviar = {
-      nombre: this.nuevoProducto.nombre.trim(),
-      categoria: this.nuevoProducto.categoria,
-      precio: this.nuevoProducto.precio,
-      stock: this.nuevoProducto.stock,
+      nombre,
+      categoria,
+      precio,
+      stock,
       desc: this.nuevoProducto.desc.trim(),
       imagen_url: this.nuevoProducto.imagen_url.trim()
     };
 
+    const esEdicion = this.editandoProducto;
+    const mensajeExito = esEdicion
+      ? 'Producto modificado correctamente.'
+      : 'Producto registrado correctamente.';
+
+    const peticion = esEdicion
+      ? this.http.put(
+          `${environment.apiUrl}/productos/${this.idProductoEnEdicion}`,
+          productoEnviar,
+          { headers: this.getHeaders() }
+        )
+      : this.http.post(
+          `${environment.apiUrl}/productos`,
+          productoEnviar,
+          { headers: this.getHeaders() }
+        );
+
     this.guardando = true;
 
-    this.http.post(
-      `${environment.apiUrl}/productos`,
-      productoEnviar,
-      { headers: this.getHeaders() }
-    ).subscribe({
+    peticion.subscribe({
       next: () => {
         this.guardando = false;
         this.isModalOpen = false;
-        alert('¡Producto registrado correctamente!');
-        this.obtenerProductos();
-      },
-      error: (err) => {
-        this.guardando = false;
-        console.error('Error al guardar producto:', err);
+        this.editandoProducto = false;
+        this.idProductoEnEdicion = null;
 
-        const mensaje = err.error?.mensaje ||
-          'No se pudo guardar el producto. Revisa el backend y la base de datos.';
+        this.obtenerProductos();
+        this.cdr.detectChanges();
+
+        alert(mensajeExito);
+      },
+      error: (error) => {
+        console.error('Error al guardar producto:', error);
+
+        const mensaje =
+          error?.error?.mensaje ||
+          (esEdicion
+            ? 'No se pudo modificar el producto. Verifica el endpoint PUT.'
+            : 'No se pudo registrar el producto. Revisa el backend.');
+
+        this.guardando = false;
+        this.cdr.detectChanges();
 
         alert(mensaje);
       }
     });
   }
 
-  imagenError(event: Event): void {
+  // ==========================================
+  // ERROR DE IMAGEN EN LA TARJETA
+  // ==========================================
+
+  imagenProductoError(producto: Producto): void {
+    producto.imagenFallida = true;
+    this.cdr.detectChanges();
+  }
+
+  // ==========================================
+  // ERROR DE IMAGEN EN LA VISTA PREVIA
+  // ==========================================
+
+  imagenPreviewError(event: Event): void {
     const imagen = event.target as HTMLImageElement;
     imagen.style.display = 'none';
   }
+
+  // ==========================================
+  // ELIMINAR PRODUCTO
+  // ==========================================
 
   eliminarProducto(id: number, nombre: string): void {
     const confirmar = confirm(
@@ -205,17 +330,22 @@ export class ProductosComponent implements OnInit {
       { headers: this.getHeaders() }
     ).subscribe({
       next: () => {
-        alert('Producto eliminado correctamente.');
-
         this.productos = this.productos.filter(
           p => p.id_producto !== id
         );
 
         this.filtrarProductos();
+        this.cdr.detectChanges();
+
+        alert('Producto eliminado correctamente.');
       },
-      error: (err) => {
-        console.error('Error al eliminar producto:', err);
-        alert('No se pudo eliminar el producto.');
+      error: (error) => {
+        console.error('Error al eliminar producto:', error);
+
+        alert(
+          error?.error?.mensaje ||
+          'No se pudo eliminar el producto.'
+        );
       }
     });
   }
