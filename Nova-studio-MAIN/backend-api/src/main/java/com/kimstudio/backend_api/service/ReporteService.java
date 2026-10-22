@@ -122,27 +122,27 @@ public class ReporteService {
             t.setWidthPercentage(100);
             fila(t, "Ingresos brutos", dinero(b.get("ingresosBrutos")), normal);
             fila(t, "Insumos y comisiones (estimado)", dinero(b.get("insumosComisiones")), normal);
-            fila(t, "Utilidad neta", dinero(b.get("utilidadNeta")), normal);
+            fila(t, "Utilidad estimada", dinero(b.get("utilidadNeta")), normal);
             doc.add(t);
             doc.add(new Paragraph(" "));
 
-            doc.add(new Paragraph("Servicios mas vendidos", sub));
+            doc.add(new Paragraph("Distribución de citas por servicio", sub));
             PdfPTable ts = new PdfPTable(2);
             ts.setWidthPercentage(100);
             for (Map<String, Object> s : servicios)
                 fila(ts, String.valueOf(s.get("nombre")), s.get("porcentaje") + " %", normal);
             if (servicios.isEmpty())
-                fila(ts, "Sin citas confirmadas en el periodo", "-", normal);
+                fila(ts, "Sin citas no canceladas en el periodo", "-", normal);
             doc.add(ts);
             doc.add(new Paragraph(" "));
 
-            doc.add(new Paragraph("Rendimiento por especialista (ingreso estimado)", sub));
+            doc.add(new Paragraph("Valor de servicios completados por especialista", sub));
             PdfPTable te = new PdfPTable(2);
             te.setWidthPercentage(100);
             for (Map<String, Object> e : empleados)
                 fila(te, e.get("nombre") + " (" + e.get("puesto") + ")", dinero(e.get("monto")), normal);
             if (empleados.isEmpty())
-                fila(te, "Sin citas confirmadas en el periodo", "-", normal);
+                fila(te, "Sin citas completadas en el periodo", "-", normal);
             doc.add(te);
         } catch (DocumentException e) {
             throw new IllegalStateException("No se pudo generar el PDF", e);
