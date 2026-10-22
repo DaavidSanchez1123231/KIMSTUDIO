@@ -31,63 +31,56 @@ public class GestionComercialController {
             @RequestBody Map<String, Object> body) {
 
         try {
-            String nombre = body.get("nombre").toString().trim();
+            String nombre = texto(body, "nombre");
+            String categoria = texto(body, "categoria");
 
-            String categoria = body.get("categoria").toString().trim();
-
-            double precio = Double.parseDouble(
-                    body.get("precio").toString()
-            );
-
-            int stock = Integer.parseInt(
-                    body.get("stock").toString()
-            );
-
-            String descripcion = body.get("desc") != null
-                    ? body.get("desc").toString().trim()
-                    : "";
-
-            String imagenUrl = body.get("imagen_url") != null
-                    ? body.get("imagen_url").toString().trim()
-                    : "";
-
-            if (nombre.isEmpty() || categoria.isEmpty()) {
+            if (nombre.isBlank() || categoria.isBlank()) {
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "El nombre y la categoría son obligatorios."
-                        )
+                        Map.of("mensaje",
+                                "El nombre y la categoría son obligatorios.")
                 );
             }
 
             if (nombre.length() > 100 || categoria.length() > 50) {
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "El nombre o la categoría exceden el tamaño permitido."
-                        )
+                        Map.of("mensaje",
+                                "El nombre o la categoría exceden el tamaño permitido.")
                 );
             }
+
+            double precio = Double.parseDouble(
+                    obligatorio(body, "precio")
+            );
+
+            int stock = Integer.parseInt(
+                    obligatorio(body, "stock")
+            );
 
             if (!Double.isFinite(precio) || precio < 0 || stock < 0) {
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "El precio y el stock deben ser valores válidos no negativos."
-                        )
+                        Map.of("mensaje",
+                                "El precio y el stock deben ser no negativos.")
                 );
             }
+
+            if (stock < 0) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("mensaje",
+                                "El stock no puede ser negativo.")
+                );
+            }
+
+            String descripcion = texto(body, "desc");
+            String imagenUrl = texto(body, "imagen_url");
 
             if (descripcion.length() > 255) {
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "La descripción no puede superar los 255 caracteres."
-                        )
+                        Map.of("mensaje",
+                                "La descripción no puede superar los 255 caracteres.")
                 );
             }
 
-            Map<String, Object> respuesta =
+            return ResponseEntity.ok(
                     comercialService.registrarProducto(
                             nombre,
                             categoria,
@@ -95,17 +88,17 @@ public class GestionComercialController {
                             stock,
                             descripcion,
                             imagenUrl
-                    );
-
-            return ResponseEntity.ok(respuesta);
-
-        } catch (Exception e) {
-
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "mensaje",
-                            "Error al registrar producto: " + e.getMessage()
                     )
+            );
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("mensaje", mensajeError(e,
+                            "Los datos del producto no son válidos."))
+            );
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    Map.of("mensaje", "Error al registrar el producto.")
             );
         }
     }
@@ -116,7 +109,6 @@ public class GestionComercialController {
 
     @GetMapping("/productos")
     public ResponseEntity<List<Map<String, Object>>> listarProductos() {
-
         return ResponseEntity.ok(
                 comercialService.obtenerProductos()
         );
@@ -132,68 +124,45 @@ public class GestionComercialController {
             @RequestBody Map<String, Object> body) {
 
         try {
+            String nombre = texto(body, "nombre");
+            String categoria = texto(body, "categoria");
 
-            String nombre = body.get("nombre") == null
-                    ? ""
-                    : body.get("nombre").toString().trim();
-
-            String categoria = body.get("categoria") == null
-                    ? ""
-                    : body.get("categoria").toString().trim();
-
-            if (nombre.isEmpty() || categoria.isEmpty()) {
-
+            if (nombre.isBlank() || categoria.isBlank()) {
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "El nombre y la categoría son obligatorios."
-                        )
+                        Map.of("mensaje",
+                                "El nombre y la categoría son obligatorios.")
                 );
             }
 
             if (nombre.length() > 100 || categoria.length() > 50) {
-
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "El nombre o la categoría exceden el tamaño permitido."
-                        )
+                        Map.of("mensaje",
+                                "El nombre o la categoría exceden el tamaño permitido.")
                 );
             }
 
             double precio = Double.parseDouble(
-                    body.get("precio").toString()
+                    obligatorio(body, "precio")
             );
 
             int stock = Integer.parseInt(
-                    body.get("stock").toString()
+                    obligatorio(body, "stock")
             );
 
             if (!Double.isFinite(precio) || precio < 0 || stock < 0) {
-
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "El precio y el stock deben ser valores válidos no negativos."
-                        )
+                        Map.of("mensaje",
+                                "El precio y el stock deben ser no negativos.")
                 );
             }
 
-            String descripcion = body.get("desc") == null
-                    ? ""
-                    : body.get("desc").toString().trim();
-
-            String imagenUrl = body.get("imagen_url") == null
-                    ? ""
-                    : body.get("imagen_url").toString().trim();
+            String descripcion = texto(body, "desc");
+            String imagenUrl = texto(body, "imagen_url");
 
             if (descripcion.length() > 255) {
-
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "mensaje",
-                                "La descripción no puede superar los 255 caracteres."
-                        )
+                        Map.of("mensaje",
+                                "La descripción no puede superar los 255 caracteres.")
                 );
             }
 
@@ -209,47 +178,34 @@ public class GestionComercialController {
                     );
 
             if (respuesta.containsKey("no_encontrado")) {
-
                 return ResponseEntity.status(404).body(
-                        Map.of(
-                                "mensaje",
-                                "Producto no encontrado o eliminado."
-                        )
+                        Map.of("mensaje",
+                                "Producto no encontrado o eliminado.")
                 );
             }
 
             return ResponseEntity.ok(respuesta);
 
-        } catch (NumberFormatException e) {
-
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "mensaje",
-                            "El precio o el stock tienen un formato incorrecto."
-                    )
+                    Map.of("mensaje", mensajeError(e,
+                            "Los datos del producto no son válidos."))
             );
-
         } catch (Exception e) {
-
             return ResponseEntity.internalServerError().body(
-                    Map.of(
-                            "mensaje",
-                            "Error al modificar producto: " + e.getMessage()
-                    )
+                    Map.of("mensaje", "Error al modificar el producto.")
             );
         }
     }
 
     // ==========================================
-    // ELIMINAR PRODUCTO
+    // ELIMINAR PRODUCTO (BAJA LÓGICA)
     // ==========================================
 
     @DeleteMapping("/productos/{id}")
-    public ResponseEntity<?> eliminarProducto(
-            @PathVariable int id) {
+    public ResponseEntity<?> eliminarProducto(@PathVariable int id) {
 
         try {
-
             int filas = jdbcTemplate.update(
                     """
                     UPDATE productos
@@ -261,29 +217,20 @@ public class GestionComercialController {
             );
 
             if (filas == 0) {
-
                 return ResponseEntity.status(404).body(
-                        Map.of(
-                                "mensaje",
-                                "Producto no encontrado o ya eliminado."
-                        )
+                        Map.of("mensaje",
+                                "Producto no encontrado o ya eliminado.")
                 );
             }
 
             return ResponseEntity.ok(
-                    Map.of(
-                            "mensaje",
-                            "Producto eliminado correctamente."
-                    )
+                    Map.of("mensaje",
+                            "Producto eliminado correctamente.")
             );
 
         } catch (Exception e) {
-
             return ResponseEntity.internalServerError().body(
-                    Map.of(
-                            "mensaje",
-                            "Error al eliminar producto: " + e.getMessage()
-                    )
+                    Map.of("mensaje", "Error al eliminar el producto.")
             );
         }
     }
@@ -297,121 +244,43 @@ public class GestionComercialController {
             @RequestBody Map<String, Object> body) {
 
         try {
+            Integer idCliente =
+                    enteroOpcional(body.get("id_cliente"), "cliente");
 
-            String cliente = body.get("cliente") != null
-                    ? body.get("cliente").toString()
-                    : "";
+            Integer idServicio =
+                    enteroOpcional(body.get("id_servicio"), "servicio");
 
-            String metodo = body.get("metodo").toString();
+            Integer idProducto =
+                    enteroOpcional(body.get("id_producto"), "producto");
 
-            double total = Double.parseDouble(
-                    body.get("total").toString()
-            );
+            Integer cantidad =
+                    enteroOpcional(body.get("cantidad"), "cantidad");
 
-            return ResponseEntity.ok(
-                    comercialService.registrarVenta(
-                            cliente,
-                            metodo,
-                            total
-                    )
-            );
-
-        } catch (Exception e) {
-
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "mensaje",
-                            "Error al registrar venta: " + e.getMessage()
-                    )
-            );
-        }
-    }
-
-    // ==========================================
-    // CREAR PROMOCIÓN
-    // ==========================================
-
-    @PostMapping("/promociones")
-    public ResponseEntity<?> crearPromocion(
-            @RequestBody Map<String, Object> body) {
-
-        try {
+            String tipo = texto(body, "tipo");
+            String metodo = texto(body, "metodo");
 
             Map<String, Object> respuesta =
-                    comercialService.crearPromocion(
-                            body.get("nombre").toString(),
-                            Integer.parseInt(
-                                    body.get("descuento").toString()
-                            ),
-                            body.get("codigo").toString(),
-                            body.get("fecha_expiracion").toString(),
-                            body.get("descripcion").toString()
+                    comercialService.registrarVenta(
+                            idCliente,
+                            tipo,
+                            metodo,
+                            idServicio,
+                            idProducto,
+                            cantidad
                     );
 
             return ResponseEntity.ok(respuesta);
 
-        } catch (Exception e) {
-
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "mensaje",
-                            "Error al crear promoción: " + e.getMessage()
-                    )
+                    Map.of("mensaje", mensajeError(e,
+                            "Los datos de la venta no son válidos."))
             );
-        }
-    }
-
-    // ==========================================
-    // LISTAR PROMOCIONES
-    // ==========================================
-
-    @GetMapping("/promociones")
-    public ResponseEntity<List<Map<String, Object>>> listarPromociones() {
-
-        return ResponseEntity.ok(
-                comercialService.obtenerPromociones()
-        );
-    }
-
-    // ==========================================
-    // ELIMINAR PROMOCIÓN
-    // ==========================================
-
-    @DeleteMapping("/promociones/{id}")
-    public ResponseEntity<?> eliminarPromocion(
-            @PathVariable int id) {
-
-        try {
-
-            int filas = jdbcTemplate.update(
-                    "UPDATE promociones SET estado = FALSE WHERE id_promocion = ?",
-                    id
-            );
-
-            if (filas == 0) {
-
-                return ResponseEntity.status(404).body(
-                        Map.of(
-                                "mensaje",
-                                "Promoción no encontrada."
-                        )
-                );
-            }
-
-            return ResponseEntity.ok(
-                    Map.of(
-                            "mensaje",
-                            "Promoción eliminada correctamente."
-                    )
-            );
-
         } catch (Exception e) {
-
             return ResponseEntity.internalServerError().body(
-                    Map.of(
-                            "mensaje",
-                            "Error: " + e.getMessage()
-                    )
+                    Map.of("mensaje",
+                            "No se pudo registrar la venta. "
+                                    + "Comprueba el servidor y la base de datos.")
             );
         }
     }
@@ -422,19 +291,17 @@ public class GestionComercialController {
 
     @GetMapping("/ventas")
     public ResponseEntity<List<Map<String, Object>>> listarVentas() {
-
         return ResponseEntity.ok(
                 comercialService.obtenerVentasRecientes()
         );
     }
 
     // ==========================================
-    // MÉTRICAS DE VENTAS DEL DÍA
+    // MÉTRICAS DE CAJA DEL DÍA
     // ==========================================
 
     @GetMapping("/ventas/metricas-hoy")
     public ResponseEntity<Map<String, Object>> metricasHoy() {
-
         return ResponseEntity.ok(
                 comercialService.obtenerMetricasHoy()
         );
@@ -449,27 +316,161 @@ public class GestionComercialController {
             @PathVariable int id,
             @RequestBody Map<String, Object> body) {
 
-        String motivo = body.get("motivo") != null
-                ? body.get("motivo").toString()
-                : "Sin motivo";
-
         try {
+            String motivo = texto(body, "motivo");
+
+            if (motivo.isBlank()) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("mensaje",
+                                "Debes indicar el motivo de la anulación.")
+                );
+            }
 
             return ResponseEntity.ok(
-                    comercialService.anularVenta(
-                            id,
-                            motivo
-                    )
+                    comercialService.anularVenta(id, motivo)
+            );
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("mensaje", mensajeError(e,
+                            "No se pudo anular la venta."))
+            );
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    Map.of("mensaje", "Error al anular la venta.")
+            );
+        }
+    }
+
+    // ==========================================
+    // CREAR PROMOCIÓN
+    // ==========================================
+
+    @PostMapping("/promociones")
+    public ResponseEntity<?> crearPromocion(
+            @RequestBody Map<String, Object> body) {
+
+        try {
+            Map<String, Object> respuesta =
+                    comercialService.crearPromocion(
+                            obligatorio(body, "nombre"),
+                            Integer.parseInt(obligatorio(body, "descuento")),
+                            obligatorio(body, "codigo"),
+                            obligatorio(body, "fecha_expiracion"),
+                            texto(body, "descripcion")
+                    );
+
+            return ResponseEntity.ok(respuesta);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("mensaje",
+                            "No se pudo crear la promoción. "
+                                    + mensajeError(e, "Revisa los datos."))
+            );
+        }
+    }
+
+    // ==========================================
+    // LISTAR PROMOCIONES
+    // ==========================================
+
+    @GetMapping("/promociones")
+    public ResponseEntity<List<Map<String, Object>>> listarPromociones() {
+        return ResponseEntity.ok(
+                comercialService.obtenerPromociones()
+        );
+    }
+
+    // ==========================================
+    // ELIMINAR PROMOCIÓN (BAJA LÓGICA)
+    // ==========================================
+
+    @DeleteMapping("/promociones/{id}")
+    public ResponseEntity<?> eliminarPromocion(@PathVariable int id) {
+
+        try {
+            int filas = jdbcTemplate.update(
+                    """
+                    UPDATE promociones
+                    SET estado = FALSE
+                    WHERE id_promocion = ?
+                      AND estado = TRUE
+                    """,
+                    id
+            );
+
+            if (filas == 0) {
+                return ResponseEntity.status(404).body(
+                        Map.of("mensaje", "Promoción no encontrada.")
+                );
+            }
+
+            return ResponseEntity.ok(
+                    Map.of("mensaje",
+                            "Promoción eliminada correctamente.")
             );
 
         } catch (Exception e) {
-
-            return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "mensaje",
-                            "Error al anular venta: " + e.getMessage()
-                    )
+            return ResponseEntity.internalServerError().body(
+                    Map.of("mensaje", "Error al eliminar la promoción.")
             );
         }
+    }
+
+    // ==========================================
+    // MÉTODOS AUXILIARES
+    // ==========================================
+
+    private String texto(
+            Map<String, Object> body,
+            String campo) {
+
+        Object valor = body.get(campo);
+
+        return valor == null
+                ? ""
+                : valor.toString().trim();
+    }
+
+    private String obligatorio(
+            Map<String, Object> body,
+            String campo) {
+
+        String valor = texto(body, campo);
+
+        if (valor.isBlank()) {
+            throw new IllegalArgumentException(
+                    "El campo '" + campo + "' es obligatorio."
+            );
+        }
+
+        return valor;
+    }
+
+    private Integer enteroOpcional(
+            Object valor,
+            String campo) {
+
+        if (valor == null || valor.toString().isBlank()) {
+            return null;
+        }
+
+        try {
+            return Integer.valueOf(valor.toString());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                    "El campo '" + campo + "' debe ser un número entero."
+            );
+        }
+    }
+
+    private String mensajeError(
+            Exception e,
+            String mensajePredeterminado) {
+
+        return e.getMessage() == null || e.getMessage().isBlank()
+                ? mensajePredeterminado
+                : e.getMessage();
     }
 }

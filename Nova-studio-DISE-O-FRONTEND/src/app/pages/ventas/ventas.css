@@ -1470,3 +1470,73 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* ==========================================
+   ESTADO DE LA VENTA
+========================================== */
+
+.ventas-page .venta-status {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid rgba(56, 209, 209, 0.28);
+  border-radius: 999px;
+  background: rgba(56, 209, 209, 0.08);
+  color: #83ffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ventas-page .venta-status.anulada {
+  border-color: rgba(255, 105, 117, 0.35);
+  background: rgba(255, 105, 117, 0.09);
+  color: #ff9aa2;
+}
+
+.ventas-page .venta-motivo {
+  display: block;
+  max-width: 180px;
+  margin-top: 5px;
+  color: #d58d94;
+  font-size: 0.66rem;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   TOTAL DEL FORMULARIO
+========================================== */
+
+.ventas-page .venta-total-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px solid rgba(56, 209, 209, 0.25);
+  border-radius: 12px;
+  background: rgba(56, 209, 209, 0.06);
+}
+
+.ventas-page .venta-total-preview span {
+  color: #b7caca;
+  font-size: 0.8rem;
+}
+
+.ventas-page .venta-total-preview span i {
+  margin-right: 7px;
+  color: #38d1d1;
+}
+
+.ventas-page .venta-total-preview strong {
+  color: #83ffff;
+  font-size: 1.35rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ventas-page .btn-save:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

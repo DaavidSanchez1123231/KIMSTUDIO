@@ -1,4 +1,3 @@
-
 package com.kimstudio.backend_api.Controller;
 
 import com.kimstudio.backend_api.service.HorarioService;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/horarios")
@@ -18,49 +18,60 @@ public class HorarioController {
     private HorarioService horarioService;
 
     @GetMapping("/disponibles")
-    public ResponseEntity<?> listarHorariosDisponibles(
-            @RequestParam String fecha) {
-
+    public ResponseEntity<?> listarHorariosDisponibles(@RequestParam String fecha) {
         if (fecha == null || fecha.isBlank()) {
-            return ResponseEntity.badRequest().body(
-                    Map.of("mensaje", "Selecciona una fecha.")
-            );
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "Selecciona una fecha."));
         }
-
-        return ResponseEntity.ok(
-                horarioService.obtenerHorariosDisponibles(fecha)
-        );
+        try {
+            return ResponseEntity.ok(horarioService.obtenerHorariosDisponibles(fecha));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", ex.getMessage()));
+        }
     }
 
     @GetMapping("/especialista/{id}")
-    public ResponseEntity<List<Map<String, Object>>> listarHorariosDelEspecialista(
-            @PathVariable int id) {
-
-        return ResponseEntity.ok(
-                horarioService.obtenerHorariosPorEspecialista(id)
-        );
+    public ResponseEntity<List<Map<String, Object>>> listarHorariosDelEspecialista(@PathVariable int id) {
+        return ResponseEntity.ok(horarioService.obtenerHorariosPorEspecialista(id));
     }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> asignarHorario(
-            @RequestBody Map<String, Object> body) {
+            @RequestBody(required = false) Map<String, Object> body) {
+        if (body == null) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "Envía los datos del horario."));
+        }
 
-        int id = Integer.parseInt(body.get("id_especialista").toString());
-        String fecha = body.get("fecha").toString();
-        String horaInicio = body.get("hora_inicio").toString();
-        String horaFin = body.get("hora_fin").toString();
-
-        return ResponseEntity.ok(
-                horarioService.crearHorario(id, fecha, horaInicio, horaFin)
-        );
+        try {
+            int id = Integer.parseInt(String.valueOf(body.get("id_especialista")));
+            String fecha = requerido(body, "fecha");
+            String inicio = requerido(body, "hora_inicio");
+            String fin = requerido(body, "hora_fin");
+            return ejecutar(() -> horarioService.crearHorario(id, fecha, inicio, fin));
+        } catch (NumberFormatException ex) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "Selecciona un colaborador válido."));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", ex.getMessage()));
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> eliminarHorario(
-            @PathVariable int id) {
+    public ResponseEntity<Map<String, Object>> eliminarHorario(@PathVariable int id) {
+        return ejecutar(() -> horarioService.eliminarHorario(id));
+    }
 
-        return ResponseEntity.ok(
-                horarioService.eliminarHorario(id)
-        );
+    private String requerido(Map<String, Object> body, String campo) {
+        Object valor = body.get(campo);
+        if (valor == null || valor.toString().isBlank()) {
+            throw new IllegalArgumentException("Completa el campo: " + campo + ".");
+        }
+        return valor.toString().trim();
+    }
+
+    private ResponseEntity<Map<String, Object>> ejecutar(Supplier<Map<String, Object>> operacion) {
+        try {
+            return ResponseEntity.ok(operacion.get());
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", ex.getMessage()));
+        }
     }
 }

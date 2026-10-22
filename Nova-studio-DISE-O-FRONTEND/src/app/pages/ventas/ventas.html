@@ -1,3 +1,4 @@
+
 <main class="ventas-page">
 
   <!-- ENCABEZADO -->
@@ -21,7 +22,7 @@
     </div>
   </section>
 
-  <!-- MÉTRICAS FINANCIERAS -->
+  <!-- MÉTRICAS -->
   <section class="ventas-metricas">
 
     <article class="metrica-box">
@@ -29,7 +30,6 @@
         <span class="metrica-icon">
           <i class="fas fa-wallet"></i>
         </span>
-
         <span class="metrica-label">INGRESOS</span>
       </div>
 
@@ -53,7 +53,6 @@
         <span class="metrica-icon">
           <i class="fas fa-spa"></i>
         </span>
-
         <span class="metrica-label">SERVICIOS</span>
       </div>
 
@@ -65,7 +64,7 @@
       </h3>
 
       <div class="metrica-footer">
-        <span>Servicios realizados</span>
+        <span>Servicios cobrados</span>
         <i class="fas fa-arrow-trend-up"></i>
       </div>
 
@@ -77,7 +76,6 @@
         <span class="metrica-icon">
           <i class="fas fa-box-open"></i>
         </span>
-
         <span class="metrica-label">PRODUCTOS</span>
       </div>
 
@@ -89,7 +87,7 @@
       </h3>
 
       <div class="metrica-footer">
-        <span>Ventas de productos</span>
+        <span>Productos vendidos</span>
         <i class="fas fa-receipt"></i>
       </div>
 
@@ -128,7 +126,7 @@
 
   </section>
 
-  <!-- TABLA DE VENTAS -->
+  <!-- HISTORIAL DE VENTAS -->
   <section class="recent-table-container">
 
     <div class="table-heading">
@@ -139,7 +137,9 @@
 
         <div>
           <h2>Registro de operaciones</h2>
-          <p>Consulta los comprobantes y movimientos registrados.</p>
+          <p>
+            Consulta las ventas completadas y las anulaciones.
+          </p>
         </div>
       </div>
 
@@ -160,6 +160,7 @@
             <th>Concepto</th>
             <th>Método de pago</th>
             <th>Total</th>
+            <th>Estado</th>
             <th class="actions-heading">Acciones</th>
           </tr>
         </thead>
@@ -168,7 +169,7 @@
 
           <!-- CARGANDO -->
           <tr *ngIf="cargando">
-            <td colspan="7">
+            <td colspan="8">
               <div class="table-feedback">
                 <i class="fas fa-spinner fa-spin"></i>
                 <span>Cargando registros de caja...</span>
@@ -178,7 +179,7 @@
 
           <!-- SIN RESULTADOS -->
           <tr *ngIf="!cargando && ventasFiltradas.length === 0">
-            <td colspan="7">
+            <td colspan="8">
               <div class="empty-state">
                 <div class="empty-state-icon">
                   <i class="fas fa-receipt"></i>
@@ -205,6 +206,7 @@
 
           <!-- OPERACIONES -->
           @for (venta of ventasFiltradas; track venta.id_venta) {
+
             <tr>
 
               <td data-label="Boleta">
@@ -217,6 +219,7 @@
               <td data-label="Fecha y hora">
                 <div class="fecha-cell">
                   <i class="far fa-clock"></i>
+
                   <span>
                     {{ venta.fecha | date:'dd/MM/yyyy HH:mm' }}
                   </span>
@@ -237,7 +240,14 @@
 
               <td data-label="Concepto">
                 <div class="concepto-cell">
-                  <i class="fas fa-receipt"></i>
+                  <i
+                    [ngClass]="
+                      venta.tipo === 'servicio'
+                        ? 'fas fa-spa'
+                        : 'fas fa-box-open'
+                    "
+                  ></i>
+
                   <span>{{ venta.detalle }}</span>
                 </div>
               </td>
@@ -268,19 +278,40 @@
                 </span>
               </td>
 
+              <!-- ESTADO -->
+              <td data-label="Estado">
+                <span
+                  class="venta-status"
+                  [class.anulada]="venta.estado === 'anulada'"
+                  [title]="venta.motivo || ''"
+                >
+                  {{ venta.estado === 'anulada' ? 'Anulada' : 'Completada' }}
+                </span>
+
+                <small
+                  class="venta-motivo"
+                  *ngIf="venta.estado === 'anulada' && venta.motivo"
+                >
+                  Motivo: {{ venta.motivo }}
+                </small>
+              </td>
+
+              <!-- ACCIONES -->
               <td data-label="Acciones">
                 <div class="action-buttons">
 
                   <button
                     type="button"
                     class="action-btn print"
-                    title="Reimprimir comprobante"
-                    aria-label="Reimprimir comprobante"
+                    (click)="imprimirComprobante(venta)"
+                    title="Imprimir comprobante"
+                    aria-label="Imprimir comprobante"
                   >
                     <i class="fas fa-print"></i>
                   </button>
 
                   <button
+                    *ngIf="venta.estado !== 'anulada'"
                     type="button"
                     (click)="anularVenta(venta.id_venta, venta.boleta)"
                     class="action-btn cancel"
@@ -328,7 +359,7 @@
       (click)="$event.stopPropagation()"
     >
 
-      <!-- ENCABEZADO DEL MODAL -->
+      <!-- ENCABEZADO -->
       <div class="modal-header">
 
         <div class="modal-heading">
@@ -347,8 +378,8 @@
           type="button"
           class="close-modal"
           (click)="cerrarModal()"
+          [disabled]="guardandoVenta"
           aria-label="Cerrar formulario"
-          title="Cerrar"
         >
           <i class="fas fa-times"></i>
         </button>
@@ -368,27 +399,41 @@
 
         <!-- CLIENTE -->
         <div class="form-group">
+
           <label for="venta-cliente">Cliente (opcional)</label>
 
-          <div class="form-input-wrapper">
+          <div class="form-input-wrapper select-wrapper">
             <i class="fas fa-user"></i>
 
-            <input
+            <select
               id="venta-cliente"
-              type="text"
-              [(ngModel)]="nuevaVenta.cliente"
-              name="cliente"
-              placeholder="Ej. Carlos Mendoza"
-            />
+              [(ngModel)]="nuevaVenta.id_cliente"
+              name="id_cliente"
+            >
+              <option [ngValue]="null">
+                Público general
+              </option>
+
+              @for (cliente of clientes; track cliente.id_usuario) {
+                <option [ngValue]="cliente.id_usuario">
+                  {{ cliente.nombre }}
+                </option>
+              }
+
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
           </div>
 
-          <span class="field-hint">
-            Déjalo vacío para registrar una venta a público general.
-          </span>
+          <small class="field-hint">
+            Selecciona un cliente o deja público general.
+          </small>
+
         </div>
 
-        <!-- TIPO DE VENTA -->
+        <!-- TIPO -->
         <div class="form-group">
+
           <label for="venta-tipo">Tipo de venta</label>
 
           <div class="form-input-wrapper select-wrapper">
@@ -397,6 +442,7 @@
             <select
               id="venta-tipo"
               [(ngModel)]="nuevaVenta.tipo"
+              (ngModelChange)="cambioTipoVenta()"
               name="tipo"
               required
             >
@@ -406,61 +452,179 @@
 
             <i class="fas fa-chevron-down select-arrow"></i>
           </div>
-        </div>
-
-        <!-- MÉTODO Y MONTO -->
-        <div class="form-row">
-
-          <div class="form-group">
-            <label for="venta-metodo">Método de pago</label>
-
-            <div class="form-input-wrapper select-wrapper">
-              <i class="fas fa-credit-card"></i>
-
-              <select
-                id="venta-metodo"
-                [(ngModel)]="nuevaVenta.metodo"
-                name="metodo"
-                required
-              >
-                <option value="Yape">Yape / Plin</option>
-                <option value="Efectivo">Efectivo</option>
-                <option value="Tarjeta">Tarjeta</option>
-              </select>
-
-              <i class="fas fa-chevron-down select-arrow"></i>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="venta-total">Monto total (S/)</label>
-
-            <div class="form-input-wrapper">
-              <i class="fas fa-wallet"></i>
-
-              <input
-                id="venta-total"
-                type="number"
-                [(ngModel)]="nuevaVenta.total"
-                name="total"
-                min="0.01"
-                step="0.01"
-                required
-                placeholder="0.00"
-              />
-            </div>
-          </div>
 
         </div>
 
-        <!-- AVISO -->
+        <!-- SELECCIONAR SERVICIO -->
+        <div
+          class="form-group"
+          *ngIf="nuevaVenta.tipo === 'servicio'"
+        >
+
+          <label for="venta-servicio">Servicio</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="fas fa-spa"></i>
+
+            <select
+              id="venta-servicio"
+              [(ngModel)]="nuevaVenta.id_servicio"
+              name="id_servicio"
+              required
+            >
+              <option [ngValue]="null" disabled>
+                Selecciona un servicio
+              </option>
+
+              @for (servicio of servicios; track servicio.id_servicio) {
+                <option [ngValue]="servicio.id_servicio">
+                  {{ servicio.nombre }} — S/
+                  {{ servicio.precio | number:'1.2-2' }}
+                </option>
+              }
+
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+
+          <small
+            class="field-hint"
+            *ngIf="servicios.length === 0"
+          >
+            No se encontraron servicios activos.
+          </small>
+
+        </div>
+
+        <!-- SELECCIONAR PRODUCTO -->
+        <div
+          class="form-group"
+          *ngIf="nuevaVenta.tipo === 'producto'"
+        >
+
+          <label for="venta-producto">Producto</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="fas fa-box-open"></i>
+
+            <select
+              id="venta-producto"
+              [(ngModel)]="nuevaVenta.id_producto"
+              name="id_producto"
+              required
+            >
+              <option [ngValue]="null" disabled>
+                Selecciona un producto
+              </option>
+
+              @for (producto of productos; track producto.id_producto) {
+                <option
+                  [ngValue]="producto.id_producto"
+                  [disabled]="producto.stock <= 0"
+                >
+                  {{ producto.nombre }} — S/
+                  {{ producto.precio | number:'1.2-2' }}
+                  (Stock: {{ producto.stock }})
+                </option>
+              }
+
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+
+          <small
+            class="field-hint"
+            *ngIf="productos.length === 0"
+          >
+            No se encontraron productos activos.
+          </small>
+
+        </div>
+
+        <!-- CANTIDAD DE PRODUCTOS -->
+        <div
+          class="form-group"
+          *ngIf="nuevaVenta.tipo === 'producto'"
+        >
+
+          <label for="venta-cantidad">Cantidad</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-cubes"></i>
+
+            <input
+              id="venta-cantidad"
+              type="number"
+              [(ngModel)]="nuevaVenta.cantidad"
+              name="cantidad"
+              min="1"
+              [max]="productoSeleccionado?.stock ?? null"
+              step="1"
+              required
+            />
+          </div>
+
+          <small
+            class="field-hint"
+            *ngIf="productoSeleccionado"
+          >
+            Stock disponible:
+            {{ productoSeleccionado.stock }} unidades.
+          </small>
+
+        </div>
+
+        <!-- MÉTODO DE PAGO -->
+        <div class="form-group">
+
+          <label for="venta-metodo">Método de pago</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="fas fa-credit-card"></i>
+
+            <select
+              id="venta-metodo"
+              [(ngModel)]="nuevaVenta.metodo"
+              name="metodo"
+              required
+            >
+              <option value="Yape">Yape / Plin</option>
+              <option value="Efectivo">Efectivo</option>
+              <option value="Tarjeta">Tarjeta</option>
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+
+        </div>
+
+        <!-- TOTAL ESTIMADO -->
+        <div class="venta-total-preview">
+          <span>
+            <i class="fas fa-calculator"></i>
+            Total de la operación
+          </span>
+
+          <strong>
+            S/ {{ totalEstimado | number:'1.2-2' }}
+          </strong>
+        </div>
+
         <div class="form-note">
           <i class="fas fa-info-circle"></i>
 
           <span>
-            Verifica el importe y el método de pago antes de confirmar.
+            El importe final se calcula y verifica en el servidor.
+            En ventas de productos, el stock se descuenta al confirmar.
           </span>
         </div>
+
+        <small *ngIf="errorCatalogos" class="field-hint">
+          Algún catálogo no se pudo cargar. Revisa el backend antes de
+          registrar la operación.
+        </small>
 
         <!-- BOTONES -->
         <div class="modal-actions">
@@ -469,6 +633,7 @@
             type="button"
             class="btn-cancel"
             (click)="cerrarModal()"
+            [disabled]="guardandoVenta"
           >
             Cancelar
           </button>
@@ -476,17 +641,21 @@
           <button
             type="submit"
             class="btn-save"
+            [disabled]="guardandoVenta || totalEstimado <= 0"
           >
-            <i class="fas fa-check-circle"></i>
-            Confirmar venta
+            <i
+              [ngClass]="guardandoVenta
+                ? 'fas fa-spinner fa-spin'
+                : 'fas fa-check-circle'"
+            ></i>
+
+            {{ guardandoVenta ? 'Procesando...' : 'Confirmar venta' }}
           </button>
 
         </div>
 
       </form>
-
     </section>
-
   </div>
 
 </main>

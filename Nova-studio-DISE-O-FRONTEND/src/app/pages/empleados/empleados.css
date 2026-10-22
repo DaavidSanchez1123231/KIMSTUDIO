@@ -1474,3 +1474,50 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Añade este bloque al FINAL de empleados.css; no borres los estilos actuales. */
+.empleados-page .action-btn.edit {
+  border-color: rgba(117, 190, 255, 0.2);
+  background: rgba(117, 190, 255, 0.045);
+  color: #9bcfff;
+}
+.empleados-page .action-btn.edit:hover {
+  border-color: rgba(117, 190, 255, 0.45);
+  background: rgba(117, 190, 255, 0.12);
+  color: #d5ecff;
+}
+.empleados-page .action-btn.activate {
+  border-color: rgba(56, 209, 137, 0.22);
+  background: rgba(56, 209, 137, 0.05);
+  color: #73e5a8;
+}
+.empleados-page .action-btn.activate:hover {
+  border-color: rgba(56, 209, 137, 0.5);
+  background: rgba(56, 209, 137, 0.13);
+  color: #c2ffdc;
+}
+.empleados-page .action-btn:disabled,
+.empleados-page .btn-save:disabled,
+.empleados-page .close-modal:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+.empleados-page .inline-error,
+.empleados-page .error-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 105, 117, 0.24);
+  border-radius: 10px;
+  background: rgba(255, 105, 117, 0.07);
+  color: #ffadb4;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.empleados-page .inline-error { margin: 12px 0; }
+.empleados-page .error-feedback { justify-content: center; min-height: 70px; }
+.empleados-page .inline-error i,
+.empleados-page .error-feedback i { margin-top: 2px; flex: 0 0 auto; }
+.empleados-page input:invalid:not(:placeholder-shown) { border-color: rgba(255, 105, 117, 0.4); }
