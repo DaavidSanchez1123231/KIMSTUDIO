@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.ZoneId;
 
 @RestController
 @RequestMapping("/api/reportes")
@@ -46,9 +47,13 @@ public class ReporteController {
 
     /** Sin parámetros: del día 1 del mes actual a hoy. Máximo 366 días. */
     private static LocalDate[] rango(String desde, String hasta) {
-        LocalDate fin = (hasta == null || hasta.isBlank()) ? LocalDate.now() : LocalDate.parse(hasta.trim());
+       LocalDate fin = (hasta == null || hasta.isBlank())
+        ? LocalDate.now(ZoneId.of("America/Lima"))
+        : LocalDate.parse(hasta.trim());
         LocalDate ini = (desde == null || desde.isBlank()) ? fin.withDayOfMonth(1) : LocalDate.parse(desde.trim());
-        if (ini.isAfter(fin) || ini.plusDays(366).isBefore(fin)) throw new IllegalArgumentException("rango");
+        if (ini.isAfter(fin) || ini.plusDays(365).isBefore(fin)) {
+    throw new IllegalArgumentException("rango");
+}
         return new LocalDate[]{ini, fin};
     }
 

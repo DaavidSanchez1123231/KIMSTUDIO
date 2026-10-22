@@ -59,7 +59,7 @@
                     type="button"
                     (click)="actualizarFiltro()"
                     class="btn-primary-sm"
-                    [disabled]="cargando"
+                    [disabled]="cargando || exportando"
                 >
                     <i
                         class="fas"
@@ -77,10 +77,29 @@
                 [disabled]="cargando"
             >
                 <i class="fas fa-file-pdf"></i>
-                Exportar PDF
+                {{ exportando ? 'Generando PDF...' : 'Exportar PDF' }}
             </button>
         </div>
     </section>
+
+    <div
+    *ngIf="errorReporte"
+    class="report-error"
+    role="alert"
+>
+    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+    <span>{{ errorReporte }}</span>
+</div>
+
+<div
+    *ngIf="errorExportacion"
+    class="report-error"
+    role="alert"
+>
+    <i class="fas fa-file-pdf" aria-hidden="true"></i>
+    <span>{{ errorExportacion }}</span>
+</div>
+
 
     <!-- Indicador de carga -->
     <div *ngIf="cargando" class="reportes-loading">
@@ -148,7 +167,7 @@
 
             <div class="card-bottom-note">
                 <i class="fas fa-info-circle"></i>
-                <span>Distribución porcentual de los servicios.</span>
+                <span>Porcentaje sobre las citas no canceladas del período.</span>
             </div>
         </article>
 
@@ -162,7 +181,7 @@
                 <div>
                     <h3>Productividad del equipo</h3>
                     <p class="subtitle-card">
-                        Monto facturado por empleado
+                       Valor de servicios completados por especialista
                     </p>
                 </div>
             </div>
@@ -208,7 +227,7 @@
 
             <div class="card-bottom-note">
                 <i class="fas fa-info-circle"></i>
-                <span>Ordenado según los datos recibidos.</span>
+                <span>El importe se calcula con el precio del servicio, no necesariamente con el dinero cobrado.</span>
             </div>
         </article>
     </section>
@@ -256,7 +275,7 @@
 
             <article class="balance-item text-danger">
                 <div class="balance-item-top">
-                    <span class="balance-label">Insumos / Comisiones</span>
+                    <span class="balance-label">Costos estimados</span>
 
                     <span class="balance-item-icon">
                         <i class="fas fa-receipt"></i>
@@ -269,13 +288,13 @@
 
                 <p>
                     <i class="fas fa-circle"></i>
-                    Costos registrados
+                    Estimación de costos (30 % configurable)
                 </p>
             </article>
 
             <article class="balance-item text-cian">
                 <div class="balance-item-top">
-                    <span class="balance-label">Utilidad neta total</span>
+                    <span class="balance-label">Utilidad estimada</span>
 
                     <span class="balance-item-icon">
                         <i class="fas fa-chart-pie"></i>
@@ -288,7 +307,7 @@
 
                 <p>
                     <i class="fas fa-circle"></i>
-                    Resultado del período
+                    Ingresos menos costos estimados
                 </p>
             </article>
         </div>

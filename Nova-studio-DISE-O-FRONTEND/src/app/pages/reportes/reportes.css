@@ -932,3 +932,21 @@
         transition-duration: 0.01ms !important;
     }
 }
+.report-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 16px 0;
+    padding: 14px 18px;
+    border: 1px solid #e7b6b6;
+    border-radius: 10px;
+    background: #fff5f5;
+    color: #8b2525;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.report-error i {
+    margin-top: 3px;
+    flex-shrink: 0;
+}

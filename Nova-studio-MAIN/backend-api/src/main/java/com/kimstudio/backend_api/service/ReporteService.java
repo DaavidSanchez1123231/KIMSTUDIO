@@ -27,30 +27,36 @@ import java.util.Map;
 @Service
 public class ReporteService {
 
-    private static final String SQL_SERVICIOS =
-            "SELECT s.nombre AS nombre, "
-          + "ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 0)::int AS porcentaje "
-          + "FROM citas c JOIN servicios s ON c.id_servicio = s.id_servicio "
-          + "JOIN horarios h ON c.id_horario = h.id_horario "
-          + "WHERE c.estado = 'confirmada' AND h.fecha BETWEEN ? AND ? "
-          + "GROUP BY s.nombre ORDER BY COUNT(*) DESC LIMIT 5";
+    private static final String SQL_SERVICIOS = "SELECT s.nombre AS nombre, "
+            + "ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 0)::int AS porcentaje "
+            + "FROM citas c JOIN servicios s ON c.id_servicio = s.id_servicio "
+            + "JOIN horarios h ON c.id_horario = h.id_horario "
+            + "WHERE LOWER(c.estado) IN "
+            + "('pendiente_confirmacion', 'confirmada', 'completada') "
+            + "AND h.fecha BETWEEN ? AND ? "
+            + "GROUP BY s.nombre ORDER BY COUNT(*) DESC LIMIT 5";
 
-    // Ingreso estimado por especialista: precio de los servicios de sus citas confirmadas
-    private static final String SQL_EMPLEADOS =
-            "SELECT e.nombre AS nombre, e.especialidad AS puesto, COALESCE(SUM(s.precio), 0) AS monto "
-          + "FROM citas c JOIN especialistas e ON c.id_especialista = e.id_especialista "
-          + "JOIN servicios s ON c.id_servicio = s.id_servicio "
-          + "JOIN horarios h ON c.id_horario = h.id_horario "
-          + "WHERE c.estado = 'confirmada' AND h.fecha BETWEEN ? AND ? "
-          + "GROUP BY e.id_especialista, e.nombre, e.especialidad ORDER BY monto DESC LIMIT 5";
+    // Ingreso estimado por especialista: precio de los servicios de sus citas
+    // confirmadas
+    private static final String SQL_EMPLEADOS = "SELECT e.nombre AS nombre, "
+            + "e.especialidad AS puesto, "
+            + "COALESCE(SUM(s.precio), 0) AS monto "
+            + "FROM citas c "
+            + "JOIN especialistas e ON c.id_especialista = e.id_especialista "
+            + "JOIN servicios s ON c.id_servicio = s.id_servicio "
+            + "JOIN horarios h ON c.id_horario = h.id_horario "
+            + "WHERE LOWER(c.estado) = 'completada' "
+            + "AND h.fecha BETWEEN ? AND ? "
+            + "GROUP BY e.id_especialista, e.nombre, e.especialidad "
+            + "ORDER BY monto DESC LIMIT 5";
 
     private final JdbcTemplate jdbc;
     private final BigDecimal porcentajeCostos;
     private final String salon;
 
     public ReporteService(JdbcTemplate jdbc,
-                          @Value("${app.negocio.porcentaje-costos:0.30}") BigDecimal porcentajeCostos,
-                          @Value("${app.nombre-salon:NOVA Beauty Salon}") String salon) {
+            @Value("${app.negocio.porcentaje-costos:0.30}") BigDecimal porcentajeCostos,
+            @Value("${app.nombre-salon:NOVA Beauty Salon}") String salon) {
         this.jdbc = jdbc;
         this.porcentajeCostos = porcentajeCostos;
         this.salon = salon;
@@ -61,10 +67,15 @@ public class ReporteService {
         Timestamp finExclusivo = Timestamp.valueOf(hasta.plusDays(1).atStartOfDay());
 
         BigDecimal bruto = jdbc.queryForObject(
-                "SELECT COALESCE(SUM(monto_total), 0) FROM ventas WHERE fecha_venta >= ? AND fecha_venta < ?",
+                "SELECT COALESCE(SUM(monto_total), 0) "
+                        + "FROM ventas "
+                        + "WHERE fecha_venta >= ? AND fecha_venta < ? "
+                        + "AND LOWER(estado_venta) = 'completada'",
                 BigDecimal.class, ini, finExclusivo);
-        if (bruto == null) bruto = BigDecimal.ZERO;
-        // No hay tabla de costos: los insumos y comisiones se estiman con un porcentaje configurable
+        if (bruto == null)
+            bruto = BigDecimal.ZERO;
+        // No hay tabla de costos: los insumos y comisiones se estiman con un porcentaje
+        // configurable
         BigDecimal costos = bruto.multiply(porcentajeCostos).setScale(2, RoundingMode.HALF_UP);
 
         Map<String, Object> balance = new HashMap<>();
@@ -72,8 +83,10 @@ public class ReporteService {
         balance.put("insumosComisiones", costos);
         balance.put("utilidadNeta", bruto.subtract(costos));
 
-        List<Map<String, Object>> servicios = jdbc.queryForList(SQL_SERVICIOS, Date.valueOf(desde), Date.valueOf(hasta));
-        List<Map<String, Object>> empleados = jdbc.queryForList(SQL_EMPLEADOS, Date.valueOf(desde), Date.valueOf(hasta));
+        List<Map<String, Object>> servicios = jdbc.queryForList(SQL_SERVICIOS, Date.valueOf(desde),
+                Date.valueOf(hasta));
+        List<Map<String, Object>> empleados = jdbc.queryForList(SQL_EMPLEADOS, Date.valueOf(desde),
+                Date.valueOf(hasta));
 
         Map<String, Object> respuesta = new HashMap<>();
         respuesta.put("balance", balance);
@@ -116,21 +129,26 @@ public class ReporteService {
             doc.add(new Paragraph("Servicios mas vendidos", sub));
             PdfPTable ts = new PdfPTable(2);
             ts.setWidthPercentage(100);
-            for (Map<String, Object> s : servicios) fila(ts, String.valueOf(s.get("nombre")), s.get("porcentaje") + " %", normal);
-            if (servicios.isEmpty()) fila(ts, "Sin citas confirmadas en el periodo", "-", normal);
+            for (Map<String, Object> s : servicios)
+                fila(ts, String.valueOf(s.get("nombre")), s.get("porcentaje") + " %", normal);
+            if (servicios.isEmpty())
+                fila(ts, "Sin citas confirmadas en el periodo", "-", normal);
             doc.add(ts);
             doc.add(new Paragraph(" "));
 
             doc.add(new Paragraph("Rendimiento por especialista (ingreso estimado)", sub));
             PdfPTable te = new PdfPTable(2);
             te.setWidthPercentage(100);
-            for (Map<String, Object> e : empleados) fila(te, e.get("nombre") + " (" + e.get("puesto") + ")", dinero(e.get("monto")), normal);
-            if (empleados.isEmpty()) fila(te, "Sin citas confirmadas en el periodo", "-", normal);
+            for (Map<String, Object> e : empleados)
+                fila(te, e.get("nombre") + " (" + e.get("puesto") + ")", dinero(e.get("monto")), normal);
+            if (empleados.isEmpty())
+                fila(te, "Sin citas confirmadas en el periodo", "-", normal);
             doc.add(te);
         } catch (DocumentException e) {
             throw new IllegalStateException("No se pudo generar el PDF", e);
         } finally {
-            if (doc.isOpen()) doc.close();
+            if (doc.isOpen())
+                doc.close();
         }
         return out.toByteArray();
     }
