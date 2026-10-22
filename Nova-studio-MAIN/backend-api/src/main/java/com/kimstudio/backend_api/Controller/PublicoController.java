@@ -56,10 +56,12 @@ public ResponseEntity<List<Map<String, Object>>> obtenerGaleriaPublica() {
 
     @GetMapping("/promociones")
     public ResponseEntity<List<Map<String, Object>>> obtenerPromocionesPublicas() {
-        String sql = "SELECT id_promocion, nombre, descuento, codigo, " +
+         String sql = "SELECT id_promocion, nombre, descuento, codigo, " +
                      "fecha_expiracion, descripcion " +
-                     "FROM Promociones WHERE estado = '1' " +
-                     "AND fecha_expiracion >= CURRENT_DATE";
+                     "FROM public.promociones WHERE estado = TRUE " +
+                     "AND fecha_expiracion >= CURRENT_DATE " +
+                     "ORDER BY id_promocion DESC";
+
         return ResponseEntity.ok(jdbcTemplate.queryForList(sql));
     }
     @GetMapping("/configuracion")

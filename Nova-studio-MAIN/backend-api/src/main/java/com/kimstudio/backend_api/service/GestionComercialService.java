@@ -11,6 +11,10 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Locale;
+
 @Service
 public class GestionComercialService {
 
@@ -398,16 +402,16 @@ public class GestionComercialService {
         );
     }
 
-    // ==========================================
+   // ==========================================
     // LISTAR PROMOCIONES ACTIVAS
     // ==========================================
 
     public List<Map<String, Object>> obtenerPromociones() {
-
         return jdbcTemplate.queryForList(
                 """
-                SELECT *
-                FROM promociones
+                SELECT id_promocion, nombre, descuento, codigo,
+                       fecha_expiracion, descripcion, estado
+                FROM public.promociones
                 WHERE estado = TRUE
                 ORDER BY id_promocion DESC
                 """
@@ -418,6 +422,7 @@ public class GestionComercialService {
     // CREAR PROMOCIÓN
     // ==========================================
 
+    @Transactional
     public Map<String, Object> crearPromocion(
             String nombre,
             int descuento,
@@ -425,15 +430,155 @@ public class GestionComercialService {
             String fechaExpiracion,
             String descripcion) {
 
+        String nombreLimpio = nombre == null ? "" : nombre.trim();
+        String codigoLimpio = normalizarCodigoPromocion(codigo);
+        String fechaLimpia = fechaExpiracion == null ? "" : fechaExpiracion.trim();
+        String descripcionLimpia = descripcion == null ? "" : descripcion.trim();
+
+        validarDatosPromocion(nombreLimpio, descuento, codigoLimpio,
+                fechaLimpia, descripcionLimpia);
+        verificarCodigoPromocionDisponible(codigoLimpio, null);
+
+        // La conversión explícita permite que PostgreSQL seleccione la función
+        // sp_crear_promocion(p_nombre, p_descuento, p_codigo, p_fecha date, p_descripcion).
         return jdbcTemplate.queryForMap(
-                "SELECT * FROM sp_crear_promocion(?, ?, ?, ?, ?)",
-                nombre,
+                "SELECT * FROM public.sp_crear_promocion(?, ?, ?, CAST(? AS DATE), ?)",
+                nombreLimpio,
                 descuento,
-                codigo,
-                fechaExpiracion,
-                descripcion
+                codigoLimpio,
+                fechaLimpia,
+                descripcionLimpia
         );
     }
+
+    // ==========================================
+    // ACTUALIZAR PROMOCIÓN
+    // ==========================================
+
+    @Transactional
+    public Map<String, Object> actualizarPromocion(
+            int id,
+            String nombre,
+            int descuento,
+            String codigo,
+            String fechaExpiracion,
+            String descripcion) {
+
+        String nombreLimpio = nombre == null ? "" : nombre.trim();
+        String codigoLimpio = normalizarCodigoPromocion(codigo);
+        String fechaLimpia = fechaExpiracion == null ? "" : fechaExpiracion.trim();
+        String descripcionLimpia = descripcion == null ? "" : descripcion.trim();
+
+        validarDatosPromocion(nombreLimpio, descuento, codigoLimpio,
+                fechaLimpia, descripcionLimpia);
+
+        Integer existentes = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM public.promociones WHERE id_promocion = ? AND estado = TRUE",
+                Integer.class,
+                id
+        );
+        if (existentes == null || existentes == 0) {
+            throw new IllegalArgumentException("La promoción no existe o ya fue dada de baja.");
+        }
+
+        verificarCodigoPromocionDisponible(codigoLimpio, id);
+
+        int filas = jdbcTemplate.update(
+                """
+                UPDATE public.promociones
+                SET nombre = ?, descuento = ?, codigo = ?,
+                    fecha_expiracion = CAST(? AS DATE), descripcion = ?
+                WHERE id_promocion = ? AND estado = TRUE
+                """,
+                nombreLimpio,
+                descuento,
+                codigoLimpio,
+                fechaLimpia,
+                descripcionLimpia,
+                id
+        );
+
+        if (filas == 0) {
+            throw new IllegalArgumentException("No se pudo actualizar la promoción.");
+        }
+
+        return Map.of(
+                "mensaje", "Promoción actualizada correctamente.",
+                "id_promocion", id
+        );
+    }
+
+    // ==========================================
+    // VALIDACIONES DE PROMOCIONES
+    // ==========================================
+
+    private String normalizarCodigoPromocion(String codigo) {
+        return codigo == null ? "" : codigo.trim().toUpperCase(Locale.ROOT);
+    }
+
+    private void validarDatosPromocion(
+            String nombre,
+            int descuento,
+            String codigo,
+            String fechaExpiracion,
+            String descripcion) {
+
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre de la promoción es obligatorio.");
+        }
+        if (nombre.length() > 100) {
+            throw new IllegalArgumentException("El nombre no puede superar los 100 caracteres.");
+        }
+        if (descuento < 1 || descuento > 100) {
+            throw new IllegalArgumentException("El descuento debe estar entre 1 y 100.");
+        }
+        if (codigo == null || !codigo.matches("[A-Z0-9_-]{1,50}")) {
+            throw new IllegalArgumentException(
+                    "El código debe usar solo letras, números, guion o guion bajo (máximo 50 caracteres)."
+            );
+        }
+        if (fechaExpiracion == null || fechaExpiracion.isBlank()) {
+            throw new IllegalArgumentException("La fecha de vencimiento es obligatoria.");
+        }
+
+        LocalDate fecha;
+        try {
+            fecha = LocalDate.parse(fechaExpiracion);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("La fecha de vencimiento no tiene un formato válido (AAAA-MM-DD).");
+        }
+
+        LocalDate hoy = LocalDate.now(ZoneId.of("America/Lima"));
+        if (fecha.isBefore(hoy)) {
+            throw new IllegalArgumentException("La fecha de vencimiento no puede estar en el pasado.");
+        }
+        if (descripcion != null && descripcion.length() > 255) {
+            throw new IllegalArgumentException("La descripción no puede superar los 255 caracteres.");
+        }
+    }
+
+    private void verificarCodigoPromocionDisponible(String codigo, Integer idExcluir) {
+        Integer cantidad;
+        if (idExcluir == null) {
+            cantidad = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM public.promociones WHERE UPPER(codigo) = UPPER(?)",
+                    Integer.class,
+                    codigo
+            );
+        } else {
+            cantidad = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM public.promociones WHERE UPPER(codigo) = UPPER(?) AND id_promocion <> ?",
+                    Integer.class,
+                    codigo,
+                    idExcluir
+            );
+        }
+
+        if (cantidad != null && cantidad > 0) {
+            throw new IllegalArgumentException("Ya existe una promoción con ese código. Usa otro código.");
+        }
+    }
+
 
     // ==========================================
     // LISTAR VENTAS RECIENTES

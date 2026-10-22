@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DuplicateKeyException;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
@@ -347,29 +349,54 @@ public class GestionComercialController {
     // ==========================================
 
     @PostMapping("/promociones")
-    public ResponseEntity<?> crearPromocion(
-            @RequestBody Map<String, Object> body) {
-
+    public ResponseEntity<?> crearPromocion(@RequestBody Map<String, Object> body) {
         try {
-            Map<String, Object> respuesta =
-                    comercialService.crearPromocion(
-                            obligatorio(body, "nombre"),
-                            Integer.parseInt(obligatorio(body, "descuento")),
-                            obligatorio(body, "codigo"),
-                            obligatorio(body, "fecha_expiracion"),
-                            texto(body, "descripcion")
-                    );
-
+            Map<String, Object> respuesta = comercialService.crearPromocion(
+                    obligatorio(body, "nombre"),
+                    Integer.parseInt(obligatorio(body, "descuento")),
+                    obligatorio(body, "codigo"),
+                    obligatorio(body, "fecha_expiracion"),
+                    texto(body, "descripcion")
+            );
             return ResponseEntity.ok(respuesta);
-
+        } catch (DuplicateKeyException e) {
+            return ResponseEntity.status(409).body(
+                    Map.of("mensaje", "Ya existe una promoción con ese código. Usa otro código.")
+            );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
-                    Map.of("mensaje",
-                            "No se pudo crear la promoción. "
-                                    + mensajeError(e, "Revisa los datos."))
+                    Map.of("mensaje", "No se pudo crear la promoción. "
+                            + mensajeError(e, "Revisa los datos."))
             );
         }
     }
+
+    @PutMapping("/promociones/{id}")
+    public ResponseEntity<?> actualizarPromocion(
+            @PathVariable int id,
+            @RequestBody Map<String, Object> body) {
+        try {
+            Map<String, Object> respuesta = comercialService.actualizarPromocion(
+                    id,
+                    obligatorio(body, "nombre"),
+                    Integer.parseInt(obligatorio(body, "descuento")),
+                    obligatorio(body, "codigo"),
+                    obligatorio(body, "fecha_expiracion"),
+                    texto(body, "descripcion")
+            );
+            return ResponseEntity.ok(respuesta);
+        } catch (DuplicateKeyException e) {
+            return ResponseEntity.status(409).body(
+                    Map.of("mensaje", "Ya existe una promoción con ese código. Usa otro código.")
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("mensaje", "No se pudo actualizar la promoción. "
+                            + mensajeError(e, "Revisa los datos."))
+            );
+        }
+    }
+
 
     // ==========================================
     // LISTAR PROMOCIONES
