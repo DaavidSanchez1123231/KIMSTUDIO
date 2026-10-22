@@ -1,6 +1,6 @@
+
 <main class="productos-page">
 
-  <!-- ENCABEZADO -->
   <section class="productos-intro">
     <div class="productos-intro-copy">
       <span class="productos-kicker">
@@ -21,9 +21,7 @@
     </div>
   </section>
 
-  <!-- BÚSQUEDA Y ACCIONES -->
   <section class="productos-toolbar">
-
     <div class="search-box">
       <i class="fas fa-search search-icon"></i>
 
@@ -31,29 +29,18 @@
         type="search"
         [(ngModel)]="textoBusqueda"
         (input)="filtrarProductos()"
-        placeholder="Buscar producto por nombre..."
-        aria-label="Buscar productos por nombre"
+        placeholder="Buscar producto por nombre o categoría..."
+        aria-label="Buscar productos"
       />
-
-      <span class="search-decoration">
-        <i class="fas fa-filter"></i>
-      </span>
     </div>
 
-    <button
-      type="button"
-      class="btn-primary"
-      (click)="abrirModal()"
-    >
+    <button type="button" class="btn-primary" (click)="abrirModal()">
       <i class="fas fa-plus"></i>
       <span>Agregar producto</span>
     </button>
-
   </section>
 
-  <!-- CATÁLOGO DE INVENTARIO -->
   <section class="inventario-section">
-
     <div class="inventario-heading">
       <div class="inventario-heading-info">
         <span class="heading-icon">
@@ -72,19 +59,13 @@
       </span>
     </div>
 
-    <!-- CUADRÍCULA DE PRODUCTOS -->
     <div class="productos-grid">
 
-      <!-- CARGANDO -->
-      <div
-        *ngIf="cargando"
-        class="product-state"
-      >
+      <div *ngIf="cargando" class="product-state">
         <i class="fas fa-spinner fa-spin"></i>
         <span>Cargando inventario desde el servidor...</span>
       </div>
 
-      <!-- SIN RESULTADOS -->
       <div
         *ngIf="!cargando && productosFiltrados.length === 0"
         class="product-state empty-products"
@@ -110,13 +91,10 @@
         </button>
       </div>
 
-      <!-- PRODUCTOS -->
       @for (producto of productosFiltrados; track producto.id_producto) {
         <article class="producto-card">
 
-          <!-- PARTE SUPERIOR -->
           <div class="product-top">
-
             <span
               class="stock-badge"
               [ngClass]="producto.stockClass"
@@ -128,12 +106,23 @@
             <span class="category-tag">
               {{ producto.categoria || 'General' }}
             </span>
-
           </div>
 
-          <!-- ICONO DEL PRODUCTO -->
+          <!-- IMAGEN DEL PRODUCTO -->
           <div class="product-visual">
-            <div class="product-visual-ring">
+            <img
+              *ngIf="producto.imagen_url"
+              [src]="producto.imagen_url"
+              [alt]="producto.nombre"
+              loading="lazy"
+              (error)="imagenError($event)"
+              class="producto-imagen"
+            />
+
+            <div
+              *ngIf="!producto.imagen_url"
+              class="product-visual-ring"
+            >
               <i class="fas fa-box-open"></i>
             </div>
 
@@ -144,12 +133,8 @@
             <div class="product-visual-decoration"></div>
           </div>
 
-          <!-- INFORMACIÓN -->
           <div class="producto-info">
-
-            <span class="product-overline">
-              PRODUCTO DE SALÓN
-            </span>
+            <span class="product-overline">PRODUCTO DE SALÓN</span>
 
             <h3>{{ producto.nombre }}</h3>
 
@@ -157,9 +142,7 @@
               {{ producto.desc || 'Sin descripción disponible.' }}
             </p>
 
-            <!-- PRECIO Y ACCIONES -->
             <div class="price-row">
-
               <div class="product-price">
                 <span>Precio de venta</span>
 
@@ -170,12 +153,12 @@
               </div>
 
               <div class="actions">
-
                 <button
                   type="button"
                   class="action-btn edit"
-                  title="Editar producto"
-                  aria-label="Editar producto"
+                  title="Edición pendiente"
+                  aria-label="Edición pendiente"
+                  disabled
                 >
                   <i class="fas fa-pen"></i>
                 </button>
@@ -192,21 +175,16 @@
                 >
                   <i class="fas fa-trash-alt"></i>
                 </button>
-
               </div>
-
             </div>
-
           </div>
 
           <div class="product-card-glow"></div>
-
         </article>
       }
 
     </div>
 
-    <!-- PIE DEL INVENTARIO -->
     <div class="inventario-footer">
       <span>
         <i class="fas fa-shield-alt"></i>
@@ -217,16 +195,14 @@
         NOVA <strong>BEAUTY SALON</strong>
       </span>
     </div>
-
   </section>
 
-  <!-- MODAL: NUEVO PRODUCTO -->
+  <!-- MODAL PARA REGISTRAR PRODUCTO -->
   <div
     class="modal-overlay"
     *ngIf="isModalOpen"
     (click)="cerrarModal()"
   >
-
     <section
       class="modal-content"
       role="dialog"
@@ -235,9 +211,7 @@
       (click)="$event.stopPropagation()"
     >
 
-      <!-- ENCABEZADO DEL MODAL -->
       <div class="modal-header">
-
         <div class="modal-heading">
           <span class="modal-icon">
             <i class="fas fa-box-open"></i>
@@ -246,7 +220,7 @@
           <div>
             <span class="modal-kicker">NOVA BEAUTY SALON</span>
             <h2 id="modal-producto-title">Nuevo producto</h2>
-            <p>Registra un producto en el inventario.</p>
+            <p>Registra los datos del producto y su imagen.</p>
           </div>
         </div>
 
@@ -254,30 +228,22 @@
           type="button"
           class="close-modal"
           (click)="cerrarModal()"
-          title="Cerrar formulario"
+          [disabled]="guardando"
           aria-label="Cerrar formulario"
         >
           <i class="fas fa-times"></i>
         </button>
-
       </div>
 
-      <!-- FORMULARIO -->
-      <form
-        class="producto-form"
-        (submit)="guardarProducto($event)"
-      >
+      <form class="producto-form" (submit)="guardarProducto($event)">
 
         <div class="form-section-label">
           <i class="fas fa-info-circle"></i>
           Información del producto
         </div>
 
-        <!-- NOMBRE -->
         <div class="form-group">
-          <label for="producto-nombre">
-            Nombre del producto
-          </label>
+          <label for="producto-nombre">Nombre del producto</label>
 
           <div class="form-input-wrapper">
             <i class="fas fa-box"></i>
@@ -288,18 +254,15 @@
               [(ngModel)]="nuevoProducto.nombre"
               name="nombre"
               required
-              placeholder="Ej. Protector Térmico Capilar"
+              maxlength="150"
+              placeholder="Ej. Protector térmico capilar"
             />
           </div>
         </div>
 
-        <!-- CATEGORÍA -->
         <div class="form-row">
-
           <div class="form-group">
-            <label for="producto-categoria">
-              Categoría
-            </label>
+            <label for="producto-categoria">Categoría</label>
 
             <div class="form-input-wrapper select-wrapper">
               <i class="fas fa-layer-group"></i>
@@ -313,7 +276,6 @@
                 <option value="" disabled>
                   Selecciona una categoría
                 </option>
-
                 <option value="Cabello">Cabello</option>
                 <option value="Uñas">Uñas</option>
                 <option value="Cejas">Cejas y mirada</option>
@@ -323,11 +285,8 @@
             </div>
           </div>
 
-          <!-- PRECIO -->
           <div class="form-group">
-            <label for="producto-precio">
-              Precio de venta (S/)
-            </label>
+            <label for="producto-precio">Precio de venta (S/)</label>
 
             <div class="form-input-wrapper">
               <i class="fas fa-wallet"></i>
@@ -344,16 +303,11 @@
               />
             </div>
           </div>
-
         </div>
 
-        <!-- STOCK Y DESCRIPCIÓN -->
         <div class="form-row">
-
           <div class="form-group">
-            <label for="producto-stock">
-              Cantidad en stock
-            </label>
+            <label for="producto-stock">Cantidad en stock</label>
 
             <div class="form-input-wrapper">
               <i class="fas fa-cubes"></i>
@@ -372,9 +326,7 @@
           </div>
 
           <div class="form-group">
-            <label for="producto-desc">
-              Descripción
-            </label>
+            <label for="producto-desc">Descripción</label>
 
             <div class="form-input-wrapper">
               <i class="fas fa-align-left"></i>
@@ -384,31 +336,70 @@
                 type="text"
                 [(ngModel)]="nuevoProducto.desc"
                 name="desc"
-                required
-                placeholder="Ej. Insumo reparador"
+                maxlength="500"
+                placeholder="Descripción del producto"
               />
             </div>
           </div>
-
         </div>
 
-        <!-- AVISO -->
+        <!-- URL DE IMAGEN -->
+        <div class="form-group">
+          <label for="producto-imagen">URL de la imagen (opcional)</label>
+
+          <div class="form-input-wrapper">
+            <i class="fas fa-image"></i>
+
+            <input
+              id="producto-imagen"
+              type="url"
+              [(ngModel)]="nuevoProducto.imagen_url"
+              name="imagen_url"
+              placeholder="https://sitio.com/imagen-producto.jpg"
+            />
+          </div>
+
+          <small>
+            Pega un enlace directo a una imagen pública.
+          </small>
+        </div>
+
+        <!-- VISTA PREVIA -->
+        <div
+          class="form-group"
+          *ngIf="nuevoProducto.imagen_url.trim()"
+        >
+          <label>Vista previa de la imagen</label>
+
+          <img
+            [src]="nuevoProducto.imagen_url"
+            alt="Vista previa del producto"
+            (error)="imagenError($event)"
+            style="
+              display: block;
+              width: 160px;
+              height: 160px;
+              object-fit: contain;
+              border-radius: 12px;
+              border: 1px solid #ddd;
+              padding: 8px;
+            "
+          />
+        </div>
+
         <div class="form-note">
           <i class="fas fa-info-circle"></i>
-
           <span>
-            Verifica el precio, la categoría y la cantidad antes de
-            guardar el producto.
+            Verifica el precio, la categoría y la cantidad antes de guardar.
           </span>
         </div>
 
-        <!-- ACCIONES -->
         <div class="modal-actions">
-
           <button
             type="button"
             class="btn-cancel"
             (click)="cerrarModal()"
+            [disabled]="guardando"
           >
             Cancelar
           </button>
@@ -416,17 +407,15 @@
           <button
             type="submit"
             class="btn-save"
+            [disabled]="guardando"
           >
             <i class="fas fa-save"></i>
-            Guardar producto
+            {{ guardando ? 'Guardando...' : 'Guardar producto' }}
           </button>
-
         </div>
 
       </form>
-
     </section>
-
   </div>
 
 </main>

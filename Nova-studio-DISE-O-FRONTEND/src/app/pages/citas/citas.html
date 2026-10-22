@@ -119,6 +119,7 @@
                   type="button"
                   class="empty-action"
                   (click)="abrirModal()"
+                  [disabled]="guardando"
                 >
                   <i class="fas fa-plus"></i>
                   Agendar una cita
@@ -260,7 +261,8 @@
             </h2>
 
             <p>
-              Selecciona el cliente, el servicio y el horario.
+              Selecciona el cliente, el servicio, la fecha
+              y un horario disponible.
             </p>
           </div>
         </div>
@@ -383,8 +385,8 @@
           <small
             *ngIf="!cargandoServicios && listaServicios.length === 0"
           >
-            No hay servicios activos disponibles. Revisa el módulo
-            Servicios.
+            No hay servicios activos disponibles.
+            Revisa el módulo Servicios.
           </small>
         </div>
 
@@ -409,31 +411,73 @@
                 id="fecha-cita"
                 type="date"
                 [(ngModel)]="nuevaCita.fecha"
+                (ngModelChange)="fechaCambiada($event)"
                 name="fecha"
+                [min]="hoy"
                 required
                 [disabled]="guardando"
               />
             </div>
           </div>
 
-          <!-- HORA -->
+          <!-- HORARIO DISPONIBLE -->
           <div class="form-group">
-            <label for="hora-cita">
-              Hora
+            <label for="horario-cita">
+              Horario disponible
             </label>
 
-            <div class="form-input-wrapper">
+            <div class="form-input-wrapper select-wrapper">
               <i class="far fa-clock"></i>
 
-              <input
-                id="hora-cita"
-                type="time"
-                [(ngModel)]="nuevaCita.hora"
-                name="hora"
+              <select
+                id="horario-cita"
+                [(ngModel)]="nuevaCita.id_horario"
+                name="id_horario"
                 required
-                [disabled]="guardando"
-              />
+                [disabled]="
+                  !nuevaCita.fecha ||
+                  cargandoHorarios ||
+                  listaHorarios.length === 0 ||
+                  guardando
+                "
+              >
+                <option [ngValue]="null" disabled>
+                  {{
+                    !nuevaCita.fecha
+                      ? 'Primero selecciona una fecha'
+                      : cargandoHorarios
+                        ? 'Buscando horarios...'
+                        : 'Selecciona un horario'
+                  }}
+                </option>
+
+                @for (
+                  horario of listaHorarios;
+                  track horario.id_horario
+                ) {
+                  <option [ngValue]="horario.id_horario">
+                    {{ horario.hora_inicio }} - {{ horario.hora_fin }}
+                    · {{ horario.especialista }}
+                  </option>
+                }
+              </select>
+
+              <i class="fas fa-chevron-down select-arrow"></i>
             </div>
+
+            <!-- SIN HORARIOS DISPONIBLES -->
+            <small
+              *ngIf="
+                nuevaCita.fecha &&
+                !cargandoHorarios &&
+                listaHorarios.length === 0 &&
+                !mensajeError
+              "
+            >
+              No hay horarios disponibles para esta fecha.
+              Prueba con otro día o registra horarios en el módulo
+              correspondiente.
+            </small>
           </div>
 
         </div>
@@ -456,13 +500,14 @@
           <i class="fas fa-info-circle"></i>
 
           <span>
-            Comprueba los datos antes de guardar. La hora seleccionada
-            debe existir como horario disponible en la agenda.
+            Selecciona un horario disponible. La cita se registrará
+            utilizando el horario elegido en la agenda.
           </span>
         </div>
 
         <!-- BOTONES -->
         <div class="modal-actions">
+
           <button
             type="button"
             class="btn-cancel"
@@ -479,8 +524,11 @@
               guardando ||
               cargandoClientes ||
               cargandoServicios ||
+              cargandoHorarios ||
               listaClientes.length === 0 ||
-              listaServicios.length === 0
+              listaServicios.length === 0 ||
+              !nuevaCita.fecha ||
+              nuevaCita.id_horario === null
             "
           >
             <i
@@ -494,6 +542,7 @@
                 : 'Guardar cita'
             }}
           </button>
+
         </div>
 
       </form>

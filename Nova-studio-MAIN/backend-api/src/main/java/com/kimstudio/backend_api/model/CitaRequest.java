@@ -38,4 +38,13 @@ public class CitaRequest {
     public void setHora(String hora) {
         this.hora = hora;
     }
+    private Integer id_horario;
+
+public Integer getId_horario() {
+    return id_horario;
+}
+
+public void setId_horario(Integer id_horario) {
+    this.id_horario = id_horario;
+}
 }
