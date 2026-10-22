@@ -1,6 +1,7 @@
+
 <main class="citas-page">
 
-  <!-- ENCABEZADO -->
+  <!-- ENCABEZADO ORIGINAL -->
   <section class="citas-intro">
     <div class="citas-intro-copy">
       <span class="citas-kicker">
@@ -21,7 +22,7 @@
     </div>
   </section>
 
-  <!-- BÚSQUEDA Y ACCIONES -->
+  <!-- BÚSQUEDA Y BOTÓN NUEVA CITA -->
   <section class="citas-toolbar">
     <div class="search-box">
       <i class="fas fa-search"></i>
@@ -29,9 +30,9 @@
       <input
         type="search"
         [(ngModel)]="textoBusqueda"
-        (input)="filtrarCitas()"
+        (ngModelChange)="filtrarCitas()"
         placeholder="Buscar cliente o servicio..."
-        aria-label="Buscar citas por cliente o servicio"
+        aria-label="Buscar citas"
       />
 
       <span class="search-shortcut">
@@ -41,8 +42,8 @@
 
     <button
       type="button"
-      (click)="abrirModal()"
       class="btn-primary"
+      (click)="abrirModal()"
       [disabled]="guardando"
     >
       <i class="fas fa-plus"></i>
@@ -50,7 +51,7 @@
     </button>
   </section>
 
-  <!-- TABLA DE CITAS -->
+  <!-- TABLA ORIGINAL DE CITAS -->
   <section class="recent-table-container">
 
     <div class="table-heading">
@@ -71,7 +72,6 @@
       </span>
     </div>
 
-    <!-- TABLA -->
     <div class="table-scroll">
       <table class="citas-table">
 
@@ -99,9 +99,7 @@
           </tr>
 
           <!-- SIN RESULTADOS -->
-          <tr
-            *ngIf="!cargando && citasFiltradas.length === 0"
-          >
+          <tr *ngIf="!cargando && citasFiltradas.length === 0">
             <td colspan="6">
               <div class="empty-state">
                 <div class="empty-state-icon">
@@ -119,7 +117,6 @@
                   type="button"
                   class="empty-action"
                   (click)="abrirModal()"
-                  [disabled]="guardando"
                 >
                   <i class="fas fa-plus"></i>
                   Agendar una cita
@@ -129,94 +126,102 @@
           </tr>
 
           <!-- CITAS REGISTRADAS -->
-          @for (cita of citasFiltradas; track cita.id_cita) {
-            <tr>
+          <tr *ngFor="let cita of citasFiltradas">
 
-              <!-- FECHA -->
-              <td data-label="Fecha">
-                <div class="date-cell">
-                  <span class="date-icon">
-                    <i class="far fa-calendar-alt"></i>
-                  </span>
-
-                  <span>
-                    {{ cita.fecha | date:'dd/MM/yyyy' }}
-                  </span>
-                </div>
-              </td>
-
-              <!-- HORA -->
-              <td data-label="Hora">
-                <div class="time-cell">
-                  <i class="far fa-clock"></i>
-                  <span>{{ cita.hora }}</span>
-                </div>
-              </td>
-
-              <!-- CLIENTE -->
-              <td data-label="Cliente">
-                <div class="client-cell">
-                  <span class="client-avatar">
-                    <i class="fas fa-user"></i>
-                  </span>
-
-                  <span class="client-name">
-                    {{ cita.cliente || 'Sin cliente' }}
-                  </span>
-                </div>
-              </td>
-
-              <!-- SERVICIO -->
-              <td data-label="Servicio">
-                <div class="service-cell">
-                  <i class="fas fa-cut"></i>
-
-                  <span>
-                    {{ cita.servicio || 'Sin servicio' }}
-                  </span>
-                </div>
-              </td>
-
-              <!-- ESTADO -->
-              <td data-label="Estado">
-                <span
-                  class="status-badge"
-                  [ngClass]="{
-                    'confirmed': ['confirmada', 'confirmado', 'confirmed'].includes((cita.estado || '').toLowerCase()),
-                    'pending': ['pendiente', 'pendiente_confirmacion', 'pending'].includes((cita.estado || '').toLowerCase()),
-                    'cancelled': ['cancelada', 'cancelado', 'cancelled'].includes((cita.estado || '').toLowerCase()),
-                    'completed': ['completada', 'completado', 'completed'].includes((cita.estado || '').toLowerCase())
-                  }"
-                >
-                  <span class="status-indicator"></span>
-                  {{ cita.estado || 'Pendiente' }}
+            <!-- FECHA -->
+            <td data-label="Fecha">
+              <div class="date-cell">
+                <span class="date-icon">
+                  <i class="far fa-calendar-alt"></i>
                 </span>
-              </td>
 
-              <!-- ACCIONES -->
-              <td data-label="Acciones">
-                <div class="action-buttons">
-                  <button
-                    type="button"
-                    (click)="eliminarCita(cita.id_cita, cita.cliente)"
-                    class="action-btn delete"
-                    title="Cancelar cita"
-                    [attr.aria-label]="'Cancelar cita de ' + cita.cliente"
-                    [disabled]="guardando"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </div>
-              </td>
+                <span>{{ cita.fecha | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </td>
 
-            </tr>
-          }
+            <!-- HORA -->
+            <td data-label="Hora">
+              <div class="time-cell">
+                <i class="far fa-clock"></i>
+                <span>{{ cita.hora }}</span>
+              </div>
+            </td>
 
+            <!-- CLIENTE -->
+            <td data-label="Cliente">
+              <div class="client-cell">
+                <span class="client-avatar">
+                  <i class="fas fa-user"></i>
+                </span>
+
+                <span class="client-name">
+                  {{ cita.cliente || 'Sin cliente' }}
+                </span>
+              </div>
+            </td>
+
+            <!-- SERVICIO -->
+            <td data-label="Servicio">
+              <div class="service-cell">
+                <i class="fas fa-cut"></i>
+
+                <span>
+                  {{ cita.servicio || 'Sin servicio' }}
+                </span>
+              </div>
+            </td>
+
+            <!-- ESTADO -->
+            <td data-label="Estado">
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'confirmed': ['confirmada', 'confirmado', 'confirmed'].includes((cita.estado || '').toLowerCase()),
+                  'pending': ['pendiente', 'pendiente_confirmacion', 'pending'].includes((cita.estado || '').toLowerCase()),
+                  'cancelled': ['cancelada', 'cancelado', 'cancelled'].includes((cita.estado || '').toLowerCase()),
+                  'completed': ['completada', 'completado', 'completed'].includes((cita.estado || '').toLowerCase())
+                }"
+              >
+                <span class="status-indicator"></span>
+                {{ cita.estado || 'Pendiente' }}
+              </span>
+            </td>
+
+            <!-- ACCIONES -->
+            <td data-label="Acciones">
+              <div class="action-buttons">
+
+                <button
+                  type="button"
+                  class="action-btn edit"
+                  title="Modificar cita"
+                  [attr.aria-label]="'Modificar cita de ' + cita.cliente"
+                  (click)="abrirEdicion(cita)"
+                  [disabled]="guardando || editando"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="action-btn delete"
+                  title="Cancelar cita"
+                  [attr.aria-label]="'Cancelar cita de ' + cita.cliente"
+                  (click)="eliminarCita(cita.id_cita, cita.cliente)"
+                  [disabled]="guardando || editando"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- PIE DE TABLA -->
+    <!-- PIE ORIGINAL -->
     <div class="table-footer">
       <span>
         <i class="fas fa-shield-alt"></i>
@@ -230,7 +235,9 @@
 
   </section>
 
-  <!-- MODAL: NUEVA CITA -->
+  <!-- =====================================
+       MODAL PARA REGISTRAR CITA
+  ====================================== -->
   <div
     class="modal-overlay"
     *ngIf="isModalOpen"
@@ -240,11 +247,10 @@
       class="modal-content"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-cita-title"
+      aria-labelledby="modal-nueva-cita-title"
       (click)="$event.stopPropagation()"
     >
 
-      <!-- ENCABEZADO DEL MODAL -->
       <div class="modal-header">
         <div class="modal-heading">
           <span class="modal-icon">
@@ -252,17 +258,14 @@
           </span>
 
           <div>
-            <span class="modal-kicker">
-              NOVA BEAUTY SALON
-            </span>
+            <span class="modal-kicker">NOVA BEAUTY SALON</span>
 
-            <h2 id="modal-cita-title">
+            <h2 id="modal-nueva-cita-title">
               Agendar nueva cita
             </h2>
 
             <p>
-              Selecciona el cliente, el servicio, la fecha
-              y un horario disponible.
+              Selecciona el cliente, el servicio y el horario.
             </p>
           </div>
         </div>
@@ -272,242 +275,154 @@
           class="close-modal"
           (click)="cerrarModal()"
           aria-label="Cerrar formulario"
-          title="Cerrar"
           [disabled]="guardando"
         >
           <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <!-- FORMULARIO -->
-      <form
-        class="cita-form"
-        (ngSubmit)="guardarCita($event)"
-      >
+      <form class="cita-form" (ngSubmit)="guardarCita($event)">
 
         <div class="form-section-label">
           <i class="fas fa-user-circle"></i>
           Información de la reserva
         </div>
 
-        <!-- CLIENTE REGISTRADO -->
+        <!-- CLIENTE -->
         <div class="form-group">
-          <label for="cliente-cita">
-            Cliente
-          </label>
+          <label for="cliente-cita">Cliente</label>
 
           <div class="form-input-wrapper select-wrapper">
             <i class="fas fa-user"></i>
 
             <select
               id="cliente-cita"
-              [(ngModel)]="nuevaCita.id_usuario"
               name="id_usuario"
+              [(ngModel)]="nuevaCita.id_usuario"
               required
-              [disabled]="cargandoClientes || guardando"
+              [disabled]="guardando"
             >
-              <option [ngValue]="null" disabled>
-                {{
-                  cargandoClientes
-                    ? 'Cargando clientes...'
-                    : 'Selecciona un cliente'
-                }}
+              <option [ngValue]="null">
+                Selecciona un cliente
               </option>
 
-              @for (
-                cliente of listaClientes;
-                track cliente.id_usuario
-              ) {
-                <option [ngValue]="cliente.id_usuario">
-                  {{ cliente.nombre }}
-                  {{
-                    cliente.correo
-                      ? ' — ' + cliente.correo
-                      : ''
-                  }}
-                </option>
-              }
+              <option
+                *ngFor="let cliente of listaClientes"
+                [ngValue]="cliente.id_usuario"
+              >
+                {{ cliente.nombre }}
+              </option>
             </select>
 
             <i class="fas fa-chevron-down select-arrow"></i>
           </div>
-
-          <small
-            *ngIf="!cargandoClientes && listaClientes.length === 0"
-          >
-            No hay clientes disponibles. Registra primero un cliente
-            en el módulo Clientes.
-          </small>
         </div>
 
-        <!-- SERVICIO REGISTRADO -->
+        <!-- SERVICIO -->
         <div class="form-group">
-          <label for="servicio-cita">
-            Servicio
-          </label>
+          <label for="servicio-cita">Servicio</label>
 
           <div class="form-input-wrapper select-wrapper">
             <i class="fas fa-cut"></i>
 
             <select
               id="servicio-cita"
-              [(ngModel)]="nuevaCita.id_servicio"
               name="id_servicio"
+              [(ngModel)]="nuevaCita.id_servicio"
               required
-              [disabled]="cargandoServicios || guardando"
+              [disabled]="guardando"
             >
-              <option [ngValue]="null" disabled>
-                {{
-                  cargandoServicios
-                    ? 'Cargando servicios...'
-                    : 'Selecciona un servicio'
-                }}
+              <option [ngValue]="null">
+                Selecciona un servicio
               </option>
 
-              @for (
-                servicio of listaServicios;
-                track servicio.id_servicio
-              ) {
-                <option [ngValue]="servicio.id_servicio">
-                  {{ servicio.nombre }}
-                  {{
-                    servicio.precio != null
-                      ? ' — S/ ' + servicio.precio
-                      : ''
-                  }}
-                </option>
-              }
+              <option
+                *ngFor="let servicio of listaServicios"
+                [ngValue]="servicio.id_servicio"
+              >
+                {{ servicio.nombre }}
+                <ng-container *ngIf="servicio.precio != null">
+                  — S/ {{ servicio.precio }}
+                </ng-container>
+              </option>
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+
+        <!-- FECHA -->
+        <div class="form-section-label schedule-label">
+          <i class="far fa-clock"></i>
+          Fecha y horario
+        </div>
+
+        <div class="form-group">
+          <label for="fecha-nueva-cita">Fecha</label>
+
+          <div class="form-input-wrapper">
+            <i class="far fa-calendar-alt"></i>
+
+            <input
+              id="fecha-nueva-cita"
+              type="date"
+              name="fecha"
+              [(ngModel)]="nuevaCita.fecha"
+              [min]="hoy"
+              (ngModelChange)="fechaCambiada($event)"
+              required
+              [disabled]="guardando"
+            />
+          </div>
+        </div>
+
+        <!-- HORARIO -->
+        <div class="form-group">
+          <label for="horario-nueva-cita">Horario disponible</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="far fa-clock"></i>
+
+            <select
+              id="horario-nueva-cita"
+              name="id_horario"
+              [(ngModel)]="nuevaCita.id_horario"
+              required
+              [disabled]="guardando || !listaHorarios.length"
+            >
+              <option [ngValue]="null">
+                Selecciona un horario
+              </option>
+
+              <option
+                *ngFor="let horario of listaHorarios"
+                [ngValue]="horario.id_horario"
+              >
+                {{ horario.hora_inicio }} - {{ horario.hora_fin }}
+                <ng-container *ngIf="horario.especialista">
+                  — {{ horario.especialista }}
+                </ng-container>
+              </option>
             </select>
 
             <i class="fas fa-chevron-down select-arrow"></i>
           </div>
 
           <small
-            *ngIf="!cargandoServicios && listaServicios.length === 0"
+            *ngIf="nuevaCita.fecha && !listaHorarios.length"
           >
-            No hay servicios activos disponibles.
-            Revisa el módulo Servicios.
+            No hay horarios disponibles para esta fecha.
           </small>
         </div>
 
-        <!-- FECHA Y HORARIO -->
-        <div class="form-section-label schedule-label">
-          <i class="far fa-clock"></i>
-          Fecha y horario
-        </div>
-
-        <div class="form-row">
-
-          <!-- FECHA -->
-          <div class="form-group">
-            <label for="fecha-cita">
-              Fecha
-            </label>
-
-            <div class="form-input-wrapper">
-              <i class="far fa-calendar-alt"></i>
-
-              <input
-                id="fecha-cita"
-                type="date"
-                [(ngModel)]="nuevaCita.fecha"
-                (ngModelChange)="fechaCambiada($event)"
-                name="fecha"
-                [min]="hoy"
-                required
-                [disabled]="guardando"
-              />
-            </div>
-          </div>
-
-          <!-- HORARIO DISPONIBLE -->
-          <div class="form-group">
-            <label for="horario-cita">
-              Horario disponible
-            </label>
-
-            <div class="form-input-wrapper select-wrapper">
-              <i class="far fa-clock"></i>
-
-              <select
-                id="horario-cita"
-                [(ngModel)]="nuevaCita.id_horario"
-                name="id_horario"
-                required
-                [disabled]="
-                  !nuevaCita.fecha ||
-                  cargandoHorarios ||
-                  listaHorarios.length === 0 ||
-                  guardando
-                "
-              >
-                <option [ngValue]="null" disabled>
-                  {{
-                    !nuevaCita.fecha
-                      ? 'Primero selecciona una fecha'
-                      : cargandoHorarios
-                        ? 'Buscando horarios...'
-                        : 'Selecciona un horario'
-                  }}
-                </option>
-
-                @for (
-                  horario of listaHorarios;
-                  track horario.id_horario
-                ) {
-                  <option [ngValue]="horario.id_horario">
-                    {{ horario.hora_inicio }} - {{ horario.hora_fin }}
-                    · {{ horario.especialista }}
-                  </option>
-                }
-              </select>
-
-              <i class="fas fa-chevron-down select-arrow"></i>
-            </div>
-
-            <!-- SIN HORARIOS DISPONIBLES -->
-            <small
-              *ngIf="
-                nuevaCita.fecha &&
-                !cargandoHorarios &&
-                listaHorarios.length === 0 &&
-                !mensajeError
-              "
-            >
-              No hay horarios disponibles para esta fecha.
-              Prueba con otro día o registra horarios en el módulo
-              correspondiente.
-            </small>
-          </div>
-
-        </div>
-
         <!-- ERROR -->
-        <div
-          class="form-note"
-          *ngIf="mensajeError"
-          role="alert"
-        >
+        <div class="form-note" *ngIf="mensajeError" role="alert">
           <i class="fas fa-exclamation-circle"></i>
           <span>{{ mensajeError }}</span>
         </div>
 
-        <!-- INFORMACIÓN -->
-        <div
-          class="form-note"
-          *ngIf="!mensajeError"
-        >
-          <i class="fas fa-info-circle"></i>
-
-          <span>
-            Selecciona un horario disponible. La cita se registrará
-            utilizando el horario elegido en la agenda.
-          </span>
-        </div>
-
         <!-- BOTONES -->
         <div class="modal-actions">
-
           <button
             type="button"
             class="btn-cancel"
@@ -520,33 +435,231 @@
           <button
             type="submit"
             class="btn-save"
-            [disabled]="
-              guardando ||
-              cargandoClientes ||
-              cargandoServicios ||
-              cargandoHorarios ||
-              listaClientes.length === 0 ||
-              listaServicios.length === 0 ||
-              !nuevaCita.fecha ||
-              nuevaCita.id_horario === null
-            "
+            [disabled]="guardando"
           >
             <i
               class="fas"
               [ngClass]="guardando ? 'fa-spinner fa-spin' : 'fa-check'"
             ></i>
 
-            {{
-              guardando
-                ? 'Guardando...'
-                : 'Guardar cita'
-            }}
+            {{ guardando ? 'Guardando...' : 'Guardar cita' }}
           </button>
-
         </div>
 
       </form>
+    </section>
+  </div>
 
+  <!-- =====================================
+       MODAL PARA MODIFICAR CITA
+  ====================================== -->
+  <div
+    class="modal-overlay"
+    *ngIf="isEditModalOpen"
+    (click)="cerrarEdicion()"
+  >
+    <section
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-editar-cita-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="modal-header">
+        <div class="modal-heading">
+          <span class="modal-icon">
+            <i class="fas fa-calendar-check"></i>
+          </span>
+
+          <div>
+            <span class="modal-kicker">NOVA BEAUTY SALON</span>
+
+            <h2 id="modal-editar-cita-title">
+              Modificar cita
+            </h2>
+
+            <p *ngIf="citaEnEdicion">
+              Cita #{{ citaEnEdicion.id_cita }} ·
+              {{ citaEnEdicion.cliente }}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="cerrarEdicion()"
+          aria-label="Cerrar formulario"
+          [disabled]="editando"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form class="cita-form" (ngSubmit)="guardarEdicion($event)">
+
+        <div class="form-section-label">
+          <i class="fas fa-edit"></i>
+          Actualizar información
+        </div>
+
+        <!-- SERVICIO -->
+        <div class="form-group">
+          <label for="servicio-edicion">Servicio</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="fas fa-cut"></i>
+
+            <select
+              id="servicio-edicion"
+              name="servicioEdicion"
+              [(ngModel)]="citaEditada.id_servicio"
+              required
+              [disabled]="editando"
+            >
+              <option [ngValue]="null">
+                Selecciona un servicio
+              </option>
+
+              <option
+                *ngFor="let servicio of listaServicios"
+                [ngValue]="servicio.id_servicio"
+              >
+                {{ servicio.nombre }}
+              </option>
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+
+        <!-- FECHA -->
+        <div class="form-group">
+          <label for="fecha-edicion">Fecha</label>
+
+          <div class="form-input-wrapper">
+            <i class="far fa-calendar-alt"></i>
+
+            <input
+              id="fecha-edicion"
+              type="date"
+              name="fechaEdicion"
+              [(ngModel)]="citaEditada.fecha"
+              [min]="hoy"
+              (ngModelChange)="fechaEdicionCambiada($event)"
+              required
+              [disabled]="editando"
+            />
+          </div>
+        </div>
+
+        <!-- HORARIO -->
+        <div class="form-group">
+          <label for="horario-edicion">Horario disponible</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="far fa-clock"></i>
+
+            <select
+              id="horario-edicion"
+              name="horarioEdicion"
+              [(ngModel)]="citaEditada.id_horario"
+              required
+              [disabled]="editando || !horariosEdicion.length"
+            >
+              <option [ngValue]="null">
+                Selecciona un horario
+              </option>
+
+              <option
+                *ngFor="let horario of horariosEdicion"
+                [ngValue]="horario.id_horario"
+              >
+                {{ horario.hora_inicio }}
+
+                <ng-container *ngIf="horario.hora_fin">
+                  - {{ horario.hora_fin }}
+                </ng-container>
+
+                <ng-container *ngIf="horario.especialista">
+                  — {{ horario.especialista }}
+                </ng-container>
+              </option>
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+
+          <div class="form-note">
+            <i class="fas fa-info-circle"></i>
+            <span>
+              Al cambiar la fecha, selecciona un horario disponible
+              para esa fecha.
+            </span>
+          </div>
+        </div>
+
+        <!-- ESTADO -->
+        <div class="form-group">
+          <label for="estado-edicion">Estado de la cita</label>
+
+          <div class="form-input-wrapper select-wrapper">
+            <i class="fas fa-tasks"></i>
+
+            <select
+              id="estado-edicion"
+              name="estadoEdicion"
+              [(ngModel)]="citaEditada.estado"
+              required
+              [disabled]="editando"
+            >
+              <option value="Pendiente">Pendiente</option>
+              <option value="Confirmada">Confirmada</option>
+              <option value="Completada">Completada</option>
+              <option value="Cancelada">Cancelada</option>
+            </select>
+
+            <i class="fas fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+
+        <!-- ERROR DE EDICIÓN -->
+        <div
+          class="form-note"
+          *ngIf="mensajeErrorEdicion"
+          role="alert"
+        >
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ mensajeErrorEdicion }}</span>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cerrarEdicion()"
+            [disabled]="editando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn-save"
+            [disabled]="editando"
+          >
+            <i
+              class="fas"
+              [ngClass]="editando ? 'fa-spinner fa-spin' : 'fa-save'"
+            ></i>
+
+            {{ editando ? 'Guardando cambios...' : 'Guardar cambios' }}
+          </button>
+        </div>
+
+      </form>
     </section>
   </div>
 

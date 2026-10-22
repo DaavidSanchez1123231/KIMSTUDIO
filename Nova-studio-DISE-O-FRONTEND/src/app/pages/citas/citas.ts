@@ -1,8 +1,8 @@
 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 
 interface ClienteCita {
@@ -29,6 +29,8 @@ interface HorarioCita {
 
 interface Cita {
   id_cita: number;
+  id_servicio: number;
+  id_horario: number;
   fecha: string;
   hora: string;
   cliente: string;
@@ -45,46 +47,42 @@ interface Cita {
 })
 export class CitasComponent implements OnInit {
 
-  // ESTADOS
   isModalOpen = false;
-  cargando = true;
-  cargandoClientes = false;
-  cargandoServicios = false;
-  cargandoHorarios = false;
+  isEditModalOpen = false;
+
+  cargando = false;
   guardando = false;
+  editando = false;
 
-  // FECHA MÍNIMA PARA RESERVAR
-hoy: string = (() => {
-  const fecha = new Date();
-  const anio = fecha.getFullYear();
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-  const dia = String(fecha.getDate()).padStart(2, '0');
+  hoy = new Date().toISOString().split('T')[0];
 
-  return `${anio}-${mes}-${dia}`;
-})();
-
-  // LISTAS
   citas: Cita[] = [];
   citasFiltradas: Cita[] = [];
+
   listaClientes: ClienteCita[] = [];
   listaServicios: ServicioCita[] = [];
   listaHorarios: HorarioCita[] = [];
 
-  // BÚSQUEDA Y MENSAJES
+  horariosEdicion: HorarioCita[] = [];
+
   textoBusqueda = '';
   mensajeError = '';
+  mensajeErrorEdicion = '';
 
-  // FORMULARIO DE CITA
-  nuevaCita: {
-    id_usuario: number | null;
-    id_servicio: number | null;
-    fecha: string;
-    id_horario: number | null;
-  } = {
-    id_usuario: null,
-    id_servicio: null,
+  citaEnEdicion: Cita | null = null;
+
+  nuevaCita = {
+    id_usuario: null as number | null,
+    id_servicio: null as number | null,
     fecha: '',
-    id_horario: null
+    id_horario: null as number | null
+  };
+
+  citaEditada = {
+    id_servicio: null as number | null,
+    fecha: '',
+    id_horario: null as number | null,
+    estado: 'Pendiente'
   };
 
   constructor(
@@ -98,227 +96,127 @@ hoy: string = (() => {
     this.obtenerServicios();
   }
 
-  // CABECERAS HTTP
-  private getHeaders(): HttpHeaders {
+  getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
 
-    if (typeof window !== 'undefined') {
-      const token = window.localStorage.getItem('token');
-
-      if (token) {
-        headers = headers.set(
-          'Authorization',
-          `Bearer ${token}`
-        );
-      }
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
     }
 
     return headers;
   }
 
-  // OBTENER CITAS REGISTRADAS
   obtenerCitas(): void {
     this.cargando = true;
 
-    this.http.get<Cita[]>(
+    this.http.get<any[]>(
       `${environment.apiUrl}/citas`,
       { headers: this.getHeaders() }
     ).subscribe({
-      next: (data) => {
-        this.citas = (Array.isArray(data) ? data : []).map(
-          (cita: any) => ({
-            ...cita,
-            id_cita: Number(cita.id_cita),
-            cliente: String(
-              cita.cliente ?? cita.nombre_cliente ?? ''
-            ),
-            servicio: String(
-              cita.servicio ?? cita.nombre_servicio ?? ''
-            ),
-            estado: String(cita.estado ?? 'Pendiente')
-          })
-        );
+      next: (respuesta) => {
+        this.citas = (respuesta || []).map((item: any) => ({
+          id_cita: Number(item.id_cita),
+          id_servicio: Number(item.id_servicio),
+          id_horario: Number(item.id_horario),
+          fecha: item.fecha,
+          hora: item.hora,
+          cliente: item.cliente,
+          servicio: item.servicio,
+          estado: item.estado || 'Pendiente'
+        }));
 
         this.filtrarCitas();
         this.cargando = false;
         this.cdr.detectChanges();
       },
-
-      error: (err) => {
-        console.error('Error al obtener citas:', err);
-
-        this.citas = [];
-        this.citasFiltradas = [];
+      error: (error) => {
+        console.error('Error al obtener citas:', error);
+        this.mensajeError = 'No se pudieron cargar las citas.';
         this.cargando = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  // OBTENER CLIENTES REGISTRADOS
   obtenerClientes(): void {
-    this.cargandoClientes = true;
-
     this.http.get<ClienteCita[]>(
       `${environment.apiUrl}/clientes`,
       { headers: this.getHeaders() }
     ).subscribe({
-      next: (data) => {
-        this.listaClientes = (
-          Array.isArray(data) ? data : []
-        )
-          .filter((cliente) =>
-            Number(cliente.id_usuario) > 0 &&
-            Boolean(cliente.nombre)
-          )
-          .map((cliente) => ({
-            ...cliente,
-            id_usuario: Number(cliente.id_usuario)
-          }));
-
-        this.cargandoClientes = false;
+      next: (respuesta) => {
+        this.listaClientes = respuesta || [];
         this.cdr.detectChanges();
       },
-
-      error: (err) => {
-        console.error('Error al cargar clientes:', err);
-
-        this.listaClientes = [];
-        this.cargandoClientes = false;
-        this.cdr.detectChanges();
+      error: (error) => {
+        console.error('Error al obtener clientes:', error);
       }
     });
   }
 
-  // OBTENER SERVICIOS
   obtenerServicios(): void {
-    this.cargandoServicios = true;
-
     this.http.get<ServicioCita[]>(
       `${environment.apiUrl}/servicios`,
       { headers: this.getHeaders() }
     ).subscribe({
-      next: (data) => {
-        this.listaServicios = (
-          Array.isArray(data) ? data : []
-        )
-          .filter((servicio) =>
-            Number(servicio.id_servicio) > 0 &&
-            Boolean(servicio.nombre)
-          )
-          .map((servicio) => ({
-            ...servicio,
-            id_servicio: Number(servicio.id_servicio)
-          }));
-
-        this.cargandoServicios = false;
+      next: (respuesta) => {
+        this.listaServicios = respuesta || [];
         this.cdr.detectChanges();
       },
-
-      error: (err) => {
-        console.error('Error al cargar servicios:', err);
-
-        this.listaServicios = [];
-        this.cargandoServicios = false;
-        this.cdr.detectChanges();
+      error: (error) => {
+        console.error('Error al obtener servicios:', error);
       }
     });
   }
 
-  // OBTENER HORARIOS DISPONIBLES SEGÚN LA FECHA
   fechaCambiada(fecha: string): void {
     this.nuevaCita.fecha = fecha;
     this.nuevaCita.id_horario = null;
     this.listaHorarios = [];
-    this.mensajeError = '';
 
     if (!fecha) {
-      this.cargandoHorarios = false;
       return;
     }
 
-    this.cargandoHorarios = true;
-
     this.http.get<HorarioCita[]>(
-      `${environment.apiUrl}/horarios/disponibles`,
-      {
-        headers: this.getHeaders(),
-        params: { fecha }
-      }
+      `${environment.apiUrl}/horarios/disponibles?fecha=${encodeURIComponent(fecha)}`,
+      { headers: this.getHeaders() }
     ).subscribe({
-      next: (data) => {
-        this.listaHorarios = (
-          Array.isArray(data) ? data : []
-        ).map((horario) => ({
-          ...horario,
-          id_horario: Number(horario.id_horario),
-          id_especialista: Number(horario.id_especialista),
-          fecha: String(horario.fecha ?? fecha),
-          hora_inicio: String(horario.hora_inicio ?? ''),
-          hora_fin: String(horario.hora_fin ?? ''),
-          especialista: String(
-            horario.especialista ?? 'Especialista'
-          )
-        }));
-
-        this.cargandoHorarios = false;
+      next: (respuesta) => {
+        this.listaHorarios = respuesta || [];
         this.cdr.detectChanges();
       },
-
-      error: (err) => {
-        console.error(
-          'Error al obtener horarios disponibles:',
-          err
-        );
-
-        this.listaHorarios = [];
-        this.cargandoHorarios = false;
-
-        this.mensajeError =
-          err.error?.mensaje ||
-          (err.status === 401 || err.status === 403
-            ? 'No tienes permiso para consultar horarios. Comprueba tu sesión.'
-            : 'No se pudieron cargar los horarios disponibles.');
-
+      error: (error) => {
+        console.error('Error al obtener horarios:', error);
+        this.mensajeError = 'No se pudieron cargar los horarios disponibles.';
         this.cdr.detectChanges();
       }
     });
   }
 
-  // FILTRAR CITAS POR CLIENTE O SERVICIO
   filtrarCitas(): void {
-    const busqueda = this.textoBusqueda
-      .toLowerCase()
-      .trim();
+    const busqueda = this.textoBusqueda.trim().toLowerCase();
 
     if (!busqueda) {
       this.citasFiltradas = [...this.citas];
       return;
     }
 
-    this.citasFiltradas = this.citas.filter((cita) => {
-      const cliente = String(
-        cita.cliente ?? ''
-      ).toLowerCase();
-
-      const servicio = String(
-        cita.servicio ?? ''
-      ).toLowerCase();
-
-      return (
-        cliente.includes(busqueda) ||
-        servicio.includes(busqueda)
-      );
-    });
+    this.citasFiltradas = this.citas.filter((cita) =>
+      String(cita.id_cita).includes(busqueda) ||
+      (cita.cliente || '').toLowerCase().includes(busqueda) ||
+      (cita.servicio || '').toLowerCase().includes(busqueda) ||
+      (cita.estado || '').toLowerCase().includes(busqueda) ||
+      (cita.fecha || '').toLowerCase().includes(busqueda) ||
+      (cita.hora || '').toLowerCase().includes(busqueda)
+    );
   }
 
-  // ABRIR FORMULARIO
   abrirModal(): void {
-    if (this.guardando) {
-      return;
-    }
+    this.mensajeError = '';
 
     this.nuevaCita = {
       id_usuario: null,
@@ -328,14 +226,9 @@ hoy: string = (() => {
     };
 
     this.listaHorarios = [];
-    this.mensajeError = '';
     this.isModalOpen = true;
-
-    this.obtenerClientes();
-    this.obtenerServicios();
   }
 
-  // CERRAR FORMULARIO
   cerrarModal(): void {
     if (this.guardando) {
       return;
@@ -343,142 +236,261 @@ hoy: string = (() => {
 
     this.isModalOpen = false;
     this.mensajeError = '';
-    this.cargandoHorarios = false;
-
-    this.nuevaCita = {
-      id_usuario: null,
-      id_servicio: null,
-      fecha: '',
-      id_horario: null
-    };
-
-    this.listaHorarios = [];
   }
 
-  // REGISTRAR CITA CON IDENTIFICADORES REALES
   guardarCita(event: Event): void {
     event.preventDefault();
-
-    if (this.guardando) {
-      return;
-    }
+    this.mensajeError = '';
 
     if (
-      this.nuevaCita.id_usuario === null ||
-      this.nuevaCita.id_servicio === null ||
+      !this.nuevaCita.id_usuario ||
+      !this.nuevaCita.id_servicio ||
       !this.nuevaCita.fecha ||
-      this.nuevaCita.id_horario === null
+      !this.nuevaCita.id_horario
     ) {
-      this.mensajeError =
-        'Selecciona un cliente, un servicio, una fecha y un horario disponible.';
+      this.mensajeError = 'Completa todos los campos para registrar la cita.';
       return;
     }
 
-    const horarioSeleccionado = this.listaHorarios.find(
-      (horario) =>
-        horario.id_horario ===
-        Number(this.nuevaCita.id_horario)
-    );
+    this.guardando = true;
 
-    if (!horarioSeleccionado) {
-      this.mensajeError =
-        'El horario seleccionado ya no está en la lista. Consulta nuevamente la fecha.';
-      return;
-    }
-
-    const payload = {
+    const datos = {
       id_usuario: Number(this.nuevaCita.id_usuario),
       id_servicio: Number(this.nuevaCita.id_servicio),
+      fecha: this.nuevaCita.fecha,
       id_horario: Number(this.nuevaCita.id_horario)
     };
 
-    this.guardando = true;
-    this.mensajeError = '';
-
-    this.http.post<{ mensaje?: string }>(
+    this.http.post(
       `${environment.apiUrl}/citas`,
-      payload,
+      datos,
       { headers: this.getHeaders() }
     ).subscribe({
-      next: (respuesta) => {
+      next: () => {
         this.guardando = false;
         this.isModalOpen = false;
-
-        this.nuevaCita = {
-          id_usuario: null,
-          id_servicio: null,
-          fecha: '',
-          id_horario: null
-        };
-
-        this.listaHorarios = [];
-        this.cdr.detectChanges();
-
-        window.alert(
-          respuesta?.mensaje ||
-          '¡Cita registrada correctamente!'
-        );
-
         this.obtenerCitas();
+        this.cdr.detectChanges();
       },
-
-      error: (err) => {
-        console.error('Error al registrar cita:', err);
-
-        this.guardando = false;
+      error: (error) => {
+        console.error('Error al registrar cita:', error);
 
         this.mensajeError =
-          err.error?.mensaje ||
-          (err.status === 401 || err.status === 403
-            ? 'No tienes permiso para registrar citas. Comprueba tu sesión.'
-            : 'No se pudo registrar la cita. El horario puede haber sido reservado por otra persona.');
+          error?.error?.message ||
+          error?.error?.error ||
+          'No se pudo registrar la cita. Verifica el horario seleccionado.';
 
+        this.guardando = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  // CANCELAR / ELIMINAR CITA
-  eliminarCita(
-    id_cita: number,
-    nombreCliente: string
-  ): void {
-    if (this.guardando) {
+  abrirEdicion(cita: Cita): void {
+    this.mensajeErrorEdicion = '';
+    this.citaEnEdicion = { ...cita };
+
+    this.citaEditada = {
+      id_servicio: Number(cita.id_servicio) || null,
+      fecha: this.formatearFecha(cita.fecha),
+      id_horario: Number(cita.id_horario) || null,
+      estado: cita.estado || 'Pendiente'
+    };
+
+    this.horariosEdicion = [];
+    this.isEditModalOpen = true;
+
+    this.cargarHorariosEdicion(true);
+  }
+
+  cerrarEdicion(): void {
+    if (this.editando) {
       return;
     }
 
+    this.isEditModalOpen = false;
+    this.citaEnEdicion = null;
+    this.horariosEdicion = [];
+    this.mensajeErrorEdicion = '';
+  }
+
+  fechaEdicionCambiada(fecha: string): void {
+    this.citaEditada.fecha = fecha;
+    this.citaEditada.id_horario = null;
+    this.mensajeErrorEdicion = '';
+
+    this.cargarHorariosEdicion(false);
+  }
+
+  cargarHorariosEdicion(conservarHorarioActual: boolean): void {
+    if (!this.citaEditada.fecha) {
+      this.horariosEdicion = [];
+      return;
+    }
+
+    const fechaSolicitada = this.citaEditada.fecha;
+
+    this.http.get<HorarioCita[]>(
+      `${environment.apiUrl}/horarios/disponibles?fecha=${encodeURIComponent(fechaSolicitada)}`,
+      { headers: this.getHeaders() }
+    ).subscribe({
+      next: (respuesta) => {
+        this.horariosEdicion = respuesta || [];
+
+        if (
+          conservarHorarioActual &&
+          this.citaEnEdicion &&
+          this.citaEditada.fecha === this.formatearFecha(this.citaEnEdicion.fecha)
+        ) {
+          const idHorarioActual = Number(this.citaEnEdicion.id_horario);
+
+          const existe = this.horariosEdicion.some(
+            (horario) => Number(horario.id_horario) === idHorarioActual
+          );
+
+          if (!existe && idHorarioActual) {
+            this.horariosEdicion = [
+              {
+                id_horario: idHorarioActual,
+                fecha: this.citaEditada.fecha,
+                hora_inicio: this.citaEnEdicion.hora,
+                hora_fin: '',
+                id_especialista: 0,
+                especialista: 'Horario actual'
+              },
+              ...this.horariosEdicion
+            ];
+          }
+
+          this.citaEditada.id_horario = idHorarioActual || null;
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al cargar horarios para edición:', error);
+        this.mensajeErrorEdicion = 'No se pudieron cargar los horarios disponibles.';
+        this.horariosEdicion = [];
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  guardarEdicion(event: Event): void {
+    event.preventDefault();
+    this.mensajeErrorEdicion = '';
+
+    if (!this.citaEnEdicion) {
+      this.mensajeErrorEdicion = 'No se encontró la cita que deseas modificar.';
+      return;
+    }
+
+    if (
+      !this.citaEditada.id_servicio ||
+      !this.citaEditada.fecha ||
+      !this.citaEditada.id_horario ||
+      !this.citaEditada.estado
+    ) {
+      this.mensajeErrorEdicion = 'Completa todos los campos para guardar los cambios.';
+      return;
+    }
+
+    this.editando = true;
+
+    const datos = {
+      id_servicio: Number(this.citaEditada.id_servicio),
+      id_horario: Number(this.citaEditada.id_horario),
+      estado: this.citaEditada.estado
+    };
+
+    this.http.put(
+      `${environment.apiUrl}/citas/${this.citaEnEdicion.id_cita}`,
+      datos,
+      { headers: this.getHeaders() }
+    ).subscribe({
+      next: () => {
+        this.editando = false;
+        this.isEditModalOpen = false;
+        this.citaEnEdicion = null;
+        this.obtenerCitas();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al modificar cita:', error);
+
+        this.mensajeErrorEdicion =
+          error?.error?.message ||
+          error?.error?.error ||
+          'No se pudo modificar la cita. Comprueba el horario y vuelve a intentarlo.';
+
+        this.editando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  eliminarCita(id_cita: number, nombreCliente: string): void {
     const confirmar = window.confirm(
-      `¿Estás seguro de cancelar la cita de ${nombreCliente}?`
+      `¿Estás seguro de cancelar o eliminar la cita de ${nombreCliente}?`
     );
 
     if (!confirmar) {
       return;
     }
 
+    this.guardando = true;
+
     this.http.delete(
       `${environment.apiUrl}/citas/${id_cita}`,
       { headers: this.getHeaders() }
     ).subscribe({
       next: () => {
-        this.citas = this.citas.filter(
-          (cita) =>
-            cita.id_cita !== Number(id_cita)
-        );
-
-        this.filtrarCitas();
+        this.guardando = false;
+        this.obtenerCitas();
         this.cdr.detectChanges();
-
-        window.alert('Cita cancelada correctamente.');
       },
-
-      error: (err) => {
-        console.error('Error al cancelar cita:', err);
-
+      error: (error) => {
+        console.error('Error al eliminar cita:', error);
         window.alert(
-          err.error?.mensaje ||
+          error?.error?.message ||
+          error?.error?.error ||
           'No se pudo cancelar la cita.'
         );
+
+        this.guardando = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  private formatearFecha(fecha: string | Date | null | undefined): string {
+    if (!fecha) {
+      return '';
+    }
+
+    if (fecha instanceof Date) {
+      const anio = fecha.getFullYear();
+      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+      const dia = String(fecha.getDate()).padStart(2, '0');
+      return `${anio}-${mes}-${dia}`;
+    }
+
+    const valor = String(fecha);
+
+    if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
+      return valor.slice(0, 10);
+    }
+
+    const fechaConvertida = new Date(valor);
+
+    if (Number.isNaN(fechaConvertida.getTime())) {
+      return '';
+    }
+
+    const anio = fechaConvertida.getFullYear();
+    const mes = String(fechaConvertida.getMonth() + 1).padStart(2, '0');
+    const dia = String(fechaConvertida.getDate()).padStart(2, '0');
+
+    return `${anio}-${mes}-${dia}`;
   }
 }
