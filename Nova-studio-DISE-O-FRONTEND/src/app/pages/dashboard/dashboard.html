@@ -52,10 +52,19 @@
         <span>Calculando métricas del servidor...</span>
       </div>
 
+      <div
+  class="metric-state empty-metrics"
+  *ngIf="!cargandoMetricas && errorMetricas"
+  role="alert"
+>
+  <i class="fas fa-exclamation-triangle"></i>
+  <span>{{ errorMetricas }}</span>
+</div>
+
       <!-- SIN MÉTRICAS -->
       <div
         class="metric-state empty-metrics"
-        *ngIf="!cargandoMetricas && metricas.length === 0"
+       *ngIf="!cargandoMetricas && !errorMetricas && metricas.length === 0"
       >
         <i class="fas fa-chart-pie"></i>
         <span>No hay métricas disponibles.</span>
@@ -158,8 +167,18 @@
               </td>
             </tr>
 
+
+            <tr *ngIf="!cargandoCitas && errorCitas">
+  <td colspan="4">
+    <div class="table-message" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ errorCitas }}</span>
+    </div>
+  </td>
+</tr>
+
             <!-- SIN CITAS -->
-            <tr *ngIf="!cargandoCitas && citas.length === 0">
+            <tr *ngIf="!cargandoCitas && !errorCitas && citas.length === 0">
               <td colspan="4">
                 <div class="table-empty">
                   <div class="empty-icon">
@@ -187,7 +206,7 @@
                     </span>
 
                     <span class="client-name">
-                      {{ cita.cliente?.nombre || cita.nombre_cliente }}
+                      {{ cita.nombre_cliente || 'Cliente' }}
                     </span>
 
                   </div>
@@ -198,7 +217,7 @@
                     <i class="fas fa-scissors"></i>
 
                     <span>
-                      {{ cita.servicio?.nombre || 'General' }}
+                      {{ cita.nombre_servicio || 'General' }}
                     </span>
                   </div>
                 </td>
